@@ -11,8 +11,9 @@
 
 <meta name="author" content="Yanyu Liang" />
 
+<meta name="date" content="2017-04-09" />
 
-<title>Task</title>
+<title>Deep brain - Training - Type 2</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -301,72 +302,34 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Task</h1>
+<h1 class="title toc-ignore">Deep brain - Training - Type 2</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>10 April, 2017</em></h4>
+<h4 class="date"><em>April 09, 2017</em></h4>
 
 </div>
 
 
-<div id="data-preparation" class="section level1">
-<h1><span class="header-section-number">1</span> Data preparation</h1>
-<p>We need to incorporate new data (fetal brain related) to the model. It contains two sub tasks:</p>
-<ol style="list-style-type: decimal">
-<li>Annotate DeepSEA sequence with new labels.
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+<div id="overview" class="section level1">
+<h1><span class="header-section-number">1</span> Overview</h1>
 <ul>
-<li>See pipeline memo <a href="memo_preprocessing.html">here</a></li>
-</ul></li>
-<li>Extract new sequences of interest based on new data set.
-<ul>
-<li>See pipeline memo <a href="memo_extract.html">here</a></li>
-</ul></li>
-</ol>
-</div>
-<div id="train-new-models" class="section level1">
-<h1><span class="header-section-number">2</span> Train new models</h1>
-<p>There are three strategies:</p>
-<ol style="list-style-type: decimal">
-<li>Use DeepSEA sequences and DeepSEA feature representation.
-<ul>
-<li>See results and analysis <a href="type1.html">here</a>.</li>
-<li>See performance on new sequences <a href="type1_newseq.html">here</a></li>
-</ul></li>
-<li>Use DeepSEA sequences but train a new model using the same architecture as DeepSEA.
-<ul>
-<li>See results and analysis <a href="type2.html">here</a>. <strong>ONGOING</strong></li>
-</ul></li>
-<li>Include new sequences and train a new model using the same architecture. <strong>TODO</strong></li>
-</ol>
-</div>
-<div id="other-analysis" class="section level1">
-<h1><span class="header-section-number">3</span> Other analysis</h1>
-<p>There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.</p>
-<ol style="list-style-type: decimal">
-<li>Examine which filter or a set of filters that contribute most to a particular prediction task.
-<ul>
-<li>See details <a href="motif_analysis.html">here</a>. <strong>TODO</strong></li>
-</ul></li>
-<li>How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?)</li>
-<li>How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
-<ul>
-<li>See related discussion <a href="auc.html">here</a></li>
-</ul></li>
-</ol>
-</div>
-<div id="todo-list" class="section level1">
-<h1><span class="header-section-number">4</span> TODO list</h1>
-<ul>
-<li>4/9/17:
-<ol style="list-style-type: decimal">
-<li><del>ROC/PR AUC interpretation</del> <a href="auc.html">link</a></li>
-<li><del>Extract sequences from new data sets</del> <a href="memo_extract.html">link</a></li>
-</ol></li>
-<li>4/10/17:
-<ol start="3" style="list-style-type: decimal">
-<li>New loss function? Weighted hinge loss? <a href="loss_function.html">link</a></li>
-<li>Motif analysis of current model <a href="motif_analysis.html">link</a></li>
-</ol></li>
+<li>Train a model with/without pre-trained weights initialization.</li>
+<li>Use DeepSEA sequences.</li>
+<li>Regularization: at present, <strong>NO</strong> penalty is applied.</li>
 </ul>
+</div>
+<div id="prepare-data-for-training" class="section level1">
+<h1><span class="header-section-number">2</span> Prepare data for training</h1>
+</div>
+<div id="train-wo-weights-initialization" class="section level1">
+<h1><span class="header-section-number">3</span> Train w/o weights initialization</h1>
 </div>
 
 
