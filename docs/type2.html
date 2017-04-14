@@ -11,7 +11,7 @@
 
 <meta name="author" content="Yanyu Liang" />
 
-<meta name="date" content="2017-04-09" />
+<meta name="date" content="2017-04-14" />
 
 <title>Deep brain - Training - Type 2</title>
 
@@ -304,7 +304,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Training - Type 2</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>April 09, 2017</em></h4>
+<h4 class="date"><em>April 14, 2017</em></h4>
 
 </div>
 
@@ -330,6 +330,419 @@ pre code, pre, code {
 </div>
 <div id="train-wo-weights-initialization" class="section level1">
 <h1><span class="header-section-number">3</span> Train w/o weights initialization</h1>
+<div id="results" class="section level2">
+<h2><span class="header-section-number">3.1</span> Results</h2>
+<pre class="r"><code>source(&#39;../../../mylib/my_r.R&#39;)
+rmsprop &lt;- read.table(&#39;../data/type2_040617_00_04_09_17.csv&#39;, sep = &#39;,&#39;, header = T)
+sdg &lt;- read.table(&#39;../data/type2_040717_00_04_09_19.csv&#39;, sep = &#39;,&#39;, header = T)
+deepsea &lt;- read.table(&#39;../data/aucs.txt&#39;, sep = &#39;\t&#39;, header = T)
+deepsea$DeepSEA.ROC.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>deepsea$DeepSEA.PR.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.PR.AUC))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+</div>
+<div id="training" class="section level2">
+<h2><span class="header-section-number">3.2</span> Training</h2>
+<pre class="r"><code>rmsprop.loss &lt;- rmsprop[rmsprop$data == &#39;all&#39;, ]
+ggplot(rmsprop.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;RMSprop convergence&#39;)</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<pre class="r"><code>sdg.loss &lt;- sdg[sdg$data == &#39;all&#39;, ]
+ggplot(sdg.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;SGD convergence&#39;)</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-40-2.png" width="672" /></p>
+</div>
+<div id="performance" class="section level2">
+<h2><span class="header-section-number">3.3</span> Performance</h2>
+<p>Select the best model according to the validation loss.</p>
+<pre class="r"><code>select_best &lt;- function(rmsprop.loss, rmsprop){
+    rms.val_loss &lt;- rmsprop.loss[rmsprop.loss$variable == &#39;val_loss&#39;, ]
+    rmsprop.best &lt;- rms.val_loss[order(rms.val_loss$value)[1],]
+    print(rmsprop.best)
+    bestmode.rms &lt;- rmsprop[rmsprop$epoch == rmsprop.best$epoch,]
+    return(bestmode.rms)
+}
+bestmodel.rms &lt;- select_best(rmsprop.loss, rmsprop)</code></pre>
+<pre><code>##    X data epoch  value variable
+## 23 0  all     0 0.0699 val_loss</code></pre>
+<pre class="r"><code>bestmodel.sgd &lt;- select_best(sdg.loss, sdg)</code></pre>
+<pre><code>##    X data epoch value variable
+## 15 0  all    19 0.076 val_loss</code></pre>
+<pre class="r"><code>anno_to_type &lt;- function(anno){
+    dnase.ind &lt;- anno == &#39;DNase&#39;
+    histone.ind &lt;- grepl(&#39;^H[0-9]&#39;, anno)
+    Annotation.Type &lt;- rep(&#39;TF&#39;, length(anno))
+    Annotation.Type[histone.ind] &lt;- &#39;Histone&#39;
+    Annotation.Type[dnase.ind] &lt;- &#39;DNase&#39;
+    return(Annotation.Type)
+}
+extract_by_col &lt;- function(x, i){
+    temp &lt;- strsplit(x, &#39;&lt;&gt;&#39;)[[1]]
+    return(temp[i])
+}
+bestmodel.rms$data &lt;- as.character(bestmodel.rms$data)
+bestmodel.rms$Annotation.Type &lt;- anno_to_type(sapply(bestmodel.rms$data, function(x){extract_by_col(x, 2)}))
+bestmodel.rms$Cell.Type &lt;- sapply(bestmodel.rms$data, function(x){extract_by_col(x, 1)})
+bestmodel.rms$source &lt;- &#39;rms&#39;
+# bestmodel.rms$value[bestmodel.rms$value == -1] &lt;- NA
+bestmodel.sgd$data &lt;- as.character(bestmodel.sgd$data)
+bestmodel.sgd$Annotation.Type &lt;- anno_to_type(sapply(bestmodel.sgd$data, function(x){extract_by_col(x, 2)}))
+bestmodel.sgd$Cell.Type &lt;- sapply(bestmodel.sgd$data, function(x){extract_by_col(x, 1)})
+bestmodel.sgd$source &lt;- &#39;sgd&#39;
+# bestmodel.sgd$value[bestmodel.sgd$value == -1] &lt;- NA</code></pre>
+<div id="aucs-of-best-model" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> AUCs of best model</h3>
+<pre class="r"><code>bestmodel.rms.aucs &lt;- bestmodel.rms[bestmodel.rms$variable == &#39;roc_auc&#39; | bestmodel.rms$variable == &#39;pr_auc&#39;, ]
+bestmodel.sgd.aucs &lt;- bestmodel.sgd[bestmodel.sgd$variable == &#39;roc_auc&#39; | bestmodel.sgd$variable == &#39;pr_auc&#39;, ]
+deepsea.aucs &lt;- melt(deepsea[, c(&#39;Cell.Type&#39;, &#39;TF.DNase.HistoneMark&#39;, &#39;Treatment&#39;, &#39;DeepSEA.ROC.AUC&#39;, &#39;DeepSEA.PR.AUC&#39;), ], id.vars = c(&#39;Cell.Type&#39;, &#39;TF.DNase.HistoneMark&#39;, &#39;Treatment&#39;))
+deepsea.aucs$variable &lt;- as.character(deepsea.aucs$variable)
+deepsea.aucs$Annotation.Type &lt;- anno_to_type(deepsea.aucs$TF.DNase.HistoneMark)
+deepsea.aucs$variable[deepsea.aucs$variable == &#39;DeepSEA.ROC.AUC&#39;] &lt;- &#39;roc_auc&#39;
+deepsea.aucs$variable[deepsea.aucs$variable == &#39;DeepSEA.PR.AUC&#39;] &lt;- &#39;pr_auc&#39;
+deepsea.aucs$source &lt;- &#39;deepsea&#39;</code></pre>
+<pre class="r"><code>auc_table &lt;- rbind(bestmodel.rms.aucs[, c(&#39;variable&#39;, &#39;value&#39;, &#39;Annotation.Type&#39;, &#39;source&#39;)],
+                   bestmodel.sgd.aucs[, c(&#39;variable&#39;, &#39;value&#39;, &#39;Annotation.Type&#39;, &#39;source&#39;)],
+                   deepsea.aucs[, c(&#39;variable&#39;, &#39;value&#39;, &#39;Annotation.Type&#39;, &#39;source&#39;)])
+ggplot(auc_table[auc_table$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scale = &#39;free_y&#39;) + ggtitle(&#39;ROC AUC&#39;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(auc_table[auc_table$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scales = &#39;free_y&#39;) + ggtitle(&#39;PR AUC&#39;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+</div>
+<div id="compare-with-type1-best-model" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> Compare with type1 (best model)</h3>
+<p>We make the comparison on E081, E082, E129, Noonan only.</p>
+<pre class="r"><code>bestmodel.type1 &lt;- read.table(&#39;../data/best_model_type1_scores.txt&#39;, sep = &#39;\t&#39;, header = T)
+bestmodel.type1$source &lt;- &#39;type1&#39;
+bestmodel.type1$Cell.Type &lt;- bestmodel.type1$data
+bestmodel.rms.subset &lt;- bestmodel.rms[bestmodel.rms$data %in% c(&#39;E081&lt;&gt;DNase&lt;&gt;None&#39;, &#39;E082&lt;&gt;DNase&lt;&gt;None&#39;, &#39;E129&lt;&gt;H3K9me3&lt;&gt;None&#39;, &#39;Noonan&lt;&gt;H3K27ac&lt;&gt;None&#39;),]
+bestmodel.sgd.subset &lt;- bestmodel.sgd[bestmodel.sgd$data %in% c(&#39;E081&lt;&gt;DNase&lt;&gt;None&#39;, &#39;E082&lt;&gt;DNase&lt;&gt;None&#39;, &#39;E129&lt;&gt;H3K9me3&lt;&gt;None&#39;, &#39;Noonan&lt;&gt;H3K27ac&lt;&gt;None&#39;),]
+temp &lt;- dcast(bestmodel.rms.subset[,c(4,5,7,8)], source + Cell.Type ~ variable)
+temp &lt;- rbind(temp, dcast(bestmodel.sgd.subset[,c(4,5,7,8)], source + Cell.Type ~ variable))
+temp &lt;- rbind(temp, bestmodel.type1[, colnames(temp)])
+temp.melted &lt;- melt(temp, id.vars = c(&#39;source&#39;, &#39;Cell.Type&#39;))
+temp.melted[which(temp.melted$value == -1), ]$value &lt;- NA
+temp.melted$variable &lt;- factor(temp.melted$variable, levels = c(&#39;cross_entropy&#39;, &#39;accuracy&#39;, &#39;roc_auc&#39;, &#39;pr_auc&#39;, levels(temp.melted$variable)[4 : 9]))
+ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), position = &#39;dodge&#39;, stat = &#39;identity&#39;) + facet_wrap(~Cell.Type) + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + ggtitle(&#39;Performance of best models on four selected data sets&#39;)</code></pre>
+<pre><code>## Warning: Removed 8 rows containing missing values (geom_bar).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p><strong>Issues in training</strong>: Some instances have very large activation at the feature representation layer. See analysis <a href="#activation">below</a>.</p>
+<p><strong>TODO</strong>: Add penalty terms and use sgd with momentum. See technical memo <a href="memo_constraint.html">here</a></p>
+<p><strong>TODO</strong>: Use weighted hinge loss.</p>
+</div>
+<div id="performance-change-along-training" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> Performance change along training</h3>
+<div id="sgd" class="section level4">
+<h4><span class="header-section-number">3.3.3.1</span> SGD</h4>
+<pre class="r"><code>performance_cross_epoch &lt;- function(scores, deepsea.aucs){
+    sdg.aucs &lt;- scores[scores$variable %in% c(&#39;pr_auc&#39;, &#39;roc_auc&#39;, &#39;cross_entropy&#39;),]
+    sdg.aucs$data &lt;- as.character(sdg.aucs$data)
+    sdg.aucs$Annotation.Type &lt;- anno_to_type(sapply(sdg.aucs$data, function(x){extract_by_col(x, 2)}))
+    sdg.aucs.plot &lt;- sdg.aucs[, c(&#39;epoch&#39;, &#39;value&#39;, &#39;variable&#39;, &#39;Annotation.Type&#39;)]
+    deepsea.aucs.plot &lt;- deepsea.aucs[, c(&#39;value&#39;, &#39;variable&#39;, &#39;Annotation.Type&#39;)]
+    deepsea.aucs.plot$epoch &lt;- &#39;DeepSEA&#39;
+    aucs.plot &lt;- rbind(sdg.aucs.plot, deepsea.aucs.plot)
+    aucs.plot$epoch &lt;- factor(aucs.plot$epoch, levels = c(unique(sdg.aucs.plot$epoch), unique(deepsea.aucs.plot$epoch)))
+    p1 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(&#39;SGD - ROC AUC&#39;)
+    p2 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(&#39;SGD - PR AUC&#39;)
+    return(list(roc=p1, pr=p2, data=aucs.plot))
+}
+re &lt;- performance_cross_epoch(sdg, deepsea.aucs)
+re$roc</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<pre class="r"><code>re$pr</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-45-2.png" width="672" /></p>
+<pre class="r"><code>re &lt;- performance_cross_epoch(rmsprop, deepsea.aucs)
+re$roc</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-45-3.png" width="672" /></p>
+<pre class="r"><code>re$pr</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-45-4.png" width="672" /></p>
+</div>
+</div>
+<div id="kernel-norm" class="section level3">
+<h3><span class="header-section-number">3.3.4</span> Kernel norm</h3>
+<p>Here we check the L2 norm of kernel corresponding to every neuron.</p>
+<ul>
+<li>DeepSEA model</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py ../DeepSEA/debug/keras_deepsea.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 10
+range 0.00 - 0.90 : 915
+range 0.90 - 0.91 : 10
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 23
+range 0.00 - 0.90 : 896
+range 0.90 - 0.91 : 23</code></pre>
+<ul>
+<li>Type2 with RMSprop (epoch 1, best)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040617/00-0.0699-0.0808.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 10
+range 0.00 - 0.90 : 310
+range 0.90 - 1.60 : 5
+range 1.60 - 3.22 : 5
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 52
+range 0.00 - 0.90 : 428
+range 0.90 - 7.89 : 45
+range 7.89 - 15.80 : 7
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 31
+range 0.00 - 0.90 : 929
+range 0.90 - 2.21 : 27
+range 2.21 - 4.43 : 4
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 7.80 : 861
+range 7.80 - 15.61 : 64
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 17.45 : 284
+range 17.45 - 34.92 : 639</code></pre>
+<ul>
+<li>Type2 with RMSprop (epoch 10)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040617/09-0.0727-0.0810.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 23
+range 0.00 - 0.90 : 297
+range 0.90 - 9.41 : 19
+range 9.41 - 18.82 : 4
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 78
+range 0.00 - 0.90 : 402
+range 0.90 - 17.02 : 64
+range 17.02 - 34.04 : 14
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 63
+range 0.00 - 0.90 : 897
+range 0.90 - 7.02 : 60
+range 7.02 - 14.04 : 3
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 10.52 : 878
+range 10.52 - 21.05 : 47
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 55.12 : 434
+range 55.12 - 110.25 : 489</code></pre>
+<ul>
+<li>Type2 with RMSprop (epoch 18)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040617/17-0.0724-0.0814.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 23
+range 0.00 - 0.90 : 297
+range 0.90 - 13.29 : 17
+range 13.29 - 26.60 : 6
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 88
+range 0.00 - 0.90 : 392
+range 0.90 - 18.79 : 72
+range 18.79 - 37.59 : 16
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 94
+range 0.00 - 0.90 : 866
+range 0.90 - 7.02 : 90
+range 7.02 - 14.05 : 4
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 11.27 : 876
+range 11.27 - 22.55 : 49
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 73.81 : 463
+range 73.81 - 147.63 : 460</code></pre>
+<ul>
+<li>Type2 with SGD (epoch 10)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040717/09-0.0791-0.0853.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 1.46 : 925
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 1.05 : 923</code></pre>
+<ul>
+<li>Type2 with SGD (epoch 14)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040717/13-0.0771-0.0827.hdf5 L2 --threshold 0.9
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 1.46 : 925
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 1.06 : 923</code></pre>
+<ul>
+<li>Type2 with SGD (epoch 20)</li>
+</ul>
+<pre class="bash"><code>$ python my_scripts/post_check_constraint.py my_train/type2_040717/19-0.0760-0.0817.hdf5 L2 --threshold 0.9 
+--- conv1d_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- conv1d_3 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 0
+--- dense_1 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 925
+range 0.00 - 0.90 : 0
+range 0.90 - 1.47 : 925
+--- dense_2 -------  L2 report  ----------
+# kernels passing the threshold 0.9 is 923
+range 0.00 - 0.90 : 0
+range 0.90 - 1.06 : 923</code></pre>
+<p>It seems that RMSprop makes the kernel weights bloom up. It indicates re-normalization is necessary under RMSprop. On the other hand, SGD one’s weights do not grow up.</p>
+</div>
+<div id="saturation-of-neuron" class="section level3">
+<h3><span class="header-section-number">3.3.5</span> Saturation of neuron</h3>
+<p>The scripts used are <code>040617_saturation.sbatch</code>, <code>040717_saturation.sbatch</code>, and <code>deepsea_saturation.sbatch</code>. The results are as follow:</p>
+<ul>
+<li>SGD epoch 10</li>
+</ul>
+<pre class="bash"><code>$ cat 0407_sat.out
+start prediction
+finish prediction
+----------  L1 report  ----------
+range 0.00 - 1.00 : 0
+range 1.00 - 2.00 : 0
+range 2.00 - 4.00 : 72
+range 4.00 - 8.00 : 33392
+range 8.00 - 16.00 : 421248
+range 16.00 - 32.00 : 312
+range 32.00 - 64.00 : 0
+range 64.00 - 128.00 : 0
+range 128.00 - 256.00 : 0
+range 256.00 - 512.00 : 0
+range 512.00 - 1024.00 : 0
+range 1024.00 - 2048.00 : 0
+range 2048.00 - 4096.00 : 0
+range 4096.00 - 8192.00 : 0
+$ cat 0406_sat.out</code></pre>
+<ul>
+<li>RMSprop epoch 1</li>
+</ul>
+<pre class="bash"><code>start prediction
+finish prediction
+----------  L1 report  ----------
+range 0.00 - 1.00 : 0
+range 1.00 - 2.00 : 0
+range 2.00 - 4.00 : 0
+range 4.00 - 8.00 : 0
+range 8.00 - 16.00 : 411153
+range 16.00 - 32.00 : 43699
+range 32.00 - 64.00 : 62
+range 64.00 - 128.00 : 1
+range 128.00 - 256.00 : 1
+range 256.00 - 512.00 : 2
+range 512.00 - 1024.00 : 3
+range 1024.00 - 2048.00 : 2
+range 2048.00 - 4096.00 : 8
+range 4096.00 - 8192.00 : 10</code></pre>
+<ul>
+<li>DeepSEA</li>
+</ul>
+<pre class="bash"><code>$ cat deepsea_sat.out
+start prediction
+finish prediction
+----------  L1 report  ----------
+range 0.00 - 1.00 : 0
+range 1.00 - 2.00 : 0
+range 2.00 - 4.00 : 0
+range 4.00 - 8.00 : 297
+range 8.00 - 16.00 : 454348
+range 16.00 - 32.00 : 379
+range 32.00 - 64.00 : 0
+range 64.00 - 128.00 : 0
+range 128.00 - 256.00 : 0
+range 256.00 - 512.00 : 0
+range 512.00 - 1024.00 : 0
+range 1024.00 - 2048.00 : 0
+range 2048.00 - 4096.00 : 0
+range 4096.00 - 8192.00 : 0</code></pre>
+<ul>
+<li>SGD epoch 20</li>
+</ul>
+<pre class="bash"><code>$ cat 0407_sat_19.out  
+start prediction
+finish prediction
+----------  L1 report  ----------
+range 0.00 - 1.00 : 0
+range 1.00 - 2.00 : 0
+range 2.00 - 4.00 : 72
+range 4.00 - 8.00 : 21021
+range 8.00 - 16.00 : 433628
+range 16.00 - 32.00 : 303
+range 32.00 - 64.00 : 0
+range 64.00 - 128.00 : 0
+range 128.00 - 256.00 : 0
+range 256.00 - 512.00 : 0
+range 512.00 - 1024.00 : 0
+range 1024.00 - 2048.00 : 0
+range 2048.00 - 4096.00 : 0
+range 4096.00 - 8192.00 : 0</code></pre>
+<ul>
+<li>RMSprop epoch 20</li>
+</ul>
+<pre class="bash"><code>$ cat 0406_sat_19.out  
+start prediction
+finish prediction
+----------  L1 report  ----------
+range 0.00 - 1.00 : 0
+range 1.00 - 2.00 : 0
+range 2.00 - 4.00 : 0
+range 4.00 - 8.00 : 0
+range 8.00 - 16.00 : 438226
+range 16.00 - 32.00 : 16671
+range 32.00 - 64.00 : 15
+range 64.00 - 128.00 : 0
+range 128.00 - 256.00 : 0
+range 256.00 - 512.00 : 0
+range 512.00 - 1024.00 : 0
+range 1024.00 - 2048.00 : 0
+range 2048.00 - 4096.00 : 0
+range 4096.00 - 8192.00 : 0</code></pre>
+<p>RMSprop does have some instances that are saturated, but SGD works fine in terms of the.</p>
+</div>
+</div>
 </div>
 
 
