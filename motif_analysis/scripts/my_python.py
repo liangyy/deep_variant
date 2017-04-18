@@ -3,7 +3,7 @@ import sys
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-    
+
 from ntpath import basename
 import os
 import subprocess
@@ -36,3 +36,8 @@ def reportHistogram(bins=None, counts=None):
 		start = bins[i]
 		end = bins[i + 1]
 		print('range {:.2f} - {:.2f} : {}'.format(start, end, counts[i]))
+def saveData(hdf5file, name, data):
+    f = h5py.File(hdf5file, 'w')
+    f.create_dataset(name, data=data)
+    f.close()
+    

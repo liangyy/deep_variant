@@ -26,4 +26,6 @@ rule select_sequence:
         --x_name {params.x} \
         --label_idx {params.label_idx} \
         --num {params.num} \
+        --out_pos {output.p} \
+        --out_neg {output.n} \
         2> {log}'

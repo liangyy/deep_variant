@@ -27,6 +27,12 @@ parser.add_argument('--num', type=int, help='''
 parser.add_argument('--label_idx', type=int, help='''
 	the label you would like to focus on
 	''')
+parser.add_argument('--out_pos', help='''
+	positive sequences output filename
+	''')
+parser.add_argument('--out_neg', help='''
+	negative sequences output filename
+	''')
 args = parser.parse_args()
 
 import h5py
@@ -47,3 +53,5 @@ x_pos = x[y == 1][y_pred[y == 1] >= threhold_pos]
 x_neg = x[y == 0][y_pred[y == 0] <= threhold_neg]
 my_python.eprint('The threshold for positive instance is {tpos}'.format(tpos=threhold_pos))
 my_python.eprint('The threshold for negative instance is {tneg}'.format(tneg=threhold_neg))
+my_python.saveData(args.out_pos, 'x', x_pos)
+my_python.saveData(args.out_neg, 'x', x_neg)
