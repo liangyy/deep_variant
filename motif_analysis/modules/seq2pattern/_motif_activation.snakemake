@@ -1,0 +1,24 @@
+# This module takes sequences and model as input and generate feather file containing the activation of first convolutional layer
+# For each sequence, the spatial information will be collapsed by taking the maximum value
+
+rule get_pattern_pos:
+    input:
+        p = 'data/{data}/selected_positive.hdf5',
+        model = config['model']['path']
+    output:
+        op = 'pattern/{data}/{method}/pattern_positive.feather'
+    params:
+        idx = config['model']['first_layer_idx']
+    shell:
+        'python scripts/motif_activation.py --model {input.model} --input {input.p} --output {output.op}'
+
+rule get_pattern_neg:
+    input:
+        n = 'data/{data}/selected_negative.hdf5'
+    output:
+        on = 'pattern/{data}/{method}/pattern_negative.feather'
+    shell:
+        'python scripts/motif_activation.py --model {input.model} \
+        --input {input.n} \
+        --output {output.on} \
+        --idx {input.idx}'

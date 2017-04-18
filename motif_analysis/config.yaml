@@ -7,6 +7,10 @@ method:
     snakemake: '_motif_gradient.snakemake'
   motif_activation:
     snakemake: '_motif_activation.snakemake'
+model:
+  name: 'Type1'
+  path: 'path_to_model'
+  first_layer_idx: 1
 data:
   E081:
     data_name: 'E081'
