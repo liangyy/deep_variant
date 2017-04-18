@@ -23,3 +23,4 @@ $ snakemake data/E081/selected_positive.hdf5
 2. implement `sliding_window` [link](modules/seq2pattern/_sliding_window.snakemake)
 3. implement `motif_gradient` [link](modules/seq2pattern/_motif_gradient.snakemake)
 4. implement `motif_activation` [link](modules/seq2pattern/_motif_activation.snakemake)
+5. generate a black list of sequences where containing meaningless NNNN...
