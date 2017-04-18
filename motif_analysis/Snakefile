@@ -1,0 +1,15 @@
+include:
+    'modules/select_sequence.snakemake'
+    # This section generate data ready for analysis
+    # It takes label file and raw data and extracts
+    # sequences according to some rules specified in
+    # the script
+for i in config['method']:
+    include:
+        'modules/{method}'.format(method=i['snakemake'])
+        # These methods generate a pattern vector for each sequence
+        # The pattern can either be the result of mutagensis analysis
+        # where vector extends along spatial direction or be the result of
+        # motif activation pattern analysis where the vector extends
+        # along motif direction
+        # The result will be saved at pattern/[data_name]/[method_name]/[positive/negative]_pattern.feather

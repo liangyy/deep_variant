@@ -1,0 +1,29 @@
+# This script takes sequence data and prediction in HDF5
+# and output selected sequence set for downstream analysis
+
+rule select_sequence:
+    input:
+        ypred = config['{data}']['data_ypred']['path'],
+        y = config['{data}']['data_y']['path'],
+        x = config['{data}']['data_x']['path']
+    output:
+        p = 'data/{data}/selected_positive.hdf5',
+        n = 'data/{data}/selected_negative.hdf5'
+    params:
+        ypred = config['{data}']['data_ypred']['name'],
+        y = config['{data}']['data_y']['name'],
+        x = config['{data}']['data_x']['name'],
+        label_idx = config['{data}']['label_num'],
+        num = config['{data}']['extract_num']
+    logs:
+        'logs/{data}/select_sequence.log'
+    shell:
+        'scripts/select_sequence.py --ypred {input.ypred} \
+        --y {input.y} \
+        --x {input.x} \
+        --ypred_name {params.ypred} \
+        --y_name {params.y} \
+        --x_name {params.x} \
+        --label_idx {params.label_idx} \
+        --num {params.num} \
+        2> {logs}'

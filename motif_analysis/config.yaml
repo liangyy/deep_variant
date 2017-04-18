@@ -1,0 +1,24 @@
+method:
+  mutagensis:
+    snakemake: '_mutagensis.snakemake'
+  sliding_window:
+    snakemake: '_sliding_window.snakemake'
+  motif_gradient:
+    snakemake: '_motif_gradient.snakemake'
+  motif_activation:
+    snakemake: '_motif_activation.snakemake'
+data:
+  E081:
+    data_name: 'E081'
+    label_num: 1 # 1-based
+    extract_num: 1000
+    # seed: 2017
+    data_ypred:
+      path: 'path_to_predicted_label_in_hdf5'
+      name: 'y_pred'
+    data_y:
+      path: 'path_to_true_label_in_hdf5'
+      name: 'traindata'
+    data_x:
+      path: 'path_to_sequence_in_hdf5'
+      name: 'trainxdata'
