@@ -24,7 +24,8 @@ model = load_model(args.model)
 from keras.models import Model
 model_intermediate = Model(inputs=model.layers[0].input, outputs=model.layers[args.idx].output)
 activation = model_intermediate.predict(x, verbose=1)
-activation = np.max(axis=1)
-
-total_table = pd.DataFrame(activation, columns=[ 'Motif.' + str(i) for i in range(ctivation.shape[1]) ])
+activation = np.max(activation, axis=1)
+# my_python.saveData(args.output, 'y', activation)
+total_table = pd.DataFrame(activation, columns=[ 'Motif.' + str(i) for i in range(activation.shape[1]) ])
+total_table = total_table.copy()
 feather.write_dataframe(total_table, args.output)

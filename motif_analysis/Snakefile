@@ -5,9 +5,9 @@ include:
     # It takes label file and raw data and extracts
     # sequences according to some rules specified in
     # the script
-# for i in config['method']:
-#     include:
-#        'modules/seq2pattern/{method}'.format(method=config['method'][i]['snakemake'])
+for i in config['method']:
+     include:
+        'modules/seq2pattern/{method}'.format(method=config['method'][i]['snakemake'])
         # These methods generate a pattern vector for each sequence
         # The pattern can either be the result of mutagensis analysis
         # where vector extends along spatial direction or be the result of

@@ -9,7 +9,7 @@ method:
     snakemake: '_motif_activation.snakemake'
 model:
   name: 'Type1'
-  path: 'path_to_model'
+  path: '../../../deep_variant/yanyu/DeepSEA/debug/keras_deepsea_copy.hdf5'
   first_layer_idx: 1
 data:
   E081:

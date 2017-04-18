@@ -6,19 +6,25 @@ rule get_pattern_pos:
         p = 'data/{data}/selected_positive.hdf5',
         model = config['model']['path']
     output:
-        op = 'pattern/{data}/{method}/pattern_positive.feather'
+        op = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name'])
     params:
         idx = config['model']['first_layer_idx']
     shell:
-        'python scripts/motif_activation.py --model {input.model} --input {input.p} --output {output.op}'
+        'python scripts/motif_activation.py --model {input.model} \
+        --input {input.p} \
+        --output {output.op} \
+        --idx {params.idx}'
 
 rule get_pattern_neg:
     input:
-        n = 'data/{data}/selected_negative.hdf5'
+        n = 'data/{data}/selected_negative.hdf5',
+        model = config['model']['path']
     output:
-        on = 'pattern/{data}/{method}/pattern_negative.feather'
+        on = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+    params:
+        idx = config['model']['first_layer_idx']
     shell:
         'python scripts/motif_activation.py --model {input.model} \
         --input {input.n} \
         --output {output.on} \
-        --idx {input.idx}'
+        --idx {params.idx}'
