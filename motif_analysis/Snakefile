@@ -1,12 +1,13 @@
+configfile: 'config.yaml'
 include:
     'modules/select_sequence.snakemake'
     # This section generate data ready for analysis
     # It takes label file and raw data and extracts
     # sequences according to some rules specified in
     # the script
-for i in config['method']:
-    include:
-        'modules/{method}'.format(method=i['snakemake'])
+# for i in config['method']:
+#     include:
+#        'modules/{method}'.format(method=config['method'][i]['snakemake'])
         # These methods generate a pattern vector for each sequence
         # The pattern can either be the result of mutagensis analysis
         # where vector extends along spatial direction or be the result of

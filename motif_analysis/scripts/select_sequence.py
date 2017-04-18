@@ -21,10 +21,10 @@ parser.add_argument('--y_name', help='''
 parser.add_argument('--x_name', help='''
 	dataset name in x HDF5
 	''')
-parser.add_argument('--num', help='''
+parser.add_argument('--num', type=int, help='''
 	number of sequences you want to extract
 	''')
-parser.add_argument('--label_idx', help='''
+parser.add_argument('--label_idx', type=int, help='''
 	the label you would like to focus on
 	''')
 args = parser.parse_args()
