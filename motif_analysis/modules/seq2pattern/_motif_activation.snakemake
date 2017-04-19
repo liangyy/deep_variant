@@ -28,3 +28,113 @@ rule get_pattern_neg:
         --input {input.n} \
         --output {output.on} \
         --idx {params.idx}'
+
+rule report_gen_rmd:
+    input:
+        p = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
+        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+    output:
+        o = temp('report/{model}/{data}/motif_activation.Rmd'.format(data='{data}', model=config['model']['name']))
+    params:
+        model = config['model']['name'],
+        data = '{data}',
+        envir = '../../'
+    run:
+        rmd = '''---
+title: "Motif Analysis - motif activation"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+# Overall Activation
+
+```{{r}}
+source('scripts/my_r.R')
+library(feather)
+library(ggplot2)
+library(reshape2)
+library(bsselectR)
+info <- c('{model}', '{data}', 'motif_activation')
+pos <- load_and_melt('{envir}/{input_p}')
+neg <- load_and_melt('{envir}/{input_n}')
+ggplot(pos$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Positive)') + labs(x = 'motif', y = 'sequence')
+ggplot(neg$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Negative)') + labs(x = 'motif', y = 'sequence')
+```
+
+# Per Motif Activation
+
+```{{r}}
+pvalues <- c()
+motifs <- c()
+for(i in colnames(pos$table)){{
+    if(i != 'id'){{
+        poss <- pos$table[[i]]
+        negs <- neg$table[[i]]
+        pvalues <- c(pvalues, wilcox.test(poss, negs)$p.value)
+        motifs <- c(motifs, i)
+    }}
+}}
+df <- data.frame(motif=motifs, p.value=pvalues)
+```
+
+## Top 5
+
+```{{r, echo=FALSE, warning=FALSE}}
+motif.ordered <- order(df$p.value)
+motifs <- unique(pos$table.melted$variable)
+motif.top5 <- motifs[motif.ordered[1 : 5]]
+pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
+plots <- list()
+for(i in 1 : length(motif.top5)){{
+    p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
+    plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
+}}
+bsselect(plots, type = "img", selected = motif.top5[1],
+         live_search = TRUE, show_tick = TRUE, height = 10)
+```
+
+## Medium 5
+
+```{{r, echo=FALSE, warning=FALSE}}
+midpoint <- floor(length(motif.ordered) / 2)
+motif.medium5 <- motifs[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
+pvalue.medium5 <- df$p.value[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
+plots <- list()
+for(i in 1 : length(motif.medium5)){{
+    p <- plot_motif(pos$table.melted, neg$table.melted, motif.medium5[i], pvalue.medium5[i])
+    plots <- save_plot(info, p, motif.medium5[i], 'plots', plots)
+}}
+bsselect(plots, type = "img", selected = motif.top5[1],
+         live_search = TRUE, show_tick = TRUE, height = 10)
+```
+
+# Bottom 5
+
+```{{r, echo=FALSE, warning=FALSE}}
+n <- length(motif.ordered)
+motif.bottom5 <- motifs[motif.ordered[(n - 4) : n]]
+pvalue.bottom5 <- df$p.value[motif.ordered[(n - 4) : n]]
+plots <- list()
+for(i in 1 : length(motif.bottom5)){{
+    p <- plot_motif(pos$table.melted, neg$table.melted, motif.bottom5[i], pvalue.bottom5[i])
+    plots <- save_plot(info, p, motif.bottom5[i], 'plots', plots)
+}}
+bsselect(plots, type = "img", selected = motif.top5[1],
+         live_search = TRUE, show_tick = TRUE, height = 10)
+```
+'''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
+        o = open({output.o}, 'w')
+        o.write(rmd)
+        o.close()
+
+rule report_gen_html:
+    input:
+        'report/{model}/{data}/motif_activation.Rmd'.format(data='{data}', model=config['model']['name'])
+    output:
+        'report/{model}/{data}/motif_activation.html'.format(data='{data}', model=config['model']['name'])
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input}')"'''
