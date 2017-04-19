@@ -25,7 +25,7 @@ save_plot <- function(info, p, motif, path, plots){
     plots
 }
 
-plot_motif <- function(filename = filname, motif_idx = motif_idx){
+plot_motif_visual <- function(filename = filname, motif_idx = motif_idx){
     motif <- read_feather(filename)
     motif$Base <- c('A', 'G', 'C', 'T') # ATTENTION! This depends on now you preprocess the data
     motif.melted <- melt(motif, id.vars = 'Base')

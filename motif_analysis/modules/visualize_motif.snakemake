@@ -48,15 +48,16 @@ knitr::opts_knit$set(root.dir = '{envir}')
 Here the order of bases is 'A', 'G', 'C', 'T'.
 
 ```{{r, echo=FALSE, warning=FALSE}}
+source('scripts/my_r.R')
 library(feather)
 library(ggplot2)
 library(reshape2)
 library(bsselectR)
-path <- '../pattern/{model}/motif_visualization/'
+path <- 'pattern/{model}/motif_visualization/'
 info <- c('{model}', 'motif_visualization')
 plots <- list()
 for(i in 0 : ({nmotifs} - 1)){{
-    p <- plot_motif(filename = paste(path, '/Motif_', i, '.feather', sep = ''), i)
+    p <- plot_motif_visual(filename = paste(path, '/Motif_', i, '.feather', sep = ''), i)
     save_plot(info, p, paste('Motif', i, sep = '.'), 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = names(plots)[1],
@@ -67,11 +68,11 @@ bsselect(plots, type = "img", selected = names(plots)[1],
         o.write(rmd)
         o.close()
 
-rule report_gen_html:
+rule visual_html:
     input:
         rmd = 'report/{model}/motif_visualization/draw_list.Rmd',
         files = [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
     output:
         'report/{model}/motif_visualization/draw_list.html'
     shell:
-        '''Rscript -e "rmarkdown::render('./{input}')"'''
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''

@@ -12,7 +12,7 @@ model:
   path: '../../../deep_variant/yanyu/DeepSEA/debug/keras_deepsea_copy.hdf5'
   first_layer_idx: 1
   motif_layer_idx: 0
-  nmotifs: 3
+  nmotifs: 320
 data:
   E081:
     data_name: 'E081'
