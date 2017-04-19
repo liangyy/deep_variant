@@ -26,5 +26,43 @@ rule visual_rmd:
         [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
     output:
         rmd = 'report/{model}/motif_visualization/draw_list.Rmd'
+    params:
+        model = config['model']['name'],
+        envir = '../../../',
+        nmotifs = config['model']['nmotifs']
     run:
-        ''
+        rmd = '''---
+title: "Motif Analysis - visualization motifs"
+output:
+html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+Here the order of bases is 'A', 'G', 'C', 'T'.
+
+```{{r, echo=FALSE, warning=FALSE}}
+library(feather)
+library(ggplot2)
+library(reshape2)
+library(bsselectR)
+path <- '../pattern/{model}/motif_visualization/'
+info <- c('{model}', 'motif_visualization')
+plots <- list()
+for(i in 1 : {nmotifs}){{
+    p <- plot_motif(filename = paste(path, '/Motif_', i, '.feather', sep = ''), i)
+    save_plot(info, p, paste('Motif', i, sep = '.'), 'plots', plots)
+}}
+bsselect(plots, type = "img", selected = names(plots)[1],
+         live_search = TRUE, show_tick = TRUE, height = 10)
+```
+'''.format(envir=params.envir, model=params.model, nmotifs=params.nmotifs)
+        o = open(output.rmd, 'w')
+        o.write(rmd)
+        o.close()
