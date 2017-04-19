@@ -32,8 +32,10 @@ options(width=2000)
 
 ```{r}
 source('../../../mylib/my_r.R')
+library(ggplot2)
+library(reshape2)
 rmsprop <- read.table('../data/type2_040617_00_04_09_17.csv', sep = ',', header = T)
-sdg <- read.table('../data/type2_040717_00_04_09_19.csv', sep = ',', header = T)
+sdg <- read.table('../data/type2_040717_00_04_09_15_19_25_30_36.csv', sep = ',', header = T)
 deepsea <- read.table('../data/aucs.txt', sep = '\t', header = T)
 deepsea$DeepSEA.ROC.AUC <- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))
 deepsea$DeepSEA.PR.AUC <- as.numeric(as.character(deepsea$DeepSEA.PR.AUC))
@@ -137,7 +139,7 @@ ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), posi
 #### SGD
 
 ```{r}
-performance_cross_epoch <- function(scores, deepsea.aucs){
+performance_cross_epoch <- function(scores, deepsea.aucs, title){
     sdg.aucs <- scores[scores$variable %in% c('pr_auc', 'roc_auc', 'cross_entropy'),]
     sdg.aucs$data <- as.character(sdg.aucs$data)
     sdg.aucs$Annotation.Type <- anno_to_type(sapply(sdg.aucs$data, function(x){extract_by_col(x, 2)}))
@@ -146,14 +148,14 @@ performance_cross_epoch <- function(scores, deepsea.aucs){
     deepsea.aucs.plot$epoch <- 'DeepSEA'
     aucs.plot <- rbind(sdg.aucs.plot, deepsea.aucs.plot)
     aucs.plot$epoch <- factor(aucs.plot$epoch, levels = c(unique(sdg.aucs.plot$epoch), unique(deepsea.aucs.plot$epoch)))
-    p1 <- ggplot(aucs.plot[aucs.plot$variable == 'roc_auc',]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle('SGD - ROC AUC')
-    p2 <- ggplot(aucs.plot[aucs.plot$variable == 'pr_auc',]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle('SGD - PR AUC')
+    p1 <- ggplot(aucs.plot[aucs.plot$variable == 'roc_auc',]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(paste(title, '- ROC AUC'))
+    p2 <- ggplot(aucs.plot[aucs.plot$variable == 'pr_auc',]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(paste(title, '- ROC AUC'))
     return(list(roc=p1, pr=p2, data=aucs.plot))
 }
-re <- performance_cross_epoch(sdg, deepsea.aucs)
+re <- performance_cross_epoch(sdg, deepsea.aucs, 'SGD')
 re$roc
 re$pr
-re <- performance_cross_epoch(rmsprop, deepsea.aucs)
+re <- performance_cross_epoch(rmsprop, deepsea.aucs, 'RMSprop')
 re$roc
 re$pr
 ```

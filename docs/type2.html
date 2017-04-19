@@ -332,8 +332,10 @@ pre code, pre, code {
 <div id="results" class="section level2">
 <h2><span class="header-section-number">3.1</span> Results</h2>
 <pre class="r"><code>source(&#39;../../../mylib/my_r.R&#39;)
+library(ggplot2)
+library(reshape2)
 rmsprop &lt;- read.table(&#39;../data/type2_040617_00_04_09_17.csv&#39;, sep = &#39;,&#39;, header = T)
-sdg &lt;- read.table(&#39;../data/type2_040717_00_04_09_19.csv&#39;, sep = &#39;,&#39;, header = T)
+sdg &lt;- read.table(&#39;../data/type2_040717_00_04_09_15_19_25_30_36.csv&#39;, sep = &#39;,&#39;, header = T)
 deepsea &lt;- read.table(&#39;../data/aucs.txt&#39;, sep = &#39;\t&#39;, header = T)
 deepsea$DeepSEA.ROC.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
@@ -363,8 +365,8 @@ bestmodel.rms &lt;- select_best(rmsprop.loss, rmsprop)</code></pre>
 <pre><code>##    X data epoch  value variable
 ## 23 0  all     0 0.0699 val_loss</code></pre>
 <pre class="r"><code>bestmodel.sgd &lt;- select_best(sdg.loss, sdg)</code></pre>
-<pre><code>##    X data epoch value variable
-## 15 0  all    19 0.076 val_loss</code></pre>
+<pre><code>##    X data epoch  value variable
+## 27 0  all    36 0.0736 val_loss</code></pre>
 <pre class="r"><code>anno_to_type &lt;- function(anno){
     dnase.ind &lt;- anno == &#39;DNase&#39;
     histone.ind &lt;- grepl(&#39;^H[0-9]&#39;, anno)
@@ -434,7 +436,7 @@ ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), posi
 <h3><span class="header-section-number">3.3.3</span> Performance change along training</h3>
 <div id="sgd" class="section level4">
 <h4><span class="header-section-number">3.3.3.1</span> SGD</h4>
-<pre class="r"><code>performance_cross_epoch &lt;- function(scores, deepsea.aucs){
+<pre class="r"><code>performance_cross_epoch &lt;- function(scores, deepsea.aucs, title){
     sdg.aucs &lt;- scores[scores$variable %in% c(&#39;pr_auc&#39;, &#39;roc_auc&#39;, &#39;cross_entropy&#39;),]
     sdg.aucs$data &lt;- as.character(sdg.aucs$data)
     sdg.aucs$Annotation.Type &lt;- anno_to_type(sapply(sdg.aucs$data, function(x){extract_by_col(x, 2)}))
@@ -443,11 +445,11 @@ ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), posi
     deepsea.aucs.plot$epoch &lt;- &#39;DeepSEA&#39;
     aucs.plot &lt;- rbind(sdg.aucs.plot, deepsea.aucs.plot)
     aucs.plot$epoch &lt;- factor(aucs.plot$epoch, levels = c(unique(sdg.aucs.plot$epoch), unique(deepsea.aucs.plot$epoch)))
-    p1 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(&#39;SGD - ROC AUC&#39;)
-    p2 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(&#39;SGD - PR AUC&#39;)
+    p1 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(paste(title, &#39;- ROC AUC&#39;))
+    p2 &lt;- ggplot(aucs.plot[aucs.plot$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = Annotation.Type)) + facet_grid(epoch~Annotation.Type) + ggtitle(paste(title, &#39;- ROC AUC&#39;))
     return(list(roc=p1, pr=p2, data=aucs.plot))
 }
-re &lt;- performance_cross_epoch(sdg, deepsea.aucs)
+re &lt;- performance_cross_epoch(sdg, deepsea.aucs, &#39;SGD&#39;)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
@@ -456,7 +458,7 @@ re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
 <p><img src="type2_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
-<pre class="r"><code>re &lt;- performance_cross_epoch(rmsprop, deepsea.aucs)
+<pre class="r"><code>re &lt;- performance_cross_epoch(rmsprop, deepsea.aucs, &#39;RMSprop&#39;)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
