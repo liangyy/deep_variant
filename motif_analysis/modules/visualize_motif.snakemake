@@ -25,6 +25,6 @@ rule visual_rmd:
     input:
         [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
     output:
-        rmd = 'pattern/{model}/motif_visualization/draw_list.Rmd'
+        rmd = 'report/{model}/motif_visualization/draw_list.Rmd'
     run:
         ''

@@ -24,3 +24,16 @@ save_plot <- function(info, p, motif, path, plots){
     plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
     plots
 }
+
+plot_motif <- function(filename = filname, motif_idx = motif_idx){
+    motif <- read_feather(filename)
+    motif$Base <- c('A', 'G', 'C', 'T') # ATTENTION! This depends on now you preprocess the data
+    motif.melted <- melt(motif, id.vars = 'Base')
+    p <- ggplot(motif.melted, aes(x = variable, y = value, group = Base)) + geom_bar(aes(fill = Base), stat='identity', position = 'dodge') + 
+        geom_text(
+        aes(label = Base, y = value / 2),
+        position = position_dodge(0.9),
+        vjust = 0
+    ) + ggtitle(paste('Motif', motif_idx, sep = '.'))
+    return(p)
+}
