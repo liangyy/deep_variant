@@ -14,3 +14,5 @@ for i in config['method']:
         # motif activation pattern analysis where the vector extends
         # along motif direction
         # The result will be saved at pattern/[data_name]/[method_name]/[positive/negative]_pattern.feather
+include:
+    'modules/visualize_motif.snakemake'

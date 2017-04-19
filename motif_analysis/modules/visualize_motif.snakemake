@@ -1,0 +1,29 @@
+# This section motif_visualization motif of model using various methods
+# The output is at [model_name]/visualization
+# Now we only focus on the first layer (namely motif)
+rule hdf52feather:
+    input:
+        model = config['model']['path']
+    output:
+        temp([ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ])
+    params:
+        layer_idx = config['model']['motif_layer_idx'],
+        nmotifs = config['model']['nmotifs']
+    run:
+        import feather
+        from keras.models import load_model
+        model = load_model(input.model)
+        motifs = model.layers[params.layer_idx].get_weights()[0]
+        for i in range(params.nmotifs):
+            motif = motifs[:,:,i].T
+            total_table = pd.DataFrame(motif, columns=[ 'Pos.' + str(i) for i in range(motif.shape[1]) ])
+            total_table = total_table.copy()
+            feather.write_dataframe(total_table, output[i])
+
+rule visual_rmd:
+    input:
+        [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
+    output:
+        rmd = 'pattern/{model}/motif_visualization/draw_list.Rmd'
+    run:
+        ''
