@@ -1,0 +1,341 @@
+---
+title: "Memo - annotate existing sequences with new labels"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Pre-requisite properties of set A and set B
+
+This section records the usage of `bedtools`. The main task done by `bedtools` is to intersect two sets of intervals, where the interval in set A (sequence of interest) should have at least 50% base pairs that overlap with some intervals in set B (annotation file).
+
+## Check if intervals in set B are disjoint {#prerequisite}
+
+The working directory is `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain`. Here we take `data/E081-DNase.macs2.narrowPeak.gz` as example.
+
+```{bash, eval=F}
+$ cd data
+$ gunzip E081-DNase.macs2.narrowPeak.gz # unzip *.gz file
+$ bedtools sort -i E081-DNase.macs2.narrowPeak > E081-DNase.macs2.narrowPeak.sorted # sort BED file for future usage
+$ bedtools merge -i E081-DNase.macs2.narrowPeak.sorted |wc -l # check the number of intervals after merging
+402481
+$ wc -l E081-DNase.macs2.narrowPeak.sorted # check the number of intervals without merging
+402481 E081-DNase.macs2.narrowPeak.sorted
+```
+
+Since they are the same, `data/E081-DNase.macs2.narrowPeak` does not have overlapped intervals. Here we did the same thing for `E082-DNase.macs2.narrowPeak.gz` and `E129-H3K9me3.narrowPeak.gz`. Note that `E129-H3K9me3.narrowPeak.gz` is one of the data set used by DeepSEA and the reason why we picked that is to test whether our pipeline is consistent with DeepSEA’s one.
+
+```{bash, eval=F}
+$ gunzip E082-DNase.macs2.narrowPeak.gz 
+$ gunzip E129-H3K9me3.narrowPeak.gz 
+$ bedtools sort -i E082-DNase.macs2.narrowPeak > E082-DNase.macs2.narrowPeak.sorted
+$ bedtools sort -i E129-H3K9me3.narrowPeak > E129-H3K9me3.narrowPeak.sorted
+$ bedtools merge -i E082-DNase.macs2.narrowPeak.sorted |wc -l
+496694
+$ wc -l E082-DNase.macs2.narrowPeak.sorted 
+496694 E082-DNase.macs2.narrowPeak.sorted
+$ bedtools merge -i E129-H3K9me3.narrowPeak.sorted |wc -l
+180296
+$ wc -l E129-H3K9me3.narrowPeak.sorted 
+180296 E129-H3K9me3.narrowPeak.sorted
+```
+
+This result shows that all the annotation data have disjoint intervals.
+
+## Intervals within an annotation file may within 200bp to each other
+
+Some intervals in annotation files are close to each other, which means that it is possible for a sequence of interest to overlap with more than one interval. The following shows that there are some intervals in set B that are close enough to each other (say 200bp which is the length of the sequence of interest).
+
+```{bash, eval=F}
+$ bedtools merge -i E081-DNase.macs2.narrowPeak.sorted -d 200 |wc -l
+311314
+$ bedtools merge -i E082-DNase.macs2.narrowPeak.sorted -d 200 |wc -l
+362944
+$ bedtools merge -i E129-H3K9me3.narrowPeak.sorted -d 200|wc -l
+166473
+```
+
+## Consider the overlap is contributed by two features in set B (namely two intervals)
+
+To ensure that we can consider this situation, we cannot use `bedtools intersect -a a.bed -b b.bed -f 0.5`, becasue it cannot handle this scenario. For example:
+
+```{bash, eval=F}
+$ cd /Users/yanyu_liang/Documents/learnATcmu/2017_spring/tasks/deep_brain/test
+$ cat a.bed
+$ cat b.bed 
+$ bedtools intersect -a a.bed -b b.bed -f 0.50
+$ bedtools intersect -a a.bed -b b.bed -f 0.51
+```
+
+Here two features in `b.bed` (row 3 and 4) contribute to overlapping with feature 5 in `a.bed`, but we cannot get the result we are expecting. So, we need to do a vanilla intersection and add up all overlaps to get the final answer. To implement this idea, we need to give intervals in set A unique label.
+
+# Pipeline
+
+The following gives the general idea of the pipeline:
+
+* Label the sequences of interest (interval) with unique identifiers (this can be done once and get reused every time).
+* Download the annotation BED file and check if it satisifies pre-requisite (follow the steps described [here](#prerequisite)).
+* Do `bedtools intersect`.
+* Add up the count by interval identifier and label accordingly.
+
+## Label intervals
+
+```{bash, eval=F}
+$ cat allTFs.pos.bed | awk -F"\t" '{print $1"\t"$2"\t"$3"\t"NR"\t"$5}' > allTFs.pos.withID.bed
+$ cat allTFs.pos.withID.bed |head
+chr1    10000   10200   1   0
+chr1    10200   10400   2   0
+chr1    10400   10600   3   0
+chr1    16000   16200   4   0
+chr1    16200   16400   5   0
+chr1    29000   29200   6   0
+chr1    29200   29400   7   0
+chr1    29400   29600   8   0
+chr1    29600   29800   9   0
+chr1    89600   89800   10  0
+```
+
+## Do intersection
+
+```{bash, eval=F}
+$ bedtools intersect -a allTFs.pos.withID.bed -b E129-H3K9me3.narrowPeak.sorted -wo > E129-H3K9me3.narrowPeak.sorted.intersect
+```
+
+The option `-wo` here ensure to output the length of one overlap event with the informatio of both Set A feature and set B feature.
+
+# Proof of principle
+
+This section shows the result of implementation on the procedure described above. First of all, we will discuss the intervals of interest and how to map them to the DeepSEA labels. Secondly, we will introduce the script used and finally will show the result and compare to DeepSEA labels.
+
+## Intervals of interest
+
+The intervals of interest now is directly derived from DeepSEA paper (see  `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/allTFs.pos.withID.bed`). The way it is generated is described in details in DeepSEA paper, and the information about how these sequences are used in described in  `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/readme`. In brief, these 200bp intervals have at least one TF binding event which are considered by DeepSEA (ENCODE TF binding data). They are not necessary to be a good representatoin of sequences which are active in fetal brain but we can annotate them using fetal brain data.
+
+So the general procedure to make the comparson is:
+
+* Find intervals that are used in DeepSEA (by row number), namely which parts are for training, validation and test respectively.
+* Extract the corresponding lines from our results.
+* Make the comparison.
+
+### Relavent rows
+
+As described in `readme`:
+
+* Training is from 1 to 2200000.
+* Validation is from 2200001 to 2204000.
+* Test is all data that come from `chr8` and `chr9`, namely
+
+```{bash, eval=F}
+$ cat allTFs.pos.withID.bed | grep -n chr[89]|head -n 1
+2309367:chr8    21000   21200   2309367 0
+$ cat allTFs.pos.withID.bed | grep -n chr[89]|tail -n 1
+2536878:chr9    141108000   141108200   2536878 8.305
+```
+
+## Scripts used
+
+The implementation is at  `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_scripts/wrapper_label_intervals.py`.
+
+```{bash, eval=F}
+$ python my_scripts/wrapper_label_intervals.py --help
+
+wrapper_label_intervals.py [intervals_of_interest] [list_of_annotation_files] [output_dir]
+Requirement on [intervals_of_interest]: the forth column is ID
+Requirement on [list_of_annotation_files]: 1st column - filename, seperate by TAB
+
+$ python -i my_scripts/wrapper_label_intervals.py data/allTFs.pos.withID.bed data/0402_DNase_list.txt test
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0402_DNase_list.txt
+>>> working on data/E081-DNase.macs2.narrowPeak
+>>> >>> sort data/E081-DNase.macs2.narrowPeak
+>>> >>> checking data/E081-DNase.macs2.narrowPeak
+>>> >>> number of columns data/E081-DNase.macs2.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E081-DNase.macs2.narrowPeak
+>>> previous = 402481, after = 402481
+>>> working on data/E082-DNase.macs2.narrowPeak
+>>> >>> sort data/E082-DNase.macs2.narrowPeak
+>>> >>> checking data/E082-DNase.macs2.narrowPeak
+>>> >>> number of columns data/E082-DNase.macs2.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E082-DNase.macs2.narrowPeak
+>>> previous = 496694, after = 496694
+>>> working on data/E129-H3K9me3.narrowPeak
+>>> >>> sort data/E129-H3K9me3.narrowPeak
+>>> >>> checking data/E129-H3K9me3.narrowPeak
+>>> >>> number of columns data/E129-H3K9me3.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E129-H3K9me3.narrowPeak
+>>> previous = 180296, after = 180296
+>>> 
+$ ls test/0402_DNase_list.txt/
+label.hdf5  passed_fliles.txt
+$ h5dump -A -H test/0402_DNase_list.txt/label.hdf5 
+HDF5 "test/0402_DNase_list.txt/label.hdf5" {
+GROUP "/" {
+   GROUP "data" {
+      DATASET "E081-DNase.macs2.narrowPeak.sorted.intersect" {
+         DATATYPE  H5T_IEEE_F64LE
+         DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+      }
+      DATASET "E082-DNase.macs2.narrowPeak.sorted.intersect" {
+         DATATYPE  H5T_IEEE_F64LE
+         DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+      }
+      DATASET "E129-H3K9me3.narrowPeak.sorted.intersect" {
+         DATATYPE  H5T_IEEE_F64LE
+         DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+      }
+   }
+}
+}
+```
+
+## Compare to DeepSEA labels
+
+To extract the corresponding label of `E129-H3K9me3.narrowPeak` from DeepSEA labels (the last column) , we do the following:
+
+```{bash, eval=F}
+$ cat test/E129_col_num.txt 
+919
+$ python ../DeepSEA/my_scripts/select_by_row.py test/E129_col_num.txt ../DanQ/my_train/data/train_all.h5 test/ traindata
+$ python ../DeepSEA/my_scripts/select_by_row.py test/E129_col_num.txt ../DanQ/my_train/data/valid_all.h5 test/ traindata
+$ python ../DeepSEA/my_scripts/select_by_row.py test/E129_col_num.txt ../DanQ/my_train/data/test_all.h5 test/ traindata
+$ ls test/
+0402_DNase_list.txt  E129_col_num.test_all.hdf5  E129_col_num.train_all.hdf5  E129_col_num.txt  E129_col_num.valid_all.hdf5
+```
+
+Make the comparison.
+
+```{bash, eval=F}
+$ cat test/compare_list.txt 
+test/E129_col_num.test_all.hdf5 2309367 2536878
+test/E129_col_num.train_all.hdf5    1   2200000
+test/E129_col_num.valid_all.hdf5    2200001 2204000
+$ python my_scripts/compare_labels.py test/compare_list.txt test/0402_DNase_list.txt/label.hdf5 
+    test/E129_col_num.test_all.hdf5 test/E129_col_num.train_all.hdf5    test/E129_col_num.valid_all.hdf5
+E081-DNase.macs2.narrowPeak.sorted.intersect    bad bad bad
+E082-DNase.macs2.narrowPeak.sorted.intersect    bad bad bad
+E129-H3K9me3.narrowPeak.sorted.intersect    0.00437796424663    0.00384049388033    perfect
+```
+
+For each entry, `bad` means that there exist both `0-1` and `1-0` inconsistent configuration and `perfect` means perfect match. If there shows number, it is defined as `(our_label - DeepSEA_label).sum() / DeepSEA_label.sum()`, the sign of which indicates whether we label more 1 than DeepSEA or the other way around. The value shows the amount of inconsistence among all positive labels in DeepSEA. Here, it seems that DeepSEA labelling criteria is `>= 100` instead of `> 100` as described in paper.
+
+# Useful scripts
+
+The following lists some scripts which might be useful for preprocessing.
+
+## `merge_two_selfgen_labels.py`
+
+Merge two self-generated (by `wrapper_label_intervals.py`) into one hdf5 file.
+
+```{bash, eval=F}
+$ python my_scripts/merge_two_selfgen_labels.py test/0402_DNase_list.txt/label.hdf5 test/0404_H3K27ac_list.txt/label.hdf5 test/merge_0402_0404/
+$ h5dump -A -H test/merge_0402_0404/label_label.hdf5 
+HDF5 "test/merge_0402_0404/label_label.hdf5" {
+GROUP "/" {
+   DATASET "E081-DNase.macs2.narrowPeak.sorted.intersect" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+   }
+   DATASET "E082-DNase.macs2.narrowPeak.sorted.intersect" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+   }
+   DATASET "E129-H3K9me3.narrowPeak.sorted.intersect" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+   }
+   DATASET "Noonan_union.bed.sorted.intersect" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182 ) / ( 2608182 ) }
+   }
+}
+}
+```
+
+## `merge_labels.py`
+
+Merge separate labels into one block.
+
+```{bash, eval=F}
+$ python my_scripts/merge_labels.py --help
+
+merge_labels.py [hdf5] [list_of_entry_to_merge] [outdir]
+
+$ python my_scripts/merge_labels.py test/merge_0402_0404/label_label.hdf5 test/merge_0402_0404/merge_all.txt test/merge_0402_0404/
+$ h5dump -A -H test/merge_0402_0404/label_label_merge_all.hdf5 
+HDF5 "test/merge_0402_0404/label_label_merge_all.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 4 ) / ( 2608182, 4 ) }
+   }
+}
+}
+```
+
+## `add_y_label_and_rename.py`
+
+Get data set prepared as standard format for our scripts.
+
+```{bash, eval=F}
+$ python my_scripts/add_y_label_and_rename.py --help
+
+add_y_label_and_rename.py [main.hdf5] [label.hdf5] [main_entry] [label_entry] [label_start] [label_end] [out_dir]
+This script glues data sets for running training and testing scripts with the self computed labels
+If you provide only two input (must be hdf5), it will print out the structure of every input hdf5
+For your reference, DeepSEA data is
+Train: 1 - 2200000
+Valid: 2200001 - 2204000
+Test: 2309367 - 2536878
+
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12_.hdf5 test/merge_0402_0404/label_label_merge_all.hdf5 
+HDF5 "my_train/DeepSEA_train_12_.hdf5" {
+GROUP "/" {
+   DATASET "feature_12" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 "test/merge_0402_0404/label_label_merge_all.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 4 ) / ( 2608182, 4 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12_.hdf5 test/merge_0402_0404/label_label_merge_all.hdf5 feature_12 merged 1 2200000 my_train/040417_merged/
+$ h5dump -A -H my_train/040417_merged/DeepSEA_train_12__with_label.hdf5 
+HDF5 "my_train/040417_merged/DeepSEA_train_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 4 ) / ( 4400000, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+```

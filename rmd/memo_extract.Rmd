@@ -1,0 +1,220 @@
+---
+title: "Memo - extract sequences from new data sets"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+# Goal
+
+The reason why we want to extract new sequences from new data sets is that:
+
+1. Analyse the performance of current classifier on a more complete set of sequences that covering the whole new data set.
+2. Train specialized model using these new sequences.
+
+To achieve the goal, we need both the raw sequences and the label (now we restrict to the new labels but it can be trivially extended to DeepSEA labels with proper BED file as input). The following describe the pipeline in details.
+
+# Pipeline
+
+The pipeline contains the following steps. In brief, we first extract 200-bp long bins based on new data sets (namely extract all bins surrounding peaks); then we label them once we get the bin file in BED format; finally, we convert it into numerical format based on the BED file as well.
+
+1. Extract bins.
+2. Label bins.
+3. Convert raw sequence into numerical input for classifier.
+
+## Extract bins
+
+This step is implemented at  `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_scripts/0_region2bins.py`. The working directory is `/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/`.
+
+```{bash, eval=F}
+$ python my_scripts/0_region2bins.py -h
+usage: 0_region2bins.py [-h] [--max_index MAX_INDEX] [--binsize BINSIZE]
+                        [--debug DEBUG]
+                        input out_dir
+
+Given a set of regions in BED format, output the surrounding bins (specify the
+bin size below), and it will record the index to the region (the ones that are
+inside the region will be set as 0). The fourth column is bin ID and the fifth
+column is bin index (distance to region).
+
+positional arguments:
+  input                 BED file
+  out_dir
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --max_index MAX_INDEX
+                        The absoulte value of index (distance to first or last
+                        hitted bin)
+  --binsize BINSIZE     The size of the bin.
+  --debug DEBUG
+$ python my_scripts/0_region2bins.py data/E129-H3K9me3.narrowPeak.sorted test/040917_binize_datasets/
+bedtools merge -i test/040917_binize_datasets//E129-H3K9me3.narrowPeak_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/040917_binize_datasets//E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/E082-DNase.macs2.narrowPeak.sorted test/040917_binize_datasets/
+bedtools merge -i test/040917_binize_datasets//E082-DNase.macs2.narrowPeak_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/040917_binize_datasets//E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/E081-DNase.macs2.narrowPeak.sorted test/040917_binize_datasets/
+bedtools merge -i test/040917_binize_datasets//E081-DNase.macs2.narrowPeak_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/040917_binize_datasets//E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_union.bed.sorted test/040917_binize_datasets/
+bedtools merge -i test/040917_binize_datasets//Noonan_union.bed_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/040917_binize_datasets//Noonan_union.bed_bin200.bed.sorted.merged
+```
+
+These commands generate `*_bin200.bed.sorted.merged.final` at `test/040917_binize_datasets/`. Every final output file contains 200-bp long intervals with interval ID (fourth column) and the relative location to peak (index at fifth column and direction at sixth column). Here index $i$ indicates the interval is the $i$th non-overlap 200-bp bin to a specific peak and the direction tells whether it locates at the left of the peak or the right of the peak.
+
+## Label bins
+
+This step is done using the previous script `my_scripts/wrapper_label_intervals.py`, which takes a interval set and a list of data sets as input and label the intervals accordingly.
+
+```{bash, eval=F}
+$ python my_scripts/wrapper_label_intervals.py --help
+
+wrapper_label_intervals.py [intervals_of_interest] [list_of_annotation_files] [output_dir]
+Requirement on [intervals_of_interest]: the forth column is ID
+Requirement on [list_of_annotation_files]: 1st column - filename, seperate by TAB
+
+$ python my_scripts/wrapper_label_intervals.py test/040917_binize_datasets/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final test/040917_binize_datasets/E081.txt test/040917_binize_datasets/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/040917_binize_datasets//E081.txt_out
+>>> working on data/E081-DNase.macs2.narrowPeak
+>>> >>> sort data/E081-DNase.macs2.narrowPeak
+>>> >>> checking data/E081-DNase.macs2.narrowPeak
+>>> >>> number of columns data/E081-DNase.macs2.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E081-DNase.macs2.narrowPeak
+>>> previous = 402481, after = 402481
+$ python my_scripts/wrapper_label_intervals.py test/040917_binize_datasets/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final test/040917_binize_datasets/E082.txt test/040917_binize_datasets/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/040917_binize_datasets//E082.txt_out
+>>> working on data/E082-DNase.macs2.narrowPeak
+>>> >>> sort data/E082-DNase.macs2.narrowPeak
+>>> >>> checking data/E082-DNase.macs2.narrowPeak
+>>> >>> number of columns data/E082-DNase.macs2.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E082-DNase.macs2.narrowPeak
+>>> previous = 496694, after = 496694
+$ python my_scripts/wrapper_label_intervals.py test/040917_binize_datasets/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final test/040917_binize_datasets/E129.txt test/040917_binize_datasets/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/040917_binize_datasets//E129.txt_out
+>>> working on data/E129-H3K9me3.narrowPeak
+>>> >>> sort data/E129-H3K9me3.narrowPeak
+>>> >>> checking data/E129-H3K9me3.narrowPeak
+>>> >>> number of columns data/E129-H3K9me3.narrowPeak
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/E129-H3K9me3.narrowPeak
+>>> previous = 180296, after = 180296
+$ python my_scripts/wrapper_label_intervals.py test/040917_binize_datasets/Noonan_union.bed_bin200.bed.sorted.merged.final test/040917_binize_datasets/Noonan.txt test/040917_binize_datasets/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/040917_binize_datasets//Noonan.txt_out
+>>> working on data/Noonan_union.bed
+>>> >>> sort data/Noonan_union.bed
+>>> >>> checking data/Noonan_union.bed
+>>> >>> number of columns data/Noonan_union.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_union.bed
+>>> previous = 75197, after = 75197
+```
+
+These commands generate `test/040917_binize_datasets/*_out/label.hdf5` files. Here, we only label intervals with the corresponding data set from which we extract those intervals.
+
+## Bin to input
+
+Here we first extend 200-bp bins to 1000 bp sequence and convert the sequences into input format.
+
+### Extend bin to sequence
+
+It is done by `my_scripts/2_bin2seq.py`.
+
+```{bash, eval=F}
+$ python my_scripts/2_bin2seq.py test/040917_binize_datasets/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final 
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/040917_binize_datasets/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final 
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/040917_binize_datasets/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final 
+$ python my_scripts/2_bin2seq.py test/040917_binize_datasets/Noonan_union.bed_bin200.bed.sorted.merged.final 
+```
+
+### Convert sequence to input
+
+It is done using `../preprocessing/my_scripts/2_seq2input.py`.
+
+```{bash, eval=F}
+$ python ../preprocessing/my_scripts/2_seq2input.py -h
+usage: 2_seq2input [-h] [--prefix PREFIX] [--window WINDOW] [--debug DEBUG]
+                   seq_file out_dir
+
+Given the formatted output from 1_snp2pos.py (second column is the sequence),
+output the hdf5 file which is ready to be used as the input for making the
+prediction. For efficiency, please provide the length of the sequence as well.
+
+positional arguments:
+  seq_file         Ideally, it is the output of 1_snp2seq.py but you may use
+                   any file unless the second column is the sequence of
+                   interest.
+  out_dir
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --prefix PREFIX
+  --window WINDOW
+  --debug DEBUG
+
+$ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.fa test/040917_binize_datasets/E081.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.fa test/040917_binize_datasets/E082.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended.fa test/040917_binize_datasets/E129.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/Noonan_union.bed_bin200.bed.sorted.merged.final.expended.fa test/040917_binize_datasets/Noonan.txt_out/
+```
+
+These commands generate the input ready for make prediction on.
+
+# Proof of correctness
+
+To make sure the correctness of the pipeline. The following works on a few intervals from DeepSEA data and generate the input using the scripts mentioned above. The results are compared with DeepSEA input. Here we only check the correctness of converting interval to input, because the labelling process is check [here](memo_preprocessing.html).
+
+```{bash, eval=F}
+$ cat data/allTFs.pos.withID.bed | head -n 10000 | tail -n 100 > test/040917_binize_datasets/allTFs.pos.withID.test.bed
+$ python my_scripts/2_bin2seq.py test/040917_binize_datasets/allTFs.pos.withID.test.bed
+$ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/allTFs.pos.withID.test.bed.expended.fa test/040917_binize_datasets/
+```
+
+Check the input.
+
+```{bash, eval=F}
+$ python quick_scripts/check_input_convertion.py 
+deepseax1 vs mypipex1
+0
+deepseax2 vs mypipex2
+0
+deepseax1 vs mypipex2
+18955776
+deepseax2 vs mypipex1
+18955776
+```

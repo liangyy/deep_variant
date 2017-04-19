@@ -11,7 +11,6 @@
 
 <meta name="author" content="Yanyu Liang" />
 
-<meta name="date" content="2017-04-14" />
 
 <title>Deep brain - Training - Type 2</title>
 
@@ -277,7 +276,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Task</a>
+  <a href="index.html">Tasks</a>
 </li>
 <li>
   <a href="analysis_list.html">Analysis</a>
@@ -304,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Training - Type 2</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>April 14, 2017</em></h4>
+<h4 class="date"><em>19 April, 2017</em></h4>
 
 </div>
 
@@ -345,10 +344,10 @@ deepsea$DeepSEA.ROC.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))<
 <h2><span class="header-section-number">3.2</span> Training</h2>
 <pre class="r"><code>rmsprop.loss &lt;- rmsprop[rmsprop$data == &#39;all&#39;, ]
 ggplot(rmsprop.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;RMSprop convergence&#39;)</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>sdg.loss &lt;- sdg[sdg$data == &#39;all&#39;, ]
 ggplot(sdg.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;SGD convergence&#39;)</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-40-2.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
 </div>
 <div id="performance" class="section level2">
 <h2><span class="header-section-number">3.3</span> Performance</h2>
@@ -404,11 +403,11 @@ deepsea.aucs$source &lt;- &#39;deepsea&#39;</code></pre>
 ggplot(auc_table[auc_table$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scale = &#39;free_y&#39;) + ggtitle(&#39;ROC AUC&#39;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(auc_table[auc_table$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scales = &#39;free_y&#39;) + ggtitle(&#39;PR AUC&#39;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
 </div>
 <div id="compare-with-type1-best-model" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> Compare with type1 (best model)</h3>
@@ -426,7 +425,7 @@ temp.melted[which(temp.melted$value == -1), ]$value &lt;- NA
 temp.melted$variable &lt;- factor(temp.melted$variable, levels = c(&#39;cross_entropy&#39;, &#39;accuracy&#39;, &#39;roc_auc&#39;, &#39;pr_auc&#39;, levels(temp.melted$variable)[4 : 9]))
 ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), position = &#39;dodge&#39;, stat = &#39;identity&#39;) + facet_wrap(~Cell.Type) + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + ggtitle(&#39;Performance of best models on four selected data sets&#39;)</code></pre>
 <pre><code>## Warning: Removed 8 rows containing missing values (geom_bar).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p><strong>Issues in training</strong>: Some instances have very large activation at the feature representation layer. See analysis <a href="#activation">below</a>.</p>
 <p><strong>TODO</strong>: Add penalty terms and use sgd with momentum. See technical memo <a href="memo_constraint.html">here</a></p>
 <p><strong>TODO</strong>: Use weighted hinge loss.</p>
@@ -452,20 +451,20 @@ re &lt;- performance_cross_epoch(sdg, deepsea.aucs)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>re$pr</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-45-2.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
 <pre class="r"><code>re &lt;- performance_cross_epoch(rmsprop, deepsea.aucs)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-45-3.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
 <pre class="r"><code>re$pr</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-45-4.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
 </div>
 </div>
 <div id="kernel-norm" class="section level3">
@@ -634,7 +633,7 @@ range 0.90 - 1.06 : 923</code></pre>
 </div>
 <div id="saturation-of-neuron" class="section level3">
 <h3><span class="header-section-number">3.3.5</span> Saturation of neuron</h3>
-<p>The scripts used are <code>040617_saturation.sbatch</code>, <code>040717_saturation.sbatch</code>, and <code>deepsea_saturation.sbatch</code>. The results are as follow:</p>
+<p>The scripts used are <code>040617_saturation.sbatch</code>, <code>040717_saturation.sbatch</code>, and deepsea_saturation.sbatch. The results are as follow:</p>
 <ul>
 <li>SGD epoch 10</li>
 </ul>
