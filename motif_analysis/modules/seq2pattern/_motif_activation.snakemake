@@ -50,17 +50,21 @@ output:
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
 # Overall Activation
 
 ```{{r}}
-source('{envir}/scripts/my_r.R')
+source('scripts/my_r.R')
 library(feather)
 library(ggplot2)
 library(reshape2)
 library(bsselectR)
 info <- c('{model}', '{data}', 'motif_activation')
-pos <- load_and_melt('{envir}/{input_p}')
-neg <- load_and_melt('{envir}/{input_n}')
+pos <- load_and_melt('{input_p}')
+neg <- load_and_melt('{input_n}')
 ggplot(pos$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Positive)') + labs(x = 'motif', y = 'sequence')
 ggplot(neg$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Negative)') + labs(x = 'motif', y = 'sequence')
 ```
@@ -91,7 +95,7 @@ pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
 plots <- list()
 for(i in 1 : length(motif.top5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
-    plots <- save_plot(info, p, motif.top5[i], '{envir}/plots', plots)
+    plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.top5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
@@ -106,7 +110,7 @@ pvalue.medium5 <- df$p.value[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
 plots <- list()
 for(i in 1 : length(motif.medium5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.medium5[i], pvalue.medium5[i])
-    plots <- save_plot(info, p, motif.medium5[i], '{envir}/plots', plots)
+    plots <- save_plot(info, p, motif.medium5[i], 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.medium5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
@@ -121,7 +125,7 @@ pvalue.bottom5 <- df$p.value[motif.ordered[(n - 4) : n]]
 plots <- list()
 for(i in 1 : length(motif.bottom5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.bottom5[i], pvalue.bottom5[i])
-    plots <- save_plot(info, p, motif.bottom5[i], '{envir}/plots', plots)
+    plots <- save_plot(info, p, motif.bottom5[i], 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.bottom5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
