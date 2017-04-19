@@ -34,4 +34,4 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
 1. Mutagensis **TODO**
 2. Sliding window **TODO**
 3. Motif gradient **TODO**
-4. Motif activation: see analysis on [E081](motif_analysis.html)
+4. Motif activation: see analysis on [E081](motif_activation.html)
