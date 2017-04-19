@@ -11,6 +11,7 @@ rule hdf52feather:
         nmotifs = config['model']['nmotifs']
     run:
         import feather
+        import pandas as pd
         from keras.models import load_model
         model = load_model(input.model)
         motifs = model.layers[params.layer_idx].get_weights()[0]
