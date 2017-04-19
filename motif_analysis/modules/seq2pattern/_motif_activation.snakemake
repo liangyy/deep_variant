@@ -38,7 +38,7 @@ rule report_gen_rmd:
     params:
         model = config['model']['name'],
         data = '{data}',
-        envir = '../../'
+        envir = '../../../'
     run:
         rmd = '''---
 title: "Motif Analysis - motif activation"
@@ -53,7 +53,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 # Overall Activation
 
 ```{{r}}
-source('scripts/my_r.R')
+source('{envir}/scripts/my_r.R')
 library(feather)
 library(ggplot2)
 library(reshape2)
@@ -91,7 +91,7 @@ pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
 plots <- list()
 for(i in 1 : length(motif.top5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
-    plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
+    plots <- save_plot(info, p, motif.top5[i], '{envir}/plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.top5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
@@ -106,9 +106,9 @@ pvalue.medium5 <- df$p.value[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
 plots <- list()
 for(i in 1 : length(motif.medium5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.medium5[i], pvalue.medium5[i])
-    plots <- save_plot(info, p, motif.medium5[i], 'plots', plots)
+    plots <- save_plot(info, p, motif.medium5[i], '{envir}/plots', plots)
 }}
-bsselect(plots, type = "img", selected = motif.top5[1],
+bsselect(plots, type = "img", selected = motif.medium5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
 ```
 
@@ -121,13 +121,13 @@ pvalue.bottom5 <- df$p.value[motif.ordered[(n - 4) : n]]
 plots <- list()
 for(i in 1 : length(motif.bottom5)){{
     p <- plot_motif(pos$table.melted, neg$table.melted, motif.bottom5[i], pvalue.bottom5[i])
-    plots <- save_plot(info, p, motif.bottom5[i], 'plots', plots)
+    plots <- save_plot(info, p, motif.bottom5[i], '{envir}/plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.top5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
 ```
 '''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
-        o = open({output.o}, 'w')
+        o = open(output.o, 'w')
         o.write(rmd)
         o.close()
 
