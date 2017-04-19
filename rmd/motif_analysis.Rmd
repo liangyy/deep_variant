@@ -28,3 +28,10 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
 1. For each sequence, do in silico mutation for each site and extract k-mer (may use something looser, like (k+m)-mer) surrounding the peak. Aggregate all k-mers collected and extract the common pattern from them.
 2. For each sequence, calculate the derivative of output w.r.t. motif neuron, where the spatial information should be collapsed properly. Aggregate all motif neuron contribution patterns to find the neuron or combination of neurons that contribute most.
 3. For each sequence, calculate the activation of motif neuron (still we need to collapse spatial information properly). Aggregate all motif activation patterns to find the neuron or combination of neurons that are activated most.
+
+# Analysis
+
+1. Mutagensis **TODO**
+2. Sliding window **TODO**
+3. Motif gradient **TODO**
+4. Motif activation: see analysis on [E081](motif_analysis.html)
