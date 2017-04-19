@@ -112,7 +112,7 @@ bsselect(plots, type = "img", selected = motif.medium5[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
 ```
 
-# Bottom 5
+## Bottom 5
 
 ```{{r, echo=FALSE, warning=FALSE}}
 n <- length(motif.ordered)
