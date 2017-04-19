@@ -58,7 +58,7 @@ info <- c('{model}', 'motif_visualization')
 plots <- list()
 for(i in 0 : ({nmotifs} - 1)){{
     p <- plot_motif_visual(filename = paste(path, '/Motif_', i, '.feather', sep = ''), i)
-    save_plot(info, p, paste('Motif', i, sep = '.'), 'plots', plots)
+    plots <- save_plot(info, p, paste('Motif', i, sep = '.'), 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = names(plots)[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
