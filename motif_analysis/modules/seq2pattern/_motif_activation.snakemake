@@ -137,8 +137,10 @@ bsselect(plots, type = "img", selected = motif.bottom5[1],
 
 rule report_gen_html:
     input:
-        'report/{model}/{data}/motif_activation.Rmd'.format(data='{data}', model=config['model']['name'])
+        rmd = 'report/{model}/{data}/motif_activation.Rmd'.format(data='{data}', model=config['model']['name']),
+        p = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
+        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
     output:
         'report/{model}/{data}/motif_activation.html'.format(data='{data}', model=config['model']['name'])
     shell:
-        '''Rscript -e "rmarkdown::render('./{input}')"'''
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''

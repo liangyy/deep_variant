@@ -25,7 +25,7 @@ rule visual_rmd:
     # input:
     #     [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
     output:
-        rmd = 'report/{model}/motif_visualization/draw_list.Rmd'
+        rmd = temp('report/{model}/motif_visualization/draw_list.Rmd')
     params:
         model = config['model']['name'],
         envir = '../../../',
@@ -66,3 +66,12 @@ bsselect(plots, type = "img", selected = names(plots)[1],
         o = open(output.rmd, 'w')
         o.write(rmd)
         o.close()
+
+rule report_gen_html:
+    input:
+        rmd = 'report/{model}/motif_visualization/draw_list.Rmd',
+        files = [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
+    output:
+        'report/{model}/motif_visualization/draw_list.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input}')"'''
