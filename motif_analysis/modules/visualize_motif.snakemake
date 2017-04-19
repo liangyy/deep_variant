@@ -55,7 +55,7 @@ library(bsselectR)
 path <- '../pattern/{model}/motif_visualization/'
 info <- c('{model}', 'motif_visualization')
 plots <- list()
-for(i in 1 : {nmotifs}){{
+for(i in 0 : ({nmotifs} - 1)){{
     p <- plot_motif(filename = paste(path, '/Motif_', i, '.feather', sep = ''), i)
     save_plot(info, p, paste('Motif', i, sep = '.'), 'plots', plots)
 }}
