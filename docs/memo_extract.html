@@ -276,7 +276,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Task</a>
+  <a href="index.html">Tasks</a>
 </li>
 <li>
   <a href="analysis_list.html">Analysis</a>
@@ -303,17 +303,17 @@ div.tocify {
 
 <h1 class="title toc-ignore">Memo - extract sequences from new data sets</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>09 April, 2017</em></h4>
+<h4 class="date"><em>19 April, 2017</em></h4>
 
 </div>
 
 
 <style>
 pre code, pre, code {
-white-space: pre !important;
-overflow-x: scroll !important;
-word-break: keep-all !important;
-word-wrap: initial !important;
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
 }
 </style>
 <div id="goal" class="section level1">
@@ -482,7 +482,7 @@ $ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/
 </div>
 <div id="proof-of-correctness" class="section level1">
 <h1><span class="header-section-number">3</span> Proof of correctness</h1>
-<p>To make sure the correctness of the pipeline. The following works on a few intervals from DeepSEA data and generate the input using the scripts mentioned above. The results are compared with DeepSEA input. Here we only check the correctness of converting interval to input, because the labelling process is check <a href="memo_preprocessing.Rmd">here</a>.</p>
+<p>To make sure the correctness of the pipeline. The following works on a few intervals from DeepSEA data and generate the input using the scripts mentioned above. The results are compared with DeepSEA input. Here we only check the correctness of converting interval to input, because the labelling process is check <a href="memo_preprocessing.html">here</a>.</p>
 <pre class="bash"><code>$ cat data/allTFs.pos.withID.bed | head -n 10000 | tail -n 100 &gt; test/040917_binize_datasets/allTFs.pos.withID.test.bed
 $ python my_scripts/2_bin2seq.py test/040917_binize_datasets/allTFs.pos.withID.test.bed
 $ python ../preprocessing/my_scripts/2_seq2input.py test/040917_binize_datasets/allTFs.pos.withID.test.bed.expended.fa test/040917_binize_datasets/</code></pre>

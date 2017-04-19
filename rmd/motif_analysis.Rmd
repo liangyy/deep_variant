@@ -1,0 +1,30 @@
+---
+title: "Deep brain - Motif analysis"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+    
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Motivation
+
+To investigate whether DeepSEA captures features related to known TFs in fetal brain. Here we focus on the first convolutional layer because it can be interpreted as motif detection layer.
+
+# Strategies
+Our goal can be formalized as: for a set of input sequences which k-mer pattern contirbute most to a particular prediction task. The followings list three strategies to implement it:
+
+1. For each sequence, do in silico mutation for each site and extract k-mer (may use something looser, like (k+m)-mer) surrounding the peak. Aggregate all k-mers collected and extract the common pattern from them.
+2. For each sequence, calculate the derivative of output w.r.t. motif neuron, where the spatial information should be collapsed properly. Aggregate all motif neuron contribution patterns to find the neuron or combination of neurons that contribute most.
+3. For each sequence, calculate the activation of motif neuron (still we need to collapse spatial information properly). Aggregate all motif activation patterns to find the neuron or combination of neurons that are activated most.

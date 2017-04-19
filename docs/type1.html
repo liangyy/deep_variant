@@ -11,7 +11,6 @@
 
 <meta name="author" content="Yanyu Liang" />
 
-<meta name="date" content="2017-04-12" />
 
 <title>Deep brain - Type 1 - Training</title>
 
@@ -277,7 +276,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Task</a>
+  <a href="index.html">Tasks</a>
 </li>
 <li>
   <a href="analysis_list.html">Analysis</a>
@@ -304,14 +303,14 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Type 1 - Training</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>April 12, 2017</em></h4>
+<h4 class="date"><em>19 April, 2017</em></h4>
 
 </div>
 
 
 <style>
 pre code, pre, code {
-white-space: pre !important;
+    white-space: pre !important;
     overflow-x: scroll !important;
     word-break: keep-all !important;
     word-wrap: initial !important;
@@ -362,7 +361,7 @@ for(i in filenames){
 <h2><span class="header-section-number">4.2</span> Loss and validation loss</h2>
 <pre class="r"><code>library(ggplot2)
 ggplot(summary_table) + geom_line(aes(x = epoch, y = loss, group = repeatID, color = &#39;loss&#39;)) + geom_line(aes(x = epoch, y = val_loss, group = repeatID, color = &#39;val_loss&#39;)) + ggtitle(&#39;Loss and validation loss along the optimization&#39;)</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-152-1.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="precision-recall-and-aucs" class="section level2">
 <h2><span class="header-section-number">4.3</span> Precision, recall, and AUCs</h2>
@@ -387,16 +386,16 @@ for(i in c(&#39;E081&#39;, &#39;E082&#39;, &#39;E129&#39;, &#39;Noonan&#39;)){
 }
 
 ggplot(temp) + geom_boxplot(aes(x = type, y = value, color = data)) + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + ggtitle(&#39;Performance overview&#39;)</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-153-1.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>temp.no_proportion &lt;- temp[!grepl(&#39;proportion&#39;, temp$type), ]
 ggplot(temp.no_proportion[temp.no_proportion$data == &#39;Noonan&#39;,]) + geom_line(aes(x = epoch, y = value, group = repeatID)) + facet_grid(type ~ ., scales = &#39;free_y&#39;, ) + ggtitle(&#39;Noonan H3K27ac&#39;) + theme(strip.text.y = element_text(angle = 0))</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-154-1.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
 <pre class="r"><code>ggplot(temp.no_proportion[temp.no_proportion$data == &#39;E129&#39;,]) + geom_line(aes(x = epoch, y = value, group = repeatID)) + facet_grid(type ~ ., scales = &#39;free_y&#39;, ) + ggtitle(&#39;E129 H3K9me3&#39;) + theme(strip.text.y = element_text(angle = 0))</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-154-2.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
 <pre class="r"><code>ggplot(temp.no_proportion[temp.no_proportion$data == &#39;E081&#39;,]) + geom_line(aes(x = epoch, y = value, group = repeatID)) + facet_grid(type ~ ., scales = &#39;free_y&#39;, ) + ggtitle(&#39;E081 DNase&#39;) + theme(strip.text.y = element_text(angle = 0))</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-154-3.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
 <pre class="r"><code>ggplot(temp.no_proportion[temp.no_proportion$data == &#39;E082&#39;,]) + geom_line(aes(x = epoch, y = value, group = repeatID)) + facet_grid(type ~ ., scales = &#39;free_y&#39;, ) + ggtitle(&#39;E082 DNase&#39;) + theme(strip.text.y = element_text(angle = 0))</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-154-4.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-4-5.png" width="672" /></p>
 <pre class="r"><code># ggplot(temp) + geom_point(aes(x = cross_entropy, y = roc_auc)) + facet_wrap(~data, scales = &#39;free&#39;)</code></pre>
 <p>From the performance curves we can see that the present feature representation works well on E081, E082 DNase data but it works really poorly on Noonan’s H3K27ac data. First of all, the bad performance is hardly due to optimization issue, because we have run 50 epochs and other data sets have reached a reasonable performance. We select the one with lowest validation loss as the best model for down stream analysis.</p>
 <pre class="r"><code>best_model &lt;- summary_table[order(summary_table$val_loss, decreasing = F)[1],]
@@ -410,6 +409,7 @@ write.table(best_model_melted, file=&#39;../data/best_model_type1_scores.txt&#39
 <div id="compare-performance-of-best-model-with-deepsea-result" class="section level2">
 <h2><span class="header-section-number">4.4</span> Compare performance of best model with DeepSEA result</h2>
 <pre class="r"><code>source(&#39;../../../deep_variant/DeepSEA/doc/cell_type/yanyu_lib.R&#39;)
+library(stringr)
 aucs_danq &lt;- read.table(&#39;../../../deep_variant/DeepSEA/doc/DeepVariantAnnotation/data/aucs.txt&#39;, sep = &#39;\t&#39;, header = T)
 aucs_danq &lt;- as_num(aucs_danq)</code></pre>
 <pre><code>## Warning in as_num(aucs_danq): NAs introduced by coercion
@@ -423,7 +423,7 @@ p2&lt;-ggplot(aucs_danq) + geom_histogram(aes(x = DeepSEA.PR.AUC, fill = Annotat
 p3&lt;-ggplot() + geom_point(data = aucs_danq, aes(x = DeepSEA.ROC.AUC, y = DeepSEA.PR.AUC, color = AnnotationType)) + theme( legend.box = &quot;horizontal&quot;, legend.justification=c(0,1), legend.position=c(0,1), legend.text=element_text(size=5), legend.title=element_text(size=5)) + geom_point(data = best_model_melted, aes(x = roc_auc, y = pr_auc, shape = data)) + scale_x_continuous(limits=c(0.25, 1))
 multiplot(p3, p1, p2, cols=2)</code></pre>
 <pre><code>## Warning: Removed 3 rows containing missing values (geom_bar).</code></pre>
-<p><img src="type1_files/figure-html/unnamed-chunk-156-1.png" width="672" /></p>
+<p><img src="type1_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>It shows that the result of E081, E082 are compatible to the DNase result in DeepSEA. E129 which is one of the data set in DeepSEA, it achieves similar result as DeepSEA one. But the H3K27ac data behaves poorly, which indicates that the feature representation is not suitable for this data. Another issue is that it is possible that the poor performance data sets have a more unbalanced label set. <strong>TODO</strong> show that!</p>
 </div>
 </div>

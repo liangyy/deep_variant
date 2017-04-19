@@ -11,7 +11,6 @@
 
 <meta name="author" content="Yanyu Liang" />
 
-<meta name="date" content="2017-04-09" />
 
 <title>Memo - annotate existing sequences with new labels</title>
 
@@ -277,7 +276,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Task</a>
+  <a href="index.html">Tasks</a>
 </li>
 <li>
   <a href="analysis_list.html">Analysis</a>
@@ -304,17 +303,17 @@ div.tocify {
 
 <h1 class="title toc-ignore">Memo - annotate existing sequences with new labels</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>April 09, 2017</em></h4>
+<h4 class="date"><em>19 April, 2017</em></h4>
 
 </div>
 
 
 <style>
 pre code, pre, code {
-white-space: pre !important;
-overflow-x: scroll !important;
-word-break: keep-all !important;
-word-wrap: initial !important;
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
 }
 </style>
 <div id="pre-requisite-properties-of-set-a-and-set-b" class="section level1">
@@ -358,11 +357,11 @@ $ bedtools merge -i E129-H3K9me3.narrowPeak.sorted -d 200|wc -l
 <div id="consider-the-overlap-is-contributed-by-two-features-in-set-b-namely-two-intervals" class="section level2">
 <h2><span class="header-section-number">1.3</span> Consider the overlap is contributed by two features in set B (namely two intervals)</h2>
 <p>To ensure that we can consider this situation, we cannot use <code>bedtools intersect -a a.bed -b b.bed -f 0.5</code>, becasue it cannot handle this scenario. For example:</p>
-<pre class="bash"><code>cd /Users/yanyu_liang/Documents/learnATcmu/2017_spring/tasks/deep_brain/test
-cat a.bed
-cat b.bed 
-bedtools intersect -a a.bed -b b.bed -f 0.50
-bedtools intersect -a a.bed -b b.bed -f 0.51</code></pre>
+<pre class="bash"><code>$ cd /Users/yanyu_liang/Documents/learnATcmu/2017_spring/tasks/deep_brain/test
+$ cat a.bed
+$ cat b.bed 
+$ bedtools intersect -a a.bed -b b.bed -f 0.50
+$ bedtools intersect -a a.bed -b b.bed -f 0.51</code></pre>
 <p>Here two features in <code>b.bed</code> (row 3 and 4) contribute to overlapping with feature 5 in <code>a.bed</code>, but we cannot get the result we are expecting. So, we need to do a vanilla intersection and add up all overlaps to get the final answer. To implement this idea, we need to give intervals in set A unique label.</p>
 </div>
 </div>
@@ -502,7 +501,7 @@ $ python my_scripts/compare_labels.py test/compare_list.txt test/0402_DNase_list
 E081-DNase.macs2.narrowPeak.sorted.intersect    bad bad bad
 E082-DNase.macs2.narrowPeak.sorted.intersect    bad bad bad
 E129-H3K9me3.narrowPeak.sorted.intersect    0.00437796424663    0.00384049388033    perfect</code></pre>
-<p>For each entry, <code>bad</code> means that there exist both <code>0-1</code> and <code>1-0</code> inconsistent configuration and <code>perfect</code> means perfect match. If there shows number, it is defined as <code>(our_label - DeepSEA_label).sum() / DeepSEA_label.sum()</code>, the sign of which indicates whether we label more <code>1</code> than DeepSEA or the other way around. The value shows the amount of inconsistence among all positive labels in DeepSEA. Here, it seems that DeepSEA labelling criteria is <code>&gt;= 100</code> instead of <code>&gt; 100</code> as described in paper.</p>
+<p>For each entry, <code>bad</code> means that there exist both <code>0-1</code> and <code>1-0</code> inconsistent configuration and <code>perfect</code> means perfect match. If there shows number, it is defined as <code>(our_label - DeepSEA_label).sum() / DeepSEA_label.sum()</code>, the sign of which indicates whether we label more 1 than DeepSEA or the other way around. The value shows the amount of inconsistence among all positive labels in DeepSEA. Here, it seems that DeepSEA labelling criteria is <code>&gt;= 100</code> instead of <code>&gt; 100</code> as described in paper.</p>
 </div>
 </div>
 <div id="useful-scripts" class="section level1">

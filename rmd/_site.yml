@@ -1,0 +1,23 @@
+name: "deep_variant"
+output_dir: "../docs"
+include: [".nojekyll"]
+exclude: ["include"]
+navbar:
+  title: "Deep Variant"
+  left:
+    - text: "Tasks"
+      href: index.html
+    - text: "Analysis"
+      href: analysis_list.html
+    - text: "Technical Memo"
+      href: memo_list.html
+  right:
+    - icon: fa-github
+      href: https://github.com/liangyy/deep_variant
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: cosmo
+    highlight: textmate
