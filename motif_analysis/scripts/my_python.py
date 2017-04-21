@@ -47,18 +47,18 @@ def getGradient(model, layer_idx, sample, label_idx):
     from keras.layers import Dense, Activation
     model = load_model(model)
     noutput = model.layers[-1].output_shape[1]
-    model.add(Dense(1))
-    model.add(Activation('sigmoid'))
+    model.add(Dense(1, name='extra_dense'))
+    model.add(Activation('sigmoid', name='extra_activation'))
     import numpy as np
     linear = np.zeros((noutput, 1))
     linear[label_idx, 0] = 1
-    bias = 0
-    model.layers[-2].set_weights((linear, bias))
-    gradients = model.optimizer.get_gradients(model.model.total_loss, model.layers[layer_idx].output)
+    bias = np.zeros((1))
+    model.layers[-2].set_weights([linear, bias])
+    gradients = model.optimizer.get_gradients(model.model.total_loss, [model.layers[layer_idx].output])
     import keras.backend as K
     input_tensors = [model.inputs[0], # input data
                      model.model.sample_weights[0], # how much to weight each sample by
-                     model.targets[0], # labels
+                     model.model.targets[0], # labels
                      K.learning_phase(), # train or test mode
     ]
     get_gradients = K.function(inputs=input_tensors, outputs=gradients)
