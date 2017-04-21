@@ -54,6 +54,7 @@ def getGradient(model, layer_idx, sample, label_idx):
     linear[label_idx, 0] = 1
     bias = np.zeros((1))
     model.layers[-2].set_weights([linear, bias])
+    model.compile(optimizer='sgd', loss='binary_crossentropy')
     gradients = model.optimizer.get_gradients(model.model.total_loss, [model.layers[layer_idx].output])
     import keras.backend as K
     input_tensors = [model.inputs[0], # input data
@@ -67,4 +68,4 @@ def getGradient(model, layer_idx, sample, label_idx):
           [sample[1]], # y
           0 # learning phase in TEST mode
     ]
-    return get_gradients(inputs)[1]
+return get_gradients(inputs)[1]
