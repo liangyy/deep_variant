@@ -29,7 +29,7 @@ See an example at `report/Type1/E081/motif_analysis.html`
 1. implement `mutagensis` [link](modules/seq2pattern/_mutagensis.snakemake)
 2. implement `sliding_window` [link](modules/seq2pattern/_sliding_window.snakemake)
 3. implement `motif_gradient` [link](modules/seq2pattern/_motif_gradient.snakemake)
-    - implement a function that takes the model, single sample, and the layer index and output the gradient w.r.t. that layer when evaluating on the given data point (need test case!)
+    - implement a function that takes the model, single sample, label index, and the layer index and output the gradient w.r.t. that layer when evaluating on the given data point (need test case!)
     - implement the whole pipeline
 4. ~~implement `motif_activation`~~ [link](modules/seq2pattern/_motif_activation.snakemake)
 5. generate a black list of sequences where containing meaningless NNNN...
