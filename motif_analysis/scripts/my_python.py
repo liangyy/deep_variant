@@ -40,7 +40,7 @@ def saveData(hdf5file, name, data):
     f = h5py.File(hdf5file, 'w')
     f.create_dataset(name, data=data)
     f.close()
-def getGradient(model, layer_idx, sample, label_idx):
+def getGradient_model(model, layer_idx, label_idx):
     # ATTENTION
     # layer_idx and label_idx should be 0-based
     from keras.models import load_model
@@ -63,6 +63,9 @@ def getGradient(model, layer_idx, sample, label_idx):
                      K.learning_phase(), # train or test mode
     ]
     get_gradients = K.function(inputs=input_tensors, outputs=gradients)
+    return get_gradients
+
+def getGradient_eval(get_gradients, sample):
     inputs = [[sample[0]], # X
           [1], # sample weights
           [sample[1]], # y

@@ -22,10 +22,10 @@ x = my_python.getData(args.input, 'x')
 
 table_all = pd.DataFrame()
 direction = (args.true_label - 0.5) * 2
-
+moded_grad = my_python.getGradient_model(args.model, args.idx, args.label_idx)
 for i in range(x.shape[0]):
 	seq = x[i, :, :]
-	grad = my_python.getGradient(args.model, args.idx, [seq, args.true_label], args.label_idx)
+	grad = my_python.getGradient(moded_grad, [seq, np.ones((1)) * args.true_label])
 	grad = np.max(grad * direction, axis=1) # direction is consistent with label
 	table = pd.DataFrame(grad)
 	table_all = pd.concat([table_all, table])
