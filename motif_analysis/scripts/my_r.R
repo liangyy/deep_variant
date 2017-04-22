@@ -14,7 +14,8 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
     merged.sub$rank <- rank(merged.sub$value)
     p <- ggplot(merged.sub) + geom_histogram(aes(x = rank, fill = label), bins = 30, position='dodge') +
         facet_grid(label~.) +
-        ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue)))
+        ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue))) + 
+        theme(title = element_text(size=3.5), text = element_text(size=3))
     return(p)
 }
 
