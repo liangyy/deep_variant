@@ -31,6 +31,7 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
 
 # Analysis
 
+0. Motif visualization: see [here](draw_list.html)
 1. Mutagensis **TODO**
 2. Sliding window **TODO**
 3. Motif gradient **TODO**
