@@ -43,11 +43,11 @@ rule report_grad_gen_rmd:
         p = 'pattern/{model}/{data}/motif_gradient/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
         n = 'pattern/{model}/{data}/motif_gradient/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
     output:
-        o = temp('report/{model}/{data}/motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']))
+        o = temp('report/{model}/{data}_motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']))
     params:
         model = config['model']['name'],
         data = '{data}',
-        envir = '../../../'
+        envir = '../../'
     run:
         rmd = '''---
 title: "Motif Analysis - motif gradient"
@@ -146,10 +146,10 @@ bsselect(plots, type = "img", selected = motif.bottom5[1],
 
 rule report_grad_gen_html:
     input:
-        rmd = 'report/{model}/{data}/motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']),
+        rmd = 'report/{model}/{data}_motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']),
         p = 'pattern/{model}/{data}/motif_gradient/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
         n = 'pattern/{model}/{data}/motif_gradient/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
     output:
-        'report/{model}/{data}/motif_gradient.html'.format(data='{data}', model=config['model']['name'])
+        'report/{model}/{data}_motif_gradient.html'.format(data='{data}', model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''

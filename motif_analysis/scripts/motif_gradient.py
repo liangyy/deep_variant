@@ -21,7 +21,8 @@ import numpy as np
 x = my_python.getData(args.input, 'x')
 
 table_all = pd.DataFrame()
-direction = (args.true_label - 0.5) * 2
+# direction = (args.true_label - 0.5) * 2
+direction = 1
 moded_grad = my_python.getGradient_model(args.model, args.idx, args.label_idx)
 for i in range(x.shape[0]):
 	print(i)

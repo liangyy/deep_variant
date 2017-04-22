@@ -9,7 +9,7 @@ method:
     snakemake: '_motif_activation.snakemake'
 model:
   name: 'Type1'
-  path: '../../../deep_variant/yanyu/DeepSEA/debug/keras_deepsea_copy.hdf5'
+  path: '../../../deep_variant/yanyu/deep_brain/my_train/keras_deepsea_with_040417_2_42_head.hdf5'
   first_layer_idx: 1 # 0-based
   motif_layer_idx: 0 # 0-based
   nmotifs: 320
