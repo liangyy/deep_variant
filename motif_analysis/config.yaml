@@ -10,8 +10,8 @@ method:
 model:
   name: 'Type1'
   path: '../../../deep_variant/yanyu/DeepSEA/debug/keras_deepsea_copy.hdf5'
-  first_layer_idx: 1
-  motif_layer_idx: 0
+  first_layer_idx: 1 # 0-based
+  motif_layer_idx: 0 # 0-based
   nmotifs: 320
 data:
   E081:
