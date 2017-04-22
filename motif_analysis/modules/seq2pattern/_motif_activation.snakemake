@@ -37,7 +37,7 @@ rule report_gen_rmd:
         data = '{data}',
         envir = '../../',
         p = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
-        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])    
+        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
     run:
         rmd = '''---
 title: "Motif Analysis - motif activation"
@@ -84,51 +84,26 @@ for(i in colnames(pos$table)){{
 df <- data.frame(motif=motifs, p.value=pvalues)
 ```
 
-## Top 5
+## Motif activation comparison (positive vs negative)
 
 ```{{r, echo=FALSE, warning=FALSE}}
 motif.ordered <- order(df$p.value)
 motifs <- unique(pos$table.melted$variable)
-motif.top5 <- motifs[motif.ordered[1 : 5]]
-pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
+motif.all <- motifs[motif.ordered]
+pvalue.all <- df$p.value[motif.ordered]
 plots <- list()
-for(i in 1 : length(motif.top5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
-    plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
+for(i in 1 : length(motif.all)){{
+    p <- plot_motif(pos$table.melted, neg$table.melted, motif.all[i], pvalue.all[i])
+    plots <- save_plot(info, p, motif.all[i], 'plots', plots)
 }}
-bsselect(plots, type = "img", selected = motif.top5[1],
+bsselect(plots, type = "img", selected = motif.all[1],
          live_search = TRUE, show_tick = TRUE, height = 10)
 ```
-
-## Medium 5
-
 ```{{r, echo=FALSE, warning=FALSE}}
-midpoint <- floor(length(motif.ordered) / 2)
-motif.medium5 <- motifs[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
-pvalue.medium5 <- df$p.value[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
-plots <- list()
-for(i in 1 : length(motif.medium5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.medium5[i], pvalue.medium5[i])
-    plots <- save_plot(info, p, motif.medium5[i], 'plots', plots)
-}}
-bsselect(plots, type = "img", selected = motif.medium5[1],
+bsselect(plots, type = "img", selected = motif.all[2],
          live_search = TRUE, show_tick = TRUE, height = 10)
 ```
 
-## Bottom 5
-
-```{{r, echo=FALSE, warning=FALSE}}
-n <- length(motif.ordered)
-motif.bottom5 <- motifs[motif.ordered[(n - 4) : n]]
-pvalue.bottom5 <- df$p.value[motif.ordered[(n - 4) : n]]
-plots <- list()
-for(i in 1 : length(motif.bottom5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.bottom5[i], pvalue.bottom5[i])
-    plots <- save_plot(info, p, motif.bottom5[i], 'plots', plots)
-}}
-bsselect(plots, type = "img", selected = motif.bottom5[1],
-         live_search = TRUE, show_tick = TRUE, height = 10)
-```
 '''.format(model=params.model, data=params.data, input_p=params.p, input_n=params.n, envir=params.envir)
         o = open(output.o, 'w')
         o.write(rmd)
