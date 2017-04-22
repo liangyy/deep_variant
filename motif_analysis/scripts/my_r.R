@@ -12,7 +12,7 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
     neg.sub$label <- 'negative'
     merged.sub <- rbind(pos.sub, neg.sub)
     merged.sub$rank <- rank(merged.sub$value)
-    p <- ggplot(merged.sub) + geom_histogram(aes(x = rank, fill = label), bins = 30, position='dodge') + 
+    p <- ggplot(merged.sub) + geom_histogram(aes(x = rank, fill = label), bins = 30, position='dodge') +
         facet_grid(label~.) +
         ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue)))
     return(p)
@@ -20,7 +20,7 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
 
 save_plot <- function(info, p, motif, path, plots){
     filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = path, width = 5, height = 3)
+    ggsave(filename = filename, plot = p, path = path, width = 3, height = 1.5)
     plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
     plots
 }
@@ -29,7 +29,7 @@ plot_motif_visual <- function(filename = filname, motif_idx = motif_idx){
     motif <- read_feather(filename)
     motif$Base <- c('A', 'G', 'C', 'T') # ATTENTION! This depends on now you preprocess the data
     motif.melted <- melt(motif, id.vars = 'Base')
-    p <- ggplot(motif.melted, aes(x = variable, y = value, group = Base)) + geom_bar(aes(fill = Base), stat='identity', position = 'dodge') + 
+    p <- ggplot(motif.melted, aes(x = variable, y = value, group = Base)) + geom_bar(aes(fill = Base), stat='identity', position = 'dodge') +
         geom_text(
         aes(label = Base, y = value / 2),
         position = position_dodge(0.9),
