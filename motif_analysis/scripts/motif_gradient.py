@@ -30,8 +30,8 @@ for i in range(x.shape[0]):
 	grad = my_python.getGradient_eval(moded_grad, [seq, np.ones((1)) * args.true_label])
 	grad1 = np.max(grad, axis=1) # increase direction
 	grad2 = np.min(grad, axis=1) # decrease direction
-	grad = np.hstack((grad1, grad2))
-	grad = np.vstack((grad, np.array(['max', 'min'])))
+	grad = np.vstack((grad1, grad2))
+	grad = np.hstack((grad, np.array([['max'], ['min']])))
 	table = pd.DataFrame(grad)
 	table_all = pd.concat([table_all, table])
 table_all.columns = [ 'Motif.' + str(i) for i in range(grad.shape[1]) ] + [ 'Direction' ]
