@@ -97,11 +97,11 @@ for(i in 1 : length(motif.all)){{
     plots <- save_plot(info, p, motif.all[i], 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.all[1],
-         live_search = TRUE, show_tick = TRUE, height = 10)
+         live_search = TRUE, show_tick = TRUE, height = 5)
 ```
 ```{{r, echo=FALSE, warning=FALSE}}
 bsselect(plots, type = "img", selected = motif.all[2],
-         live_search = TRUE, show_tick = TRUE, height = 10)
+         live_search = TRUE, show_tick = TRUE, height = 5)
 ```
 
 '''.format(model=params.model, data=params.data, input_p=params.p, input_n=params.n, envir=params.envir)
