@@ -34,6 +34,6 @@ for i in range(x.shape[0]):
 	grad = np.hstack((grad, np.array([['max'], ['min']])))
 	table = pd.DataFrame(grad)
 	table_all = pd.concat([table_all, table])
-table_all.columns = [ 'Motif.' + str(i) for i in range(grad.shape[1]) ] + [ 'Direction' ]
+table_all.columns = [ 'Motif.' + str(i) for i in range(grad.shape[1] - 1) ] + [ 'Direction' ]
 table_all = table_all.copy()
 feather.write_dataframe(table_all, args.output)
