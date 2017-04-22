@@ -25,7 +25,7 @@ direction = (args.true_label - 0.5) * 2
 
 for i in range(x.shape[0]):
 	seq = x[i, :, :]
-	grad = my_python.getGradient(args.model, arg.idx, [seq, args.true_label], args.label_idx)
+	grad = my_python.getGradient(args.model, args.idx, [seq, args.true_label], args.label_idx)
 	grad = np.max(grad * direction, axis=1) # direction is consistent with label
 	table = pd.DataFrame(grad)
 	table_all = pd.concat([table_all, table])

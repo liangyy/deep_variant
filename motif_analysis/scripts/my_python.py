@@ -68,4 +68,4 @@ def getGradient(model, layer_idx, sample, label_idx):
           [sample[1]], # y
           0 # learning phase in TEST mode
     ]
-return get_gradients(inputs)[1]
+    return get_gradients(inputs)[1]
