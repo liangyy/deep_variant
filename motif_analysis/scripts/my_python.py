@@ -71,4 +71,4 @@ def getGradient_eval(get_gradients, sample):
           [sample[1]], # y
           0 # learning phase in TEST mode
     ]
-    return get_gradients(inputs)[1]
+    return get_gradients(inputs)[0]

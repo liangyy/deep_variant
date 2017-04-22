@@ -31,7 +31,7 @@ rule get_pattern_grad_neg:
         label_idx = lambda wildcards: config['data'][wildcards.data]['label_num'],
         true_label = 0
     shell:
-        'python scripts/motif_activation.py --model {input.model} \
+        'python scripts/motif_gradient.py --model {input.model} \
         --input {input.n} \
         --output {output.on} \
         --idx {params.idx} \
@@ -103,6 +103,7 @@ motif.top5 <- motifs[motif.ordered[1 : 5]]
 pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
 plots <- list()
 for(i in 1 : length(motif.top5)){{
+    p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
     plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
 }}
 bsselect(plots, type = "img", selected = motif.top5[1],

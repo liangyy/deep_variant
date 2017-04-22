@@ -24,11 +24,12 @@ table_all = pd.DataFrame()
 direction = (args.true_label - 0.5) * 2
 moded_grad = my_python.getGradient_model(args.model, args.idx, args.label_idx)
 for i in range(x.shape[0]):
+	print(i)
 	seq = x[i, :, :]
-	grad = my_python.getGradient(moded_grad, [seq, np.ones((1)) * args.true_label])
+	grad = my_python.getGradient_eval(moded_grad, [seq, np.ones((1)) * args.true_label])
 	grad = np.max(grad * direction, axis=1) # direction is consistent with label
 	table = pd.DataFrame(grad)
 	table_all = pd.concat([table_all, table])
 table_all.columns = [ 'Motif.' + str(i) for i in range(grad.shape[1]) ]
-table_all = total_table.copy()
+table_all = table_all.copy()
 feather.write_dataframe(table_all, args.output)
