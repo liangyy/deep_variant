@@ -1,0 +1,113 @@
+---
+title: "Deep brain - Motif Analysis - motif gradient"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+# Data
+
+```{r}
+library(ggplot2)
+library(feather)
+library(reshape2)
+source('scripts/my_r.R')
+info <- c('model', 'data', 'motif_gradient')
+pos <- read_feather('pattern/Type1/E081/motif_gradient/pattern_positive.feather')
+pos <- reformat_grad(pos)
+neg <- read_feather('pattern/Type1/E081/motif_gradient/pattern_negative.feather')
+neg <- reformat_grad(neg)
+```
+
+# Overview
+
+```{r, echo=FALSE}
+p1 <- plot_gradient(pos, 'Positive')
+p2 <- plot_gradient(neg, 'Negative')
+multiplot(p1, p2)
+```
+
+# Correlation between motifs
+
+```{r, echo=FALSE}
+p1 <- cor_to_hist(pos, 'Positive')
+p2 <- cor_to_hist(neg, 'Negative')
+multiplot(p1, p2)
+```
+
+# Correlation between increase/decrease directions
+
+```{r, echo = FALSE}
+direction.cor <- list()
+direction.cor.pos <- lapply(pos[!colnames(pos) %in% 'Direction'], function(x){
+    cor(x[pos$Direction == 'increase'], x[pos$Direction == 'decrease'])
+})
+direction.cor$cor <- unlist(direction.cor.pos)
+direction.cor$label <- rep('positive', length(direction.cor$cor))
+direction.cor.neg <-  lapply(neg[!colnames(neg) %in% 'Direction'], function(x){
+    cor(x[neg$Direction == 'increase'], x[neg$Direction == 'decrease'])
+})
+temp <- list()
+temp$cor <- unlist(direction.cor.neg)
+temp$label <- rep('negative', length(temp$cor))
+direction.cor <- rbind(as.data.frame(direction.cor), as.data.frame(temp))
+ggplot(direction.cor) + geom_violin(aes(x = label, y = cor)) + ggtitle('Distribution of correlation btw directions (increase/decrease)')
+```
+
+# Gradient per motif
+
+```{r, echo=FALSE}
+re <- plot_per_motif_grad_mean(pos, 'Positive')
+p1 <- re$plot
+mean.max.ordered <- re$mean.max
+mean.min.ordered <- re$mean.min
+motifs.ordered.pos <- re$motifs
+plots.pos <- list()
+for(i in 1 :  (length(motifs.ordered.pos))){
+    p <- plot_per_motif_grad(pos, motifs.ordered.pos[i], 'Positive', c(mean.max.ordered[i], mean.min.ordered[i]))
+    plots.pos <- save_plot2(info, p, motifs.ordered.pos[i], 'plots', plots.pos)
+}
+re <- plot_per_motif_grad_mean(neg, 'Negative')
+p2 <- re$plot
+mean.max.ordered <- re$mean.max
+mean.min.ordered <- re$mean.min
+motifs.ordered.neg <- re$motifs
+plots.neg <- list()
+for(i in 1 : (length(motifs.ordered.neg))){
+    p <- plot_per_motif_grad(neg, motifs.ordered.neg[i], 'Negative', c(mean.max.ordered[i], mean.min.ordered[i]))
+    plots.neg <- save_plot2(info, p, motifs.ordered.neg[i], 'plots', plots.neg)
+}
+multiplot(p1, p2)
+```
+
+<div class="col2">
+```{r, echo=FALSE, warning=FALSE}
+bsselect(plots.pos, type = "img", selected = motifs.ordered.pos[1],
+        live_search = TRUE, show_tick = TRUE, height = 5, width = 3, 
+        frame_height = 400, frame_width = 300)
+bsselect(plots.neg, type = "img", selected = motifs.ordered.neg[1],
+        live_search = TRUE, show_tick = TRUE, height = 5, width = 3, 
+        frame_height = 400, frame_width = 300)
+```
+</div>
+
