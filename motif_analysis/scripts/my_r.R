@@ -58,9 +58,9 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
     return(p)
 }
 
-save_plot <- function(info, p, motif, path, plots){
+save_plot <- function(info, p, motif, path, plots, folder){
     filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = path, width = 3, height = 1.5)
+    ggsave(filename = filename, plot = p, path = paste0(folder, '/', path), width = 3, height = 1.5)
     plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
     plots
 }
@@ -136,9 +136,9 @@ plot_per_motif_grad <- function(pos, motif, title, means){
     return(p)
 }
 
-save_plot2 <- function(info, p, motif, path, plots){
+save_plot2 <- function(info, p, motif, path, plots, folder){
     filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = path, width = 1.5, height = 2.2)
+    ggsave(filename = filename, plot = p, path = paste0(folder, '/', path), width = 1.5, height = 2.2)
     plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
     plots
 }

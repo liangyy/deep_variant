@@ -1,3 +1,4 @@
+http: 'https://github.com/liangyy/deep_variant/blob/code/motif_analysis/'
 method:
   mutagensis:
     snakemake: '_mutagensis.snakemake'

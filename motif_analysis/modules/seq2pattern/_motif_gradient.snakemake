@@ -47,7 +47,8 @@ rule report_grad_gen_rmd:
     params:
         model = config['model']['name'],
         data = '{data}',
-        envir = '../../'
+        envir = '../../',
+        folder = config['http']
     run:
         rmd = '''---
 title: "Deep brain - Motif Analysis - motif gradient"
@@ -136,7 +137,7 @@ motifs.ordered.pos <- re$motifs
 plots.pos <- list()
 for(i in 1 :  (length(motifs.ordered.pos))){{
     p <- plot_per_motif_grad(pos, motifs.ordered.pos[i], 'Positive', c(mean.max.ordered[i], mean.min.ordered[i]))
-    plots.pos <- save_plot2(info, p, motifs.ordered.pos[i], 'plots', plots.pos)
+    plots.pos <- save_plot2(info, p, motifs.ordered.pos[i], 'plots', plots.pos, '{folder}')
 }}
 re <- plot_per_motif_grad_mean(neg, 'Negative')
 p2 <- re$plot
@@ -146,7 +147,7 @@ motifs.ordered.neg <- re$motifs
 plots.neg <- list()
 for(i in 1 : (length(motifs.ordered.neg))){{
     p <- plot_per_motif_grad(neg, motifs.ordered.neg[i], 'Negative', c(mean.max.ordered[i], mean.min.ordered[i]))
-    plots.neg <- save_plot2(info, p, motifs.ordered.neg[i], 'plots', plots.neg)
+    plots.neg <- save_plot2(info, p, motifs.ordered.neg[i], 'plots', plots.neg, '{folder}')
 }}
 multiplot(p1, p2)
 ```
@@ -162,7 +163,7 @@ bsselect(plots.neg, type = "img", selected = motifs.ordered.neg[1],
 ```
 </div>
 
-'''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
+'''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir, folder=params.folder)
         o = open(output.o, 'w')
         o.write(rmd)
         o.close()
