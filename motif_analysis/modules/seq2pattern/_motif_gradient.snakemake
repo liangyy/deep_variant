@@ -83,6 +83,7 @@ knitr::opts_knit$set(root.dir = '{envir}')
 library(ggplot2)
 library(feather)
 library(reshape2)
+library(bsselectR)
 source('scripts/my_r.R')
 info <- c('{model}', '{data}', 'motif_gradient')
 pos <- read_feather('{input_p}')
@@ -137,7 +138,7 @@ motifs.ordered.pos <- re$motifs
 plots.pos <- list()
 for(i in 1 :  (length(motifs.ordered.pos))){{
     p <- plot_per_motif_grad(pos, motifs.ordered.pos[i], 'Positive', c(mean.max.ordered[i], mean.min.ordered[i]))
-    plots.pos <- save_plot2(info, p, motifs.ordered.pos[i], 'plots', plots.pos, '{folder}')
+    plots.pos <- save_plot2(info, p, 'positive', motifs.ordered.pos[i], 'plots', plots.pos, '{envir}', i)
 }}
 re <- plot_per_motif_grad_mean(neg, 'Negative')
 p2 <- re$plot
@@ -147,23 +148,23 @@ motifs.ordered.neg <- re$motifs
 plots.neg <- list()
 for(i in 1 : (length(motifs.ordered.neg))){{
     p <- plot_per_motif_grad(neg, motifs.ordered.neg[i], 'Negative', c(mean.max.ordered[i], mean.min.ordered[i]))
-    plots.neg <- save_plot2(info, p, motifs.ordered.neg[i], 'plots', plots.neg, '{folder}')
+    plots.neg <- save_plot2(info, p, 'negative',  motifs.ordered.neg[i], 'plots', plots.neg, '{envir}', i)
 }}
 multiplot(p1, p2)
 ```
 
 <div class="col2">
 ```{{r, echo=FALSE, warning=FALSE}}
-bsselect(plots.pos, type = "img", selected = motifs.ordered.pos[1],
+bsselect(plots.pos, type = "img", selected = names(plots.pos)[1],
         live_search = TRUE, show_tick = TRUE, height = 5, width = 3,
         frame_height = 400, frame_width = 300)
-bsselect(plots.neg, type = "img", selected = motifs.ordered.neg[1],
+bsselect(plots.neg, type = "img", selected = names(plots.neg)[1],
         live_search = TRUE, show_tick = TRUE, height = 5, width = 3,
         frame_height = 400, frame_width = 300)
 ```
 </div>
 
-'''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir, folder=params.folder)
+'''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
         o = open(output.o, 'w')
         o.write(rmd)
         o.close()

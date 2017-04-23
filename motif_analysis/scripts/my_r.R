@@ -54,14 +54,21 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
     p <- ggplot(merged.sub) + geom_histogram(aes(x = rank, fill = label), bins = 30, position='dodge') +
         facet_grid(label~.) +
         ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue))) +
-        theme(title = element_text(size=3.5), text = element_text(size=3))
+        theme(title = element_text(size=3.5), text = element_text(size=3.5))
     return(p)
 }
 
 save_plot <- function(info, p, motif, path, plots, folder){
     filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = paste0(folder, '/', path), width = 3, height = 1.5)
-    plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
+    ggsave(filename = filename, plot = p, path = path, width = 3, height = 1.5)
+    plots[[as.character(motif)]] <- paste(folder, path, filename, sep = '/')
+    plots
+}
+
+save_plot12 <- function(info, p, motif, path, plots, folder, rank){
+    filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
+    ggsave(filename = filename, plot = p, path = path, width = 3, height = 1.5)
+    plots[[paste0(rank, ' : ', as.character(motif))]] <- paste(folder, path, filename, sep = '/')
     plots
 }
 
@@ -73,9 +80,10 @@ plot_motif_visual <- function(filename = filname, motif_idx = motif_idx){
         geom_text(
         aes(label = Base, y = value / 2),
         position = position_dodge(0.9),
-        vjust = 0
+        vjust = 0,
+        size = 2
     ) + ggtitle(paste('Motif', motif_idx, sep = '.')) +
-    theme(title = element_text(size=3.5), text = element_text(size=3))
+    theme(title = element_text(size=4), text = element_text(size=3.5))
     return(p)
 }
 
@@ -137,9 +145,9 @@ plot_per_motif_grad <- function(pos, motif, title, means){
     return(p)
 }
 
-save_plot2 <- function(info, p, motif, path, plots, folder){
-    filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = paste0(folder, '/', path), width = 1.5, height = 2.2)
-    plots[[as.character(motif)]] <- paste(path, filename, sep = '/')
+save_plot2 <- function(info, p, direction, motif, path, plots, folder, rank){
+    filename <- paste(paste(c(info, direction, motif), collapse = '_'), '.png', sep = '')
+    ggsave(filename = filename, plot = p, path = path, width = 1.5, height = 2.2)
+    plots[[paste0(rank, ' : ', as.character(motif))]] <- paste(folder, path, filename, sep = '/')
     plots
 }

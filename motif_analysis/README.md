@@ -34,3 +34,13 @@ See an example at `report/Type1/E081/motif_analysis.html`
 4. ~~implement `motif_activation`~~ [link](modules/seq2pattern/_motif_activation.snakemake)
 5. generate a black list of sequences where containing meaningless NNNN...
 6. motif visualization
+
+# Generate reports at `report/`
+
+```
+$ snakemake report/Type1/motif_visualization/draw_list.html
+$ snakemake report/Type1/E081_motif_activation.html
+$ snakemake report/Type1/E082_motif_activation.html
+$ snakemake report/Type1/E081_motif_gradient.html
+$ snakemake report/Type1/E082_motif_gradient.html
+```
