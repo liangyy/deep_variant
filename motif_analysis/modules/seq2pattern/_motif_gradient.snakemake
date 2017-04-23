@@ -50,95 +50,118 @@ rule report_grad_gen_rmd:
         envir = '../../'
     run:
         rmd = '''---
-title: "Motif Analysis - motif gradient"
+title: "Deep brain - Motif Analysis - motif gradient"
 output:
     html_document:
         number_sections: true
         toc: true
         toc_depth: 3
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ```{{r setup}}
 knitr::opts_knit$set(root.dir = '{envir}')
 ```
 
-# Overall Activation
+<style>
+  .col2 {{
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }}
+  .col3 {{
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }}
+</style>
+
+# Data
 
 ```{{r}}
-source('scripts/my_r.R')
-library(feather)
 library(ggplot2)
+library(feather)
 library(reshape2)
-library(bsselectR)
+source('scripts/my_r.R')
 info <- c('{model}', '{data}', 'motif_gradient')
-pos <- load_and_melt('{input_p}')
-neg <- load_and_melt('{input_n}')
-ggplot(pos$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Positive)') + labs(x = 'motif', y = 'sequence')
-ggplot(neg$table.melted) + geom_raster(aes(x = variable, y = id, fill = value)) + scale_fill_gradient2() + ggtitle('Activation per sequence (Negative)') + labs(x = 'motif', y = 'sequence')
+pos <- read_feather('{input_p}')
+pos <- reformat_grad(pos)
+neg <- read_feather('{input_n}')
+neg <- reformat_grad(neg)
 ```
 
-# Per Motif Activation
+# Overview
 
-```{{r}}
-pvalues <- c()
-motifs <- c()
-for(i in colnames(pos$table)){{
-    if(i != 'id'){{
-        poss <- pos$table[[i]]
-        negs <- neg$table[[i]]
-        pvalues <- c(pvalues, wilcox.test(poss, negs)$p.value)
-        motifs <- c(motifs, i)
-    }}
+```{{r, echo=FALSE}}
+p1 <- plot_gradient(pos, 'Positive')
+p2 <- plot_gradient(neg, 'Negative')
+multiplot(p1, p2)
+```
+
+# Correlation between motifs
+
+```{{r, echo=FALSE}}
+p1 <- cor_to_hist(pos, 'Positive')
+p2 <- cor_to_hist(neg, 'Negative')
+multiplot(p1, p2)
+```
+
+# Correlation between increase/decrease directions
+
+```{{r, echo = FALSE}}
+direction.cor <- list()
+direction.cor.pos <- lapply(pos[!colnames(pos) %in% 'Direction'], function(x){{
+    cor(x[pos$Direction == 'increase'], x[pos$Direction == 'decrease'])
+}})
+direction.cor$cor <- unlist(direction.cor.pos)
+direction.cor$label <- rep('positive', length(direction.cor$cor))
+direction.cor.neg <-  lapply(neg[!colnames(neg) %in% 'Direction'], function(x){{
+    cor(x[neg$Direction == 'increase'], x[neg$Direction == 'decrease'])
+}})
+temp <- list()
+temp$cor <- unlist(direction.cor.neg)
+temp$label <- rep('negative', length(temp$cor))
+direction.cor <- rbind(as.data.frame(direction.cor), as.data.frame(temp))
+ggplot(direction.cor) + geom_violin(aes(x = label, y = cor)) + ggtitle('Distribution of correlation btw directions (increase/decrease)')
+```
+
+# Gradient per motif
+
+```{{r, echo=FALSE}}
+re <- plot_per_motif_grad_mean(pos, 'Positive')
+p1 <- re$plot
+mean.max.ordered <- re$mean.max
+mean.min.ordered <- re$mean.min
+motifs.ordered.pos <- re$motifs
+plots.pos <- list()
+for(i in 1 :  (length(motifs.ordered.pos))){{
+    p <- plot_per_motif_grad(pos, motifs.ordered.pos[i], 'Positive', c(mean.max.ordered[i], mean.min.ordered[i]))
+    plots.pos <- save_plot2(info, p, motifs.ordered.pos[i], 'plots', plots.pos)
 }}
-df <- data.frame(motif=motifs, p.value=pvalues)
+re <- plot_per_motif_grad_mean(neg, 'Negative')
+p2 <- re$plot
+mean.max.ordered <- re$mean.max
+mean.min.ordered <- re$mean.min
+motifs.ordered.neg <- re$motifs
+plots.neg <- list()
+for(i in 1 : (length(motifs.ordered.neg))){{
+    p <- plot_per_motif_grad(neg, motifs.ordered.neg[i], 'Negative', c(mean.max.ordered[i], mean.min.ordered[i]))
+    plots.neg <- save_plot2(info, p, motifs.ordered.neg[i], 'plots', plots.neg)
+}}
+multiplot(p1, p2)
 ```
 
-## Top 5
-
+<div class="col2">
 ```{{r, echo=FALSE, warning=FALSE}}
-motif.ordered <- order(df$p.value)
-motifs <- unique(pos$table.melted$variable)
-motif.top5 <- motifs[motif.ordered[1 : 5]]
-pvalue.top5 <- df$p.value[motif.ordered[1 : 5]]
-plots <- list()
-for(i in 1 : length(motif.top5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.top5[i], pvalue.top5[i])
-    plots <- save_plot(info, p, motif.top5[i], 'plots', plots)
-}}
-bsselect(plots, type = "img", selected = motif.top5[1],
-         live_search = TRUE, show_tick = TRUE, height = 10)
+bsselect(plots.pos, type = "img", selected = motifs.ordered.pos[1],
+        live_search = TRUE, show_tick = TRUE, height = 5, width = 3,
+        frame_height = 400, frame_width = 300)
+bsselect(plots.neg, type = "img", selected = motifs.ordered.neg[1],
+        live_search = TRUE, show_tick = TRUE, height = 5, width = 3,
+        frame_height = 400, frame_width = 300)
 ```
+</div>
 
-## Medium 5
-
-```{{r, echo=FALSE, warning=FALSE}}
-midpoint <- floor(length(motif.ordered) / 2)
-motif.medium5 <- motifs[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
-pvalue.medium5 <- df$p.value[motif.ordered[(midpoint - 2) : (midpoint + 2)]]
-plots <- list()
-for(i in 1 : length(motif.medium5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.medium5[i], pvalue.medium5[i])
-    plots <- save_plot(info, p, motif.medium5[i], 'plots', plots)
-}}
-bsselect(plots, type = "img", selected = motif.medium5[1],
-         live_search = TRUE, show_tick = TRUE, height = 10)
-```
-
-## Bottom 5
-
-```{{r, echo=FALSE, warning=FALSE}}
-n <- length(motif.ordered)
-motif.bottom5 <- motifs[motif.ordered[(n - 4) : n]]
-pvalue.bottom5 <- df$p.value[motif.ordered[(n - 4) : n]]
-plots <- list()
-for(i in 1 : length(motif.bottom5)){{
-    p <- plot_motif(pos$table.melted, neg$table.melted, motif.bottom5[i], pvalue.bottom5[i])
-    plots <- save_plot(info, p, motif.bottom5[i], 'plots', plots)
-}}
-bsselect(plots, type = "img", selected = motif.bottom5[1],
-         live_search = TRUE, show_tick = TRUE, height = 10)
-```
 '''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
         o = open(output.o, 'w')
         o.write(rmd)
