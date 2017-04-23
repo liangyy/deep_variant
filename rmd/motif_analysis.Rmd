@@ -31,8 +31,8 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
 
 # Analysis
 
-0. Motif visualization: see [here](draw_list.html)
+0. Motif visualization: see [here](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/motif_analysis/report/Type1/motif_visualization/draw_list.html)
 1. Mutagensis **TODO**
 2. Sliding window **TODO**
-3. Motif gradient [081](motif_gradient_e081.html), [E082](motif_gradient_e082.html)
-4. Motif activation: see analysis on [E081](motif_activation_e081.html), [E082](motif_activation_e082.html)
+3. Motif gradient [E081](motif_gradient_e081.html), [E082](motif_gradient_e082.html)
+4. Motif activation: see analysis on [E081](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/motif_analysis/report/Type1/E081_motif_activation.html), [E082](motif_activation_e082.html)
