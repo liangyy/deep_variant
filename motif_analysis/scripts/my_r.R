@@ -1,12 +1,12 @@
 ## derived from http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     library(grid)
-    
+
     # Make a list from the ... arguments and plotlist
     plots <- c(list(...), plotlist)
-    
+
     numPlots = length(plots)
-    
+
     # If layout is NULL, then use 'cols' to determine layout
     if (is.null(layout)) {
         # Make the panel
@@ -15,20 +15,20 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
         layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
                          ncol = cols, nrow = ceiling(numPlots/cols))
     }
-    
+
     if (numPlots==1) {
         print(plots[[1]])
-        
+
     } else {
         # Set up the page
         grid.newpage()
         pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-        
+
         # Make each plot, in the correct location
         for (i in 1:numPlots) {
             # Get the i,j matrix positions of the regions that contain this subplot
             matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-            
+
             print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
                                             layout.pos.col = matchidx$col))
         }
@@ -53,7 +53,7 @@ plot_motif <- function(pos.in, neg.in, motif, pvalue){
     merged.sub$rank <- rank(merged.sub$value)
     p <- ggplot(merged.sub) + geom_histogram(aes(x = rank, fill = label), bins = 30, position='dodge') +
         facet_grid(label~.) +
-        ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue))) + 
+        ggtitle(paste('Histogram of Activation', motif, '\n p.value = ', formatC(pvalue))) +
         theme(title = element_text(size=3.5), text = element_text(size=3))
     return(p)
 }
@@ -74,7 +74,8 @@ plot_motif_visual <- function(filename = filname, motif_idx = motif_idx){
         aes(label = Base, y = value / 2),
         position = position_dodge(0.9),
         vjust = 0
-    ) + ggtitle(paste('Motif', motif_idx, sep = '.'))
+    ) + ggtitle(paste('Motif', motif_idx, sep = '.')) +
+    theme(title = element_text(size=3.5), text = element_text(size=3))
     return(p)
 }
 
@@ -91,8 +92,8 @@ cor_to_hist <- function(pos, instance){
     pos.cor.max <- compute_cor(pos, 'increase')
     pos.cor.max.melted <- melt(pos.cor.max)
     p <- ggplot() + xlim(0, 1) +
-        geom_histogram(data = pos.cor.min.melted, aes(x = value, fill = 'decrease'), bins = 30, alpha = .3) + 
-        geom_histogram(data = pos.cor.max.melted, aes(x = value, fill = 'increase'), bins = 30, alpha = .3) + 
+        geom_histogram(data = pos.cor.min.melted, aes(x = value, fill = 'decrease'), bins = 30, alpha = .3) +
+        geom_histogram(data = pos.cor.max.melted, aes(x = value, fill = 'increase'), bins = 30, alpha = .3) +
         ggtitle(paste('Histogram of the correlation btw motifs in', instance, 'samples'))
     return(p)
 }
@@ -101,10 +102,10 @@ plot_gradient <- function(pos, string){
     temp.pos <- pos
     temp.pos$id <- rep(1 : (nrow(temp.pos) / 2), each = 2)
     pos.melted <- melt(temp.pos, id.vars = c('Direction', 'id'))
-    p1 <- ggplot(pos.melted) + 
-        geom_raster(aes(x = variable, y = id, fill = value)) + 
-        scale_fill_gradient2() + ggtitle(paste('Gradient per sequence (', string, ')', sep = '')) + 
-        labs(x = 'motif', y = 'sequence') + 
+    p1 <- ggplot(pos.melted) +
+        geom_raster(aes(x = variable, y = id, fill = value)) +
+        scale_fill_gradient2() + ggtitle(paste('Gradient per sequence (', string, ')', sep = '')) +
+        labs(x = 'motif', y = 'sequence') +
         facet_grid(Direction~.)
     return(p1)
 }
@@ -112,8 +113,8 @@ plot_gradient <- function(pos, string){
 plot_per_motif_grad_mean <- function(pos, title){
     pos.max.mean <- colMeans(pos[pos$Direction == 'increase', !colnames(pos) %in% 'Direction'])
     pos.min.mean <- colMeans(pos[pos$Direction == 'decrease', !colnames(pos) %in% 'Direction'])
-    p <- ggplot() + geom_point(aes(x = pos.max.mean, y = pos.min.mean)) + 
-        labs(x = 'mean of increase', y = 'mean of decrease') + 
+    p <- ggplot() + geom_point(aes(x = pos.max.mean, y = pos.min.mean)) +
+        labs(x = 'mean of increase', y = 'mean of decrease') +
         ggtitle(paste('Comparison btw two directions in', title, 'data'))
     motifs <- colnames(pos)[!colnames(pos) %in% 'Direction']
     motif.order <- order(pos.max.mean, decreasing = T)
@@ -130,7 +131,7 @@ reformat_grad <- function(pos){
 
 plot_per_motif_grad <- function(pos, motif, title, means){
     data.sub <- pos[, c(motif, 'Direction')]
-    p <- ggplot(data.sub) + geom_boxplot(aes_string(x = 'Direction', y = motif)) + 
+    p <- ggplot(data.sub) + geom_boxplot(aes_string(x = 'Direction', y = motif)) +
         ggtitle(paste('Gradient of', motif, 'across', title, 'data', '\n', 'increase mean = ', formatC(means[1]), '\n', 'decrease mean = ', formatC(means[2]))) +
         theme(title = element_text(size=3.5), text = element_text(size=3))
     return(p)
