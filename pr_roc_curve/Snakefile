@@ -111,11 +111,10 @@ knitr::opts_knit$set(root.dir = '{envir}')
     }}
 </style>
 
-# ROC curves
-
 ```{{r, echo=FALSE}}
 library(feather)
 library(ggplot2)
+library(bsselectR)
 source('scripts/my_r.R')
 prefix <- '{prefix}'
 path <- 'plots/'
@@ -124,16 +123,19 @@ curves <- read_feather('{input}')
 curves.roc <- curves[curves$type == 'roc', ]
 plots.roc <- list()
 for(i in unique(curves.roc$data)){{
-    p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info)) +
-        ggtitle(paste('ROC curve', 'of data', i))
+    p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info), size = 0.1, alpha = 0.1) +
+        ggtitle(paste('ROC curve', 'of data', i)) +
+        theme(title = element_text(size=5), text = element_text(size=5)) +
+        coord_fixed(ratio = 1)
     plots.roc <- save_plot(prefix, p, i, path, plots.roc, envir, 'roc')
 }}
 curves.pr <- curves[curves$type == 'pr', ]
 plots.pr <- list()
 for(i in unique(curves.pr$data)){{
-    p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info)) +
+    p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info), size = 0.1, alpha = 0.1) +
         ggtitle(paste('PR curve', 'of data', i)) +
-        theme(title = element_text(size=4), text = element_text(size=4))
+        theme(title = element_text(size=5), text = element_text(size=5)) +
+        coord_fixed(ratio = 1)
     plots.pr <- save_plot(prefix, p, i, path, plots.pr, envir, 'pr')
 }}
 ```
@@ -141,11 +143,11 @@ for(i in unique(curves.pr$data)){{
 <div class="col2">
 ```{{r, echo=FALSE, warning=FALSE}}
 bsselect(plots.roc, type = "img", selected = names(plots.roc)[1],
-        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
-        frame_height = 300, frame_width = 300)
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 4,
+        frame_height = 300, frame_width = 400)
 bsselect(plots.pr, type = "img", selected = names(plots.pr)[1],
-        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
-        frame_height = 300, frame_width = 300)
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 4,
+        frame_height = 300, frame_width = 400)
 ```
 </div>
 '''.format(prefix=params[0], input=input[0], envir='../')

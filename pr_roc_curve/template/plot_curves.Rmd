@@ -39,7 +39,9 @@ curves.roc <- curves[curves$type == 'roc', ]
 plots.roc <- list()
 for(i in unique(curves.roc$data)){
     p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info)) + 
-        ggtitle(paste('ROC curve', 'of data', i))
+        ggtitle(paste('ROC curve', 'of data', i))  +
+        theme(title = element_text(size=3.5), text = element_text(size=3.5))
+    p
     plots.roc <- save_plot(prefix, p, i, path, plots.roc, folder, 'roc')
 }
 curves.pr <- curves[curves$type == 'pr', ]
