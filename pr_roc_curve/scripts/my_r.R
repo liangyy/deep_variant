@@ -38,7 +38,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 save_plot <- function(prefix, p, data, path, plots, folder, type){
     filename <- paste(paste(c(prefix, type, data), collapse = '_'), '.png', sep = '')
-    ggsave(filename = filename, plot = p, path = path, width = 1.5, height = 2.2)
+    ggsave(filename = filename, plot = p, path = path, width = 2.2, height = 1.5)
     plots[[data]] <- paste(folder, path, filename, sep = '/')
     plots
 }

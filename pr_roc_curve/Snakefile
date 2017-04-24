@@ -132,10 +132,22 @@ curves.pr <- curves[curves$type == 'pr', ]
 plots.pr <- list()
 for(i in unique(curves.pr$data)){{
     p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info)) +
-        ggtitle(paste('PR curve', 'of data', i))
+        ggtitle(paste('PR curve', 'of data', i)) +
+        theme(title = element_text(size=4), text = element_text(size=4))
     plots.pr <- save_plot(prefix, p, i, path, plots.pr, envir, 'pr')
 }}
 ```
+
+<div class="col2">
+```{{r, echo=FALSE, warning=FALSE}}
+bsselect(plots.roc, type = "img", selected = names(plots.roc)[1],
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
+        frame_height = 300, frame_width = 300)
+bsselect(plots.pr, type = "img", selected = names(plots.pr)[1],
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
+        frame_height = 300, frame_width = 300)
+```
+</div>
 '''.format(prefix=params[0], input=input[0], envir='../')
         o = open(output[0], 'w')
         o.write(rmd)
