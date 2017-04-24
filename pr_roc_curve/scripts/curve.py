@@ -11,6 +11,11 @@ parser.add_argument('--ypidx', type=int, help='1-based')
 parser.add_argument('--output')
 parser.add_argument('--mode')
 parser.add_argument('--name')
+parser.add_argument('--info')
+parser.add_argument('--ydouble')
+parser.add_argument('--ypdouble')
+parser.add_argument('--yremove', help='1-based: remove [start]-[end]')
+parser.add_argument('--ypremove')
 args = parser.parse_args()
 
 
@@ -25,14 +30,32 @@ import pandas as pd
 import feather
 
 y = my_python.getData(args.ypath, args.yname)
-y = y[:, args.yidx - 1]
-ny = y.shape[0] / 2
-y = y[:ny]
+if y.dim == 2:
+    y = y[:, args.yidx - 1]
+if args.ypdouble == 'Yes':
+    ny = y.shape[0] / 2
+    y = y[:ny]
+if args.yremove != 'None':
+    temp = args.yremove.split('-')
+    start = int(temp[0]) - 1
+    end = int(temp[1])
+    y = np.hstack((y[:start], y[end:]))
+
+
+
 
 yp = my_python.getData(args.yppath, args.ypname)
-yp = y[:, args.ypidx - 1]
-nyp = yp.shape[0] / 2
-if nyp != ny:
+if yp.dim == 2:
+    yp = y[:, args.ypidx - 1]
+if args.ypdouble == 'Yes':
+    nyp = yp.shape[0] / 2
+if args.ypremove != 'None':
+    temp = args.ypremove.split('-')
+    start = int(temp[0]) - 1
+    end = int(temp[1])
+    yp = np.hstack((yp[:start], yp[end:]))
+
+if yp.shape[0] != y.shape[0]:
     my_python.eprint('The number of sampels in y and y_pred does not match. Exit')
     sys.exit()
 yp = (yp[:nyp] + yp[nyp:]) / 2
