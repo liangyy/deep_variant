@@ -1,0 +1,36 @@
+E081:
+  y:
+    path: 'path_to_y_hdf5'
+    name: 'traindata'
+    label_idx: 3 # 1-based
+  ypred:
+    path: 'path_to_ypred_hdf5'
+    name: 'y_pred'
+    label_idx: 1 # 1-based
+E082:
+  y:
+    path: 'path_to_y_hdf5'
+    name: 'traindata'
+    label_idx: 3 # 1-based
+  ypred:
+    path: 'path_to_ypred_hdf5'
+    name: 'y_pred'
+    label_idx: 1 # 1-based
+E129:
+  y:
+    path: 'path_to_y_hdf5'
+    name: 'traindata'
+    label_idx: 3 # 1-based
+  ypred:
+    path: 'path_to_ypred_hdf5'
+    name: 'y_pred'
+    label_idx: 1 # 1-based
+Noonan:
+  y:
+    path: 'path_to_y_hdf5'
+    name: 'traindata'
+    label_idx: 3 # 1-based
+  ypred:
+    path: 'path_to_ypred_hdf5'
+    name: 'y_pred'
+    label_idx: 1 # 1-based

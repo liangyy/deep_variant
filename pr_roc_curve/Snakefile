@@ -1,0 +1,51 @@
+# This pipeline takes y, predicted y and output PR, ROC curves calculated by scikit-learn
+# toolkit and saves it as a feather table for downstream analysis
+
+# Here we assume that the y and y_pred contains two directions !!
+configfil: 'config.yaml'
+run combine:
+    input:
+        pr = [ 'curve/pr_{i}.feather'.format(i = i) for i in config ],
+        roc = [ 'curve/roc_{i}.feather'.format(i = i) for i in config ]
+    output:
+        'curves.feather'
+    shell:
+        'scripts/combine.py --files {input.roc} {input.pr} --output {output[0]}'
+
+run pr:
+    input:
+        y = lambda wildcards: config[wildcards.data]['y']['path']
+        yp = lambda wildcards: config[wildcards.data]['ypred']['path']
+    params:
+        y_name = lambda wildcards: config[wildcards.data]['y']['name'],
+        y_idx = lambda wildcards: config[wildcards.data]['y']['label_idx'],
+        yp_name = lambda wildcards: config[wildcards.data]['ypred']['name'],
+        yp_idx = lambda wildcards: config[wildcards.data]['ypred']['label_idx']
+    output:
+        temp('curve/pr_{data}.feather')
+    shell:
+        'scripts/curve.py --ypath {input.y} --yppath {input.yp} \
+                        --yname {params.y_name} --ypname {params.yp_name} \
+                        --yidx {params.y_idx} --ypidx {params.yp_idx} \
+                        --output {output[0]} \
+                        --mode pr \
+                        --name {params.data_name}'
+run roc:
+    input:
+        y = lambda wildcards: config[wildcards.data]['y']['path']
+        yp = lambda wildcards: config[wildcards.data]['ypred']['path']
+    params:
+        y_name = lambda wildcards: config[wildcards.data]['y']['name'],
+        y_idx = lambda wildcards: config[wildcards.data]['y']['label_idx'],
+        yp_name = lambda wildcards: config[wildcards.data]['ypred']['name'],
+        yp_idx = lambda wildcards: config[wildcards.data]['ypred']['label_idx'],
+        data_name = lambda wildcards: wildcards.data
+    output:
+        temp('curve/roc_{data}.feather')
+    shell:
+        'scripts/curve.py --ypath {input.y} --yppath {input.yp} \
+                        --yname {params.y_name} --ypname {params.yp_name} \
+                        --yidx {params.y_idx} --ypidx {params.yp_idx} \
+                        --output {output[0]} \
+                        --mode roc \
+                        --name {params.data_name}'
