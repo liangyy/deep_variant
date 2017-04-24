@@ -7,6 +7,8 @@ configfile: 'config.yaml'
 def get_names(config):
     files = []
     for group in config:
+        if 'data' not in config[group]:
+            continue
         for data in config[group]['data']:
             files.append('curve/{group}/pr_{data}.feather'.format(group=group, data=data))
             files.append('curve/{group}/roc_{data}.feather'.format(group=group, data=data))

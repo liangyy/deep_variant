@@ -68,8 +68,8 @@ if yp.shape[0] != y.shape[0]:
 if args.mode == 'pr':
     precision, recall, thresholds = precision_recall_curve(y, yp)
     thresholds = np.hstack((thresholds, 1))
-    table = pd.DataFrame({ 'precision' : precision, 'recall' : recall, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode})
+    table = pd.DataFrame({ 'precision' : precision, 'recall' : recall, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 elif args.mode == 'roc':
     fpr, tpr, thresholds = metrics.roc_curve(y, yp)
-    table = pd.DataFrame({ 'fpr' : fpr, 'tpr' : tpr, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode})
+    table = pd.DataFrame({ 'fpr' : fpr, 'tpr' : tpr, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 feather.write_dataframe(table, args.output)
