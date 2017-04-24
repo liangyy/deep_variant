@@ -125,7 +125,7 @@ plot_per_motif_grad_mean <- function(pos, title){
         labs(x = 'mean of increase', y = 'mean of decrease') +
         ggtitle(paste('Comparison btw two directions in', title, 'data'))
     motifs <- colnames(pos)[!colnames(pos) %in% 'Direction']
-    motif.order <- order(pos.max.mean, decreasing = T)
+    motif.order <- order(pos.min.mean)
     motifs.ordered <- as.character(motifs[motif.order])
     return(list(plot = p, motifs = motifs.ordered, mean.max = pos.max.mean[motif.order], mean.min = pos.min.mean[motif.order]))
 }
