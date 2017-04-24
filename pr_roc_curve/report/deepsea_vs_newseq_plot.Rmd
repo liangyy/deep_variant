@@ -1,0 +1,64 @@
+---
+title: "Deep brain - Performance ROC/PR curves"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+<style>
+    .col2 {
+        columns: 2 200px;         /* number of columns and width in pixels*/
+            -webkit-columns: 2 200px; /* chrome, safari */
+            -moz-columns: 2 200px;    /* firefox */
+    }
+    .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+    }
+</style>
+
+# ROC curves
+
+```{r, echo=FALSE}
+library(feather)
+library(ggplot2)
+source('scripts/my_r.R')
+prefix <- 'deepsea_vs_newseq'
+path <- 'plots/'
+envir <- '../'
+curves <- read_feather('result/deepsea_vs_newseq_curves.feather')
+curves.roc <- curves[curves$type == 'roc', ]
+plots.roc <- list()
+for(i in unique(curves.roc$data)){
+    p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info)) +
+        ggtitle(paste('ROC curve', 'of data', i))
+    plots.roc <- save_plot(prefix, p, i, path, plots.roc, envir, 'roc')
+}
+curves.pr <- curves[curves$type == 'pr', ]
+plots.pr <- list()
+for(i in unique(curves.pr$data)){
+    p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info)) +
+        ggtitle(paste('PR curve', 'of data', i)) +
+        theme(title = element_text(size=4), text = element_text(size=4))
+    plots.pr <- save_plot(prefix, p, i, path, plots.pr, envir, 'pr')
+}
+```
+
+<div class="col2">
+```{r, echo=FALSE, warning=FALSE}
+bsselect(plots.roc, type = "img", selected = names(plots.roc)[1],
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
+        frame_height = 300, frame_width = 300)
+bsselect(plots.pr, type = "img", selected = names(plots.pr)[1],
+        live_search = TRUE, show_tick = TRUE, height = 3, width = 3,
+        frame_height = 300, frame_width = 300)
+```
+</div>
