@@ -1,0 +1,52 @@
+---
+title: "Deep brain - Performance ROC/PR curves"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+    
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+<style>
+    .col2 {
+        columns: 2 200px;         /* number of columns and width in pixels*/
+            -webkit-columns: 2 200px; /* chrome, safari */
+            -moz-columns: 2 200px;    /* firefox */
+    }
+    .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+    }
+</style>
+
+# ROC curves
+
+```{r}
+library(feather)
+library(ggplot2)
+source('scripts/my_r.R')
+prefix <- '{prefix}'
+path <- 'plots/'
+envir <- '{envir}'
+curves <- read_feather('curves.feather')
+curves.roc <- curves[curves$type == 'roc', ]
+plots.roc <- list()
+for(i in unique(curves.roc$data)){
+    p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info)) + 
+        ggtitle(paste('ROC curve', 'of data', i))
+    plots.roc <- save_plot(prefix, p, i, path, plots.roc, folder, 'roc')
+}
+curves.pr <- curves[curves$type == 'pr', ]
+plots.pr <- list()
+for(i in unique(curves.pr$data)){
+    p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info)) + 
+        ggtitle(paste('PR curve', 'of data', i))
+    plots.pr <- save_plot(prefix, p, i, path, plots.pr, folder, 'pr')
+}
+```

@@ -1,7 +1,6 @@
 # This pipeline takes y, predicted y and output PR, ROC curves calculated by scikit-learn
 # toolkit and saves it as a feather table for downstream analysis
 
-# Here we assume that the y and y_pred contains two directions !!
 configfile: 'config.yaml'
 
 def get_names(config):
@@ -18,7 +17,7 @@ rule combine:
     input:
         files = get_names(config)
     output:
-        'curves.feather'
+        'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
     shell:
         'python scripts/combine.py --files {input.files} --output {output[0]}'
 
@@ -76,3 +75,77 @@ rule roc:
                         --info {params.info} \
                         --ydouble {params.y_double} --ypdouble {params.yp_double} \
                         --yremove {params.y_remove} --ypremove {params.yp_remove}'
+
+rule report_rmd:
+    input:
+        'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
+    params:
+        config['prefix']
+    output:
+        temp('report/{run_name}_plot.Rmd'.format(run_name=config['prefix']))
+    run:
+        rmd = '''---
+title: "Deep brain - Performance ROC/PR curves"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+<style>
+    .col2 {{
+        columns: 2 200px;         /* number of columns and width in pixels*/
+            -webkit-columns: 2 200px; /* chrome, safari */
+            -moz-columns: 2 200px;    /* firefox */
+    }}
+    .col3 {{
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+    }}
+</style>
+
+# ROC curves
+
+```{{r, echo=FALSE}}
+library(feather)
+library(ggplot2)
+source('scripts/my_r.R')
+prefix <- '{prefix}'
+path <- 'plots/'
+envir <- '{envir}'
+curves <- read_feather('{input}')
+curves.roc <- curves[curves$type == 'roc', ]
+plots.roc <- list()
+for(i in unique(curves.roc$data)){{
+    p <- ggplot(curves.roc[curves.roc$data == i, ]) + geom_point(aes(x = fpr, y = tpr, group = info, color = info)) +
+        ggtitle(paste('ROC curve', 'of data', i))
+    plots.roc <- save_plot(prefix, p, i, path, plots.roc, envir, 'roc')
+}}
+curves.pr <- curves[curves$type == 'pr', ]
+plots.pr <- list()
+for(i in unique(curves.pr$data)){{
+    p <- ggplot(curves.pr[curves.pr$data == i, ]) + geom_point(aes(x = recall, y = precision, group = info, color = info)) +
+        ggtitle(paste('PR curve', 'of data', i))
+    plots.pr <- save_plot(prefix, p, i, path, plots.pr, envir, 'pr')
+}}
+```
+'''.format(prefix=params[0], input=input[0], envir='../')
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule report_html:
+    input:
+        rmd = 'report/{run_name}_plot.Rmd'.format(run_name=config['prefix']),
+        data = 'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
+    output:
+        'report/{run_name}_plot.html'.format(run_name=config['prefix'])
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
