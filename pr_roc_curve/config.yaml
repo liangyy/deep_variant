@@ -90,7 +90,7 @@ group2:
         double: 'No'
         remove: 'None'
       ypred:
-        path: 'E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
+        path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
         name: 'y_pred'
         label_idx: 3 # 1-based
         double: 'No'

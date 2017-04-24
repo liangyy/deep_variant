@@ -2,27 +2,27 @@
 # toolkit and saves it as a feather table for downstream analysis
 
 # Here we assume that the y and y_pred contains two directions !!
-configfil: 'config.yaml'
+configfile: 'config.yaml'
 
 def get_names(config):
     files = []
     for group in config:
-        for data in config[group]:
+        for data in config[group]['data']:
             files.append('curve/{group}/pr_{data}.feather'.format(group=group, data=data))
-            files.append('curve/{group}/pr_{data}.feather'.format(group=group, data=data))
+            files.append('curve/{group}/roc_{data}.feather'.format(group=group, data=data))
     return files
 
-run combine:
+rule combine:
     input:
         files = get_names(config)
     output:
         'curves.feather'
     shell:
-        'scripts/combine.py --files {input.files} --output {output[0]}'
+        'python scripts/combine.py --files {input.files} --output {output[0]}'
 
-run pr:
+rule pr:
     input:
-        y = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['path']
+        y = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['path'],
         yp = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['ypred']['path']
     params:
         y_name = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['name'],
@@ -38,7 +38,7 @@ run pr:
     output:
         temp('curve/{group}/pr_{data}.feather')
     shell:
-        'scripts/curve.py --ypath {input.y} --yppath {input.yp} \
+        'python scripts/curve.py --ypath {input.y} --yppath {input.yp} \
                         --yname {params.y_name} --ypname {params.yp_name} \
                         --yidx {params.y_idx} --ypidx {params.yp_idx} \
                         --output {output[0]} \
@@ -46,11 +46,11 @@ run pr:
                         --name {params.data_name} \
                         --info {params.info} \
                         --ydouble {params.y_double} --ypdouble {params.yp_double} \
-                        --yremove {params.yp_remove} --ypremove {params.yp_remove}'
-run roc:
+                        --yremove {params.y_remove} --ypremove {params.yp_remove}'
+rule roc:
     input:
-        y = lambda wildcards: config[wildcards.group][wildcards.data]['y']['path']
-        yp = lambda wildcards: config[wildcards.group][wildcards.data]['ypred']['path']
+        y = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['path'],
+        yp = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['ypred']['path']
     params:
         y_name = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['name'],
         y_idx = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['label_idx'],
@@ -65,7 +65,7 @@ run roc:
     output:
         temp('curve/{group}/roc_{data}.feather')
     shell:
-        'scripts/curve.py --ypath {input.y} --yppath {input.yp} \
+        'python scripts/curve.py --ypath {input.y} --yppath {input.yp} \
                         --yname {params.y_name} --ypname {params.yp_name} \
                         --yidx {params.y_idx} --ypidx {params.yp_idx} \
                         --output {output[0]} \
@@ -73,4 +73,4 @@ run roc:
                         --name {params.data_name} \
                         --info {params.info} \
                         --ydouble {params.y_double} --ypdouble {params.yp_double} \
-                        --yremove {params.yp_remove} --ypremove {params.yp_remove}'
+                        --yremove {params.y_remove} --ypremove {params.yp_remove}'

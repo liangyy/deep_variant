@@ -30,10 +30,13 @@ import pandas as pd
 import feather
 
 y = my_python.getData(args.ypath, args.yname)
-if y.dim == 2:
+if y.ndim == 2:
     y = y[:, args.yidx - 1]
-if args.ypdouble == 'Yes':
-    ny = y.shape[0] / 2
+if args.ydouble == 'Yes':
+    if y.shape[0] % 2 == 1:
+        my_python.eprint('y dim is not mod 2 zero. Cannot use double mode. Exit')
+        sys.exit()
+    ny = int(y.shape[0] / 2)
     y = y[:ny]
 if args.yremove != 'None':
     temp = args.yremove.split('-')
@@ -45,20 +48,22 @@ if args.yremove != 'None':
 
 
 yp = my_python.getData(args.yppath, args.ypname)
-if yp.dim == 2:
-    yp = y[:, args.ypidx - 1]
+if yp.ndim == 2:
+    yp = yp[:, args.ypidx - 1]
 if args.ypdouble == 'Yes':
-    nyp = yp.shape[0] / 2
+    if yp.shape[0] % 2 == 1:
+        my_python.eprint('y_pred dim is not mod 2 zero. Cannot use double mode. Exit')
+        sys.exit()
+    nyp = int(yp.shape[0] / 2)
+    yp = (yp[:nyp] + yp[nyp:]) / 2
 if args.ypremove != 'None':
     temp = args.ypremove.split('-')
     start = int(temp[0]) - 1
     end = int(temp[1])
     yp = np.hstack((yp[:start], yp[end:]))
-
 if yp.shape[0] != y.shape[0]:
     my_python.eprint('The number of sampels in y and y_pred does not match. Exit')
     sys.exit()
-yp = (yp[:nyp] + yp[nyp:]) / 2
 
 if args.mode == 'pr':
     precision, recall, thresholds = precision_recall_curve(y, yp)
