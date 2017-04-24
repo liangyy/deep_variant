@@ -20,6 +20,7 @@ There are three strategies:
 1. Use DeepSEA sequences and DeepSEA feature representation. 
     - See results and analysis [here](type1.html). 
     - See performance on new sequences [here](type1_newseq.html)
+    - See ROC/PR curve [here](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html)
 2. Use DeepSEA sequences but train a new model using the same architecture as DeepSEA. 
     - See results and analysis [here](type2.html). **ONGOING**
 3. Include new sequences and train a new model using the same architecture. **TODO**
