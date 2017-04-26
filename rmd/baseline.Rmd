@@ -1,0 +1,29 @@
+---
+title: "Deep brain - Baseline - Training"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+    
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Overview
+
+Baseline method is used to compare the performance. As DeepSEA, gkm-SVM is selected as baseline classifier. Here are several issues in making such comparison:
+
+* Gkm-SVM does not support joint learning, so we can only train a independent gkm-SVM for each annotation at a time.
+* Another issue is that gkm-SVM can only support ~20000 training sequences, therefore we should shrink the training set a lot.
+* Gkm-SVM is reported to work well under 300-bp window size and DeepSEA paper confirmed such behavior. So, we may need to use shorter window size for gkm-SVM learning.
+
+Therefore, the comparison cannot be made under rigoriously the same conditions, and it is unclear how to make fair comparison in this case.

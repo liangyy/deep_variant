@@ -17,6 +17,7 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
 
 There are three strategies:
 
+0. Baseline classifier. [here](baseline.html)
 1. Use DeepSEA sequences and DeepSEA feature representation. 
     - See results and analysis [here](type1.html). 
     - See performance on new sequences [here](type1_newseq.html)
@@ -30,8 +31,8 @@ There are three strategies:
 There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.
 
 1. Examine which filter or a set of filters that contribute most to a particular prediction task. 
-    - See details [here](motif_analysis.html). **TODO**
-2. How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) 
+    - See details [here](motif_analysis.html). **ONGOING**
+2. How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) **TODO**
 3. How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
     - See related discussion [here](auc.html)
 
@@ -41,10 +42,12 @@ There are some other directions and issues we need to explore and tackle. The an
     1. ~~ROC/PR AUC interpretation~~ [link](auc.html)
     2. ~~Extract sequences from new data sets~~ [link](memo_extract.html)
 * 4/10/17:
-    3. New loss function? Weighted hinge loss? [link](loss_function.html)
-    4. Motif analysis of current model [link](motif_analysis.html)
+    3. New loss function? Weighted hinge loss? [link](loss_function.html) **TODO**
+    4. Motif analysis of current model [link](motif_analysis.html) **ONGOING**
 * 4/14/17:
     5. ~~Build up pipeline using snakemake.~~ See issue1 at [link](https://github.com/CreRecombinase/DeepVariantPrediction)
+* 4/26/17:
+    6. Build base line classifier
 
 
 
