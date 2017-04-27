@@ -1,0 +1,78 @@
+def fastq_files(wildcards):
+    re = []
+    for i in config['fastq'][wildcards.group]:
+        re.append(config['fastq'][wildcards.group][i])
+    return re
+def concatenate_cmd(files, out):
+    files = ' '.join(files)
+    cmd = 'zcat {files} | gzip > {out}'.format(files = files, out = out)
+    return cmd
+
+
+### fastq 2 bam ###
+rule combine_fastqs:
+    input:
+        fastq_files = fastq_files(wildcards)
+    output:
+        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+    shell:
+        concatenate_cmd('{input.fastq_files}', '{output[0]}')
+
+rule fastq2sai:
+    input:
+        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+    output:
+        sai = temp('temp/{name}.combined.sai'.format(name = config['fastq']))
+    params:
+        ref = config['reference'],
+        ncpus = config['ncpus']
+    shell:
+        'bwa aln -Y -l 32 -n 0.04 -k 2 -t {params.ncpus} {params.ref} {input[0]} > {output.sai}'
+
+rule sai2sam:
+    input:
+        'temp/{name}.combined.sai'.format(name = config['fastq']),
+        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+    output:
+        temp('temp/{name}.combined.sam'.format(name = config['fastq']))
+    params:
+        ref = config['reference']
+    shell:
+        'bwa samse -n 10 {params.ref} {input[0]} {input[1]} > {output[0]}'
+
+rule sam2bam:
+    input:
+        'temp/{name}.combined.sam'.format(name = config['fastq'])
+    output:
+        'temp/{name}.combined.bam'.format(name = config['fastq'])
+    params:
+        ncpus = config['ncpus']
+    shell:
+        'samtools view -Shb {input[0]} > {output[0]}'
+
+rule bam_sort:
+    input:
+        'temp/{name}.combined.bam'.format(name = config['fastq'])
+    output:
+        'data/{name}.combined.bam'.format(name = config['fastq'])
+    shell:
+        'samtools sort -@ {params.ncpus} -m 4G -f {input[0]} {output[0]}'
+
+rule bam_index:
+    input:
+        'data/{name}.combined.bam'.format(name = config['fastq'])
+    output:
+        'data/{name}.combined.bam.bai'.format(name = config['fastq'])
+    shell:
+        'samtools index {input[0]}'
+
+        
+### variant calling ###
+rule call_snp:
+    input:
+        'data/{name}.combined.bam'.format(name = config['fastq']),
+        'data/{name}.combined.bam.bai'.format(name = config['fastq'])
+    output:
+
+samtools view -b -q 10 myBam.bam | samtools pileup -f myRef.fasta -
+| java -jar VarScan.jar pileup2snp

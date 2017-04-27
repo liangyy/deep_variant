@@ -1,0 +1,14 @@
+fastq:
+  E081:
+    1: 'path_to_fastq'
+    2: 'path_to_fastq'
+    3: 'path_to_fastq'
+    4: 'path_to_fastq'
+    5: 'path_to_fastq'
+    6: 'path_to_fastq'
+    7: 'path_to_fastq'
+    8: 'path_to_fastq'
+    9: 'path_to_fastq'
+    10: 'path_to_fastq'
+reference: 'path_to_reference'
+ncpus: 4
