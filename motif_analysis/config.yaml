@@ -4,6 +4,7 @@ method:
     snakemake: '_mutagensis.snakemake'
   sliding_window:
     snakemake: '_sliding_window.snakemake'
+    mask_size: 8
   motif_gradient:
     snakemake: '_motif_gradient.snakemake'
   motif_activation:
