@@ -15,8 +15,10 @@ rule combine_fastqs:
         fastq_files = lambda wildcards: fastq_files(wildcards)
     output:
         'data/{name}.combined.fastq.gz'
-    shell:
-        concatenate_cmd('{input.fastq_files}', '{output[0]}')
+    run:
+        import os
+        cmd = concatenate_cmd(input.fastq_files, output[0])
+        os.system(cmd)
 
 rule fastq2sai:
     input:
@@ -25,9 +27,9 @@ rule fastq2sai:
         sai = temp('temp/{name}.combined.sai')
     params:
         ref = config['genome_assembly']['fasta'],
-        ncpus = config['ncpus']
+    threads: config['ncpus']
     shell:
-        'bwa aln -Y -l 32 -n 0.04 -k 2 -t {params.ncpus} {params.ref} {input[0]} > {output.sai}'
+        'bwa aln -Y -l 32 -n 0.04 -k 2 -t {threads} {params.ref} {input[0]} > {output.sai}'
 
 rule sai2sam:
     input:
@@ -44,9 +46,7 @@ rule sam2bam:
     input:
         'temp/{name}.combined.sam'
     output:
-        'temp/{name}.combined.bam'
-    params:
-        ncpus = config['ncpus']
+        temp('temp/{name}.combined.bam')
     shell:
         'samtools view -Shb {input[0]} > {output[0]}'
 
@@ -55,8 +55,9 @@ rule bam_sort:
         'temp/{name}.combined.bam'
     output:
         'data/{name}.combined.bam'
+    threads: config['ncpus']
     shell:
-        'samtools sort -@ {params.ncpus} -m 4G -f {input[0]} {output[0]}'
+        'samtools sort -@ {threads} -m 4G -f {input[0]} {output[0]}'
 
 rule bam_index:
     input:

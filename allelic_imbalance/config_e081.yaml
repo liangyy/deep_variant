@@ -14,7 +14,7 @@ fastq:
 genome_assembly:
   fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
   size: '/project2/xinhe/yanyul/database/hg19/hg19.chrom.sizes'
-ncpus: 4
+ncpus: 20
 model:
   name: 'keras_deepsea_copy'
   snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
