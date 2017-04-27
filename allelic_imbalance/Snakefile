@@ -24,7 +24,7 @@ rule fastq2sai:
     output:
         sai = temp('temp/{name}.combined.sai'.format(name = config['fastq']))
     params:
-        ref = config['reference'],
+        ref = config['genome_assembly']['fasta'],
         ncpus = config['ncpus']
     shell:
         'bwa aln -Y -l 32 -n 0.04 -k 2 -t {params.ncpus} {params.ref} {input[0]} > {output.sai}'
@@ -36,7 +36,7 @@ rule sai2sam:
     output:
         temp('temp/{name}.combined.sam'.format(name = config['fastq']))
     params:
-        ref = config['reference']
+        ref = config['genome_assembly']['size']
     shell:
         'bwa samse -n 10 {params.ref} {input[0]} {input[1]} > {output[0]}'
 
@@ -66,13 +66,128 @@ rule bam_index:
     shell:
         'samtools index {input[0]}'
 
-        
+### alignment report ###
+rule gen_align_stats1:
+    input:
+        'data/{name}.combined.bam'.format(name = config['fastq'])
+    output:
+        temp('report/{name}.align_flagstat.txt'.format(name = config['fastq']))
+    shell:
+        'samtools flagstat {input[0]} > {output[0]}'
+# No edwBamStats is available
+# rule gen_align_stats2:
+#     input:
+#         'data/{name}.combined.bam'.format(name = config['fastq'])
+#     output:
+#         temp('report/{name}.align_edwBamStats.txt'.format(name = config['fastq']))
+#     shell:
+#         'edwBamStats {input[0]} {output[0]}'
+
 ### variant calling ###
-rule call_snp:
+rule call_snp_varscan:
     input:
         'data/{name}.combined.bam'.format(name = config['fastq']),
         'data/{name}.combined.bam.bai'.format(name = config['fastq'])
     output:
+        temp('data/{name}.combined.varscan.gz'.format(name = config['fastq']))
+    params:
+        varscan = config['call_varscan']
+    shell:
+        '''samtools view -b -q 10 myBam.bam | \
+        samtools pileup -f myRef.fasta - | \
+        {params.varscan} pileup2snp --min-coverage 100 \
+        --min-reads2 20 | \
+        gzip > {output[0]}'''
 
-samtools view -b -q 10 myBam.bam | samtools pileup -f myRef.fasta -
-| java -jar VarScan.jar pileup2snp
+rule filtering:
+    input:
+        'data/{name}.combined.varscan.gz'.format(name = config['fastq'])
+    output:
+        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+    shell:
+        'python scripts/filtering.py --infile {input[0]} --outfile {output[0]}'
+
+### allele freq distribution ###
+rule draw_hist_rmd:
+    input:
+        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+    output:
+        temp('report/{name}.allele_freq.Rmd'.format(name = config['fastq']))
+    run:
+        rmd = '''---
+title: "Deep brain - Allelic imbalance - data processing - histogram"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{{r}}
+library(ggplot2)
+mydata <- read.table({input}, sep = '\t', header = T)
+ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('Allele frequency')
+```
+'''.format(input=input[0])
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule draw_hist_html:
+    input:
+        'report/{name}.allele_freq.Rmd'.format(name = config['fastq'])
+    output:
+        'report/{name}.allele_freq.html'.format(name = config['fastq'])
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
+
+### infer imbalance ###
+rule calculate_pvalue:
+    input:
+        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+    output:
+        'data/{name}.combined.imbalance.gz'.format(name = config['fastq'])
+    shell:
+        'python scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
+
+### prepare input for prediction workflow ###
+rule prepare_input:
+    input:
+        'data/{name}.combined.imbalance.gz'.format(name = config['fastq'])
+    output:
+        'data/{name}.combined.var_input_list.txt.gz'.format(name = config['fastq'])
+rule prepare_config:
+    params:
+        name = lambda wildcards: wildcards.name,
+        inputfile = 'data/{name}.combined.var_input_list.txt.gz'.format(name = config['fastq']),
+        model = config['model']['name'],
+        model_dir = config['model']['workdir'],
+        label_idx = config['model']['label_idx']
+    output:
+        'data/config.{name}.allelic_imbalance.yaml'.format(name = config['fastq'])
+    run:
+        import os
+        inputfile = os.path.abspath(params.inputfile)
+        yaml = '''
+data:
+  {name}:
+    name: '{inputfile}'
+    method: '_formatting_allelic_imbalance.snakemake'
+window_size: 1000 # Attention: this should match the window size of the model below
+model:
+  name: '{model}'
+  snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
+  workdir: '{model_dir}'
+label:
+  allelic_imbalance_{name}:
+    {name} : {label_idx}
+genome_assembly:
+  fasta: '{fasta_path}'
+  size: '{fasta_size}'
+'''.format(name=params.name, inputfile=inputfile,
+            model=params.model, model_dir=params.model_dir,
+            label_idx=params.label_idx)
+        o = open(output[0], 'w')
+        o.write(yaml)
+        o.close()

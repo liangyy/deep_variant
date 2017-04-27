@@ -1,3 +1,4 @@
+call_varscan: 'java -jar /project2/xinhe/yanyul/softwares/varscan/VarScan.v2.4.3.jar'
 fastq:
   E081:
     1: 'path_to_fastq'
@@ -10,5 +11,12 @@ fastq:
     8: 'path_to_fastq'
     9: 'path_to_fastq'
     10: 'path_to_fastq'
-reference: 'path_to_reference'
+genome_assembly:
+  fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
+  size: '/project2/xinhe/yanyul/database/hg19/hg19.chrom.sizes'
 ncpus: 4
+model:
+  name: 'keras_deepsea_copy'
+  snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
+  workdir: '../../yanyu/DeepSEA/debug'
+  label_idx: 920 # 1-based
