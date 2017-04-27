@@ -12,7 +12,7 @@ def concatenate_cmd(files, out):
 ### fastq 2 bam ###
 rule combine_fastqs:
     input:
-        fastq_files = fastq_files(wildcards)
+        fastq_files = lambda wildcards: fastq_files(wildcards)
     output:
         'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
     shell:
