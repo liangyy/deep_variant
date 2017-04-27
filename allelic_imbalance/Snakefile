@@ -71,7 +71,7 @@ rule gen_align_stats1:
     input:
         'data/{name}.combined.bam'.format(name = config['fastq'])
     output:
-        temp('report/{name}.align_flagstat.txt'.format(name = config['fastq']))
+        'report/{name}.align_flagstat.txt'.format(name = config['fastq'])
     shell:
         'samtools flagstat {input[0]} > {output[0]}'
 # No edwBamStats is available
