@@ -1,7 +1,7 @@
 def fastq_files(wildcards):
     re = []
-    for i in config['fastq'][wildcards.group]:
-        re.append(config['fastq'][wildcards.group][i])
+    for i in config['fastq'][wildcards.name]:
+        re.append(config['fastq'][wildcards.name][i])
     return re
 def concatenate_cmd(files, out):
     files = ' '.join(files)
@@ -14,15 +14,15 @@ rule combine_fastqs:
     input:
         fastq_files = lambda wildcards: fastq_files(wildcards)
     output:
-        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+        'data/{name}.combined.fastq.gz'
     shell:
         concatenate_cmd('{input.fastq_files}', '{output[0]}')
 
 rule fastq2sai:
     input:
-        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+        'data/{name}.combined.fastq.gz'
     output:
-        sai = temp('temp/{name}.combined.sai'.format(name = config['fastq']))
+        sai = temp('temp/{name}.combined.sai')
     params:
         ref = config['genome_assembly']['fasta'],
         ncpus = config['ncpus']
@@ -31,10 +31,10 @@ rule fastq2sai:
 
 rule sai2sam:
     input:
-        'temp/{name}.combined.sai'.format(name = config['fastq']),
-        'data/{name}.combined.fastq.gz'.format(name = config['fastq'])
+        'temp/{name}.combined.sai',
+        'data/{name}.combined.fastq.gz'
     output:
-        temp('temp/{name}.combined.sam'.format(name = config['fastq']))
+        temp('temp/{name}.combined.sam')
     params:
         ref = config['genome_assembly']['size']
     shell:
@@ -42,9 +42,9 @@ rule sai2sam:
 
 rule sam2bam:
     input:
-        'temp/{name}.combined.sam'.format(name = config['fastq'])
+        'temp/{name}.combined.sam'
     output:
-        'temp/{name}.combined.bam'.format(name = config['fastq'])
+        'temp/{name}.combined.bam'
     params:
         ncpus = config['ncpus']
     shell:
@@ -52,44 +52,44 @@ rule sam2bam:
 
 rule bam_sort:
     input:
-        'temp/{name}.combined.bam'.format(name = config['fastq'])
+        'temp/{name}.combined.bam'
     output:
-        'data/{name}.combined.bam'.format(name = config['fastq'])
+        'data/{name}.combined.bam'
     shell:
         'samtools sort -@ {params.ncpus} -m 4G -f {input[0]} {output[0]}'
 
 rule bam_index:
     input:
-        'data/{name}.combined.bam'.format(name = config['fastq'])
+        'data/{name}.combined.bam'
     output:
-        'data/{name}.combined.bam.bai'.format(name = config['fastq'])
+        'data/{name}.combined.bam.bai'
     shell:
         'samtools index {input[0]}'
 
 ### alignment report ###
 rule gen_align_stats1:
     input:
-        'data/{name}.combined.bam'.format(name = config['fastq'])
+        'data/{name}.combined.bam'
     output:
-        'report/{name}.align_flagstat.txt'.format(name = config['fastq'])
+        'report/{name}.align_flagstat.txt'
     shell:
         'samtools flagstat {input[0]} > {output[0]}'
 # No edwBamStats is available
 # rule gen_align_stats2:
 #     input:
-#         'data/{name}.combined.bam'.format(name = config['fastq'])
+#         'data/{name}.combined.bam'
 #     output:
-#         temp('report/{name}.align_edwBamStats.txt'.format(name = config['fastq']))
+#         temp('report/{name}.align_edwBamStats.txt')
 #     shell:
 #         'edwBamStats {input[0]} {output[0]}'
 
 ### variant calling ###
 rule call_snp_varscan:
     input:
-        'data/{name}.combined.bam'.format(name = config['fastq']),
-        'data/{name}.combined.bam.bai'.format(name = config['fastq'])
+        'data/{name}.combined.bam',
+        'data/{name}.combined.bam.bai'
     output:
-        temp('data/{name}.combined.varscan.gz'.format(name = config['fastq']))
+        temp('data/{name}.combined.varscan.gz')
     params:
         varscan = config['call_varscan']
     shell:
@@ -101,18 +101,18 @@ rule call_snp_varscan:
 
 rule filtering:
     input:
-        'data/{name}.combined.varscan.gz'.format(name = config['fastq'])
+        'data/{name}.combined.varscan.gz'
     output:
-        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+        'data/{name}.combined.varscan.filtered.gz'
     shell:
         'python scripts/filtering.py --infile {input[0]} --outfile {output[0]}'
 
 ### allele freq distribution ###
 rule draw_hist_rmd:
     input:
-        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+        'data/{name}.combined.varscan.filtered.gz'
     output:
-        temp('report/{name}.allele_freq.Rmd'.format(name = config['fastq']))
+        temp('report/{name}.allele_freq.Rmd')
     run:
         rmd = '''---
 title: "Deep brain - Allelic imbalance - data processing - histogram"
@@ -136,36 +136,36 @@ ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('All
 
 rule draw_hist_html:
     input:
-        'report/{name}.allele_freq.Rmd'.format(name = config['fastq'])
+        'report/{name}.allele_freq.Rmd'
     output:
-        'report/{name}.allele_freq.html'.format(name = config['fastq'])
+        'report/{name}.allele_freq.html'
     shell:
         '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
 
 ### infer imbalance ###
 rule calculate_pvalue:
     input:
-        'data/{name}.combined.varscan.filtered.gz'.format(name = config['fastq'])
+        'data/{name}.combined.varscan.filtered.gz'
     output:
-        'data/{name}.combined.imbalance.gz'.format(name = config['fastq'])
+        'data/{name}.combined.imbalance.gz'
     shell:
         'python scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
 
 ### prepare input for prediction workflow ###
 rule prepare_input:
     input:
-        'data/{name}.combined.imbalance.gz'.format(name = config['fastq'])
+        'data/{name}.combined.imbalance.gz'
     output:
-        'data/{name}.combined.var_input_list.txt.gz'.format(name = config['fastq'])
+        'data/{name}.combined.var_input_list.txt.gz'
 rule prepare_config:
     params:
         name = lambda wildcards: wildcards.name,
-        inputfile = 'data/{name}.combined.var_input_list.txt.gz'.format(name = config['fastq']),
+        inputfile = 'data/{name}.combined.var_input_list.txt.gz',
         model = config['model']['name'],
         model_dir = config['model']['workdir'],
         label_idx = config['model']['label_idx']
     output:
-        'data/config.{name}.allelic_imbalance.yaml'.format(name = config['fastq'])
+        'data/config.{name}.allelic_imbalance.yaml'
     run:
         import os
         inputfile = os.path.abspath(params.inputfile)
