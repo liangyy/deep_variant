@@ -35,6 +35,8 @@ There are some other directions and issues we need to explore and tackle. The an
 2. How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) **TODO**
 3. How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
     - See related discussion [here](auc.html)
+4. GWAS SNPs
+    - See [here](gwas.html)
 
 # TODO list
 

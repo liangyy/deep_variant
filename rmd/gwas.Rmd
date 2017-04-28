@@ -1,0 +1,54 @@
+---
+title: "Deep brain - GWAS - progress"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+    
+<style>
+pre code, pre, code {
+        white-space: pre !important;
+        overflow-x: scroll !important;
+        word-break: keep-all !important;
+        word-wrap: initial !important;
+    }
+</style>
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Main idea
+
+We want to see if DeepSEA predicted causal SNPs are enriched in GWAS leading SNPs. 
+
+# Case study 
+
+## Inflammatory Bowel Disease
+
+### Data source
+We used IBD GWAS study at [here](https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/analysis.cgi?study_id=phs000130.v1.p1&pha=2847) and [here](http://science.sciencemag.org/content/314/5804/1461.long) is a related research paper.
+
+### Annotation labels
+
+We used the following annotation labels:
+
+```{r}
+labels <- read.table('../../../deep_brain/pranav/IBD/IBD_SNPs.seleced_labels.txt', header = T, sep = '\t')
+print(labels[, !grepl('AUC', colnames(labels)) & colnames(labels) != 'Treatment'])
+```
+
+### Results
+
+```{r}
+results <- read.table('../../../deep_brain/pranav/IBD/IBD_fisher_results.txt', header = T, sep = '\t')
+print(results)
+```
+
+Thershold column shows the thresholds used to call leading SNPs and predicted causal SNPs. Here leading SNPs are called based on p-value (last number) and causal SNPs are called based on odds ratio difference (first two percentile).
+
+### Future direction 
+
+* Filtering out protein-coding SNPs
+* Restirct to SNPs that are within DNase region (same cell type)
+* Focus on known causal gene (see the referred paper)
