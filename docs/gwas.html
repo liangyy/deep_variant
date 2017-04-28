@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Deep brain - GWAS - progress</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Deep Variant</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Tasks</a>
+</li>
+<li>
+  <a href="analysis_list.html">Analysis</a>
+</li>
+<li>
+  <a href="memo_list.html">Technical Memo</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/deep_variant">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Deep brain - GWAS - progress</h1>
+<h4 class="date"><em>28 April, 2017</em></h4>
+
+</div>
+
+
+<style>
+pre code, pre, code {
+        white-space: pre !important;
+        overflow-x: scroll !important;
+        word-break: keep-all !important;
+        word-wrap: initial !important;
+    }
+</style>
+<div id="main-idea" class="section level1">
+<h1><span class="header-section-number">1</span> Main idea</h1>
+<p>We want to see if DeepSEA predicted causal SNPs are enriched in GWAS leading SNPs.</p>
+</div>
+<div id="case-study" class="section level1">
+<h1><span class="header-section-number">2</span> Case study</h1>
+<div id="inflammatory-bowel-disease" class="section level2">
+<h2><span class="header-section-number">2.1</span> Inflammatory Bowel Disease</h2>
+<div id="data-source" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> Data source</h3>
+<p>We used IBD GWAS study at <a href="https://www.ncbi.nlm.nih.gov/projects/gap/cgi-bin/analysis.cgi?study_id=phs000130.v1.p1&amp;pha=2847">here</a> and <a href="http://science.sciencemag.org/content/314/5804/1461.long">here</a> is a related research paper.</p>
+</div>
+<div id="annotation-labels" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> Annotation labels</h3>
+<p>We used the following annotation labels:</p>
+<pre class="r"><code>labels &lt;- read.table(&#39;../../../deep_brain/pranav/IBD/IBD_SNPs.seleced_labels.txt&#39;, header = T, sep = &#39;\t&#39;)
+print(labels[, !grepl(&#39;AUC&#39;, colnames(labels)) &amp; colnames(labels) != &#39;Treatment&#39;])</code></pre>
+<pre><code>##                 Cell.Type TF.DNase.HistoneMark       Tissue Karyotype row_number label_type
+## 1           Adult_CD4_Th0                DNase        blood    normal         38   positive
+## 2                   CD20+                DNase        blood    normal         50   positive
+## 3                 GM12878                DNase        blood    normal         54   positive
+## 4 Monocytes-CD14+_RO01746                DNase    monocytes    normal        108   positive
+## 5                 HFF-Myc                DNase     foreskin    normal         83    control
+## 6                     HPF                DNase         lung    normal        101    control
+## 7                   RWPE1                DNase     prostate    normal         35    control
+## 8                   AoSMC                DNase blood vessel    normal          2    control</code></pre>
+</div>
+<div id="results" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> Results</h3>
+<pre class="r"><code>results &lt;- read.table(&#39;../../../deep_brain/pranav/IBD/IBD_fisher_results.txt&#39;, header = T, sep = &#39;\t&#39;)
+print(results)</code></pre>
+<pre><code>##         Threshold AdultCD4Th0   CD20plus   GM12878 MonocytesCD14plusRO01746     AoSMC    HFFMyc       HPF     RWPE1
+## 1 2.5, 97.5, 0.05  0.65411913 0.07902787 0.3995886                0.5072534 0.5187957 0.4303589 0.5187957 0.2985841
+## 2 2.5, 97.5, 0.01  0.05378379 0.46685633 0.4234880                0.6362819 0.3260644 0.7433662 0.2595354 0.6362819
+## 3     5, 95, 0.01  0.03233203 0.04456284 0.3415510                0.5972389 0.3549902 0.9789175 0.1319769 0.2343457
+## 4     5, 95, 0.05  0.29158860 0.07237007 0.4270613                0.3418697 0.9067175 0.7251829 0.8964103 0.1212775</code></pre>
+<p>Thershold column shows the thresholds used to call leading SNPs and predicted causal SNPs. Here leading SNPs are called based on p-value (last number) and causal SNPs are called based on odds ratio difference (first two percentile).</p>
+</div>
+<div id="future-direction" class="section level3">
+<h3><span class="header-section-number">2.1.4</span> Future direction</h3>
+<ul>
+<li>Filtering out protein-coding SNPs</li>
+<li>Restirct to SNPs that are within DNase region (same cell type)</li>
+<li>Focus on known causal gene (see the referred paper)</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
