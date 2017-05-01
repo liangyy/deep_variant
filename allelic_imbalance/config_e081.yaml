@@ -13,10 +13,10 @@ fastq:
     10: '../../../deep_variant/yanyu/deep_brain/evaluate_by_DGF/SRX062364/SRR203409.fastq.gz'
 genome_assembly:
   fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
-  size: '/project2/xinhe/yanyul/database/hg19/hg19.chrom.sizes'
+  size: '/project2/xinhe/yanyul/databases/hg19/hg19.chrom.sizes'
 ncpus: 20
 model:
-  name: 'keras_deepsea_copy'
+  name: 'keras_deepsea_with_040417_2_42_head_copy'
   snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
-  workdir: '../../yanyu/DeepSEA/debug'
-  label_idx: 920 # 1-based
+  workdir: '../../../deep_variant/yanyu/deep_brain/my_train/'
+  label_idx: 1 # 1-based

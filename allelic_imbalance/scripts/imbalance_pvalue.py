@@ -18,10 +18,10 @@ def fisher(inp):
     return {'Odds.Ratio': oddsratio, 'P.Value': pvalue}
 
 table = pd.read_csv(args.infile, delimiter = '\t', header = 0, compression = 'gzip')
-table['FishersExact'] = table.apply(
-    x1 =
-    lambda r: scipy.stats.fisher_exact([[r.Read1, r.Read2], []]),
-    axis=1)
+# table['FishersExact'] = table.apply(
+#     x1 
+#     lambda r: scipy.stats.fisher_exact([[r.Read1, r.Read2], []]),
+#     axis=1)
 new_table = table.apply(lambda s: pd.Series(fisher(s)), axis=1)
 table = pd.concat([table, new_table], axis=1)
 table.to_csv(args.outfile, sep='\t', compression='gzip')

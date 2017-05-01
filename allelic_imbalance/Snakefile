@@ -168,20 +168,22 @@ rule calculate_pvalue:
         'python scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
 
 ### prepare input for prediction workflow ###
-rule prepare_input:
-    input:
-        'data/{name}.combined.imbalance.gz'
-    output:
-        'data/{name}.combined.var_input_list.txt.gz'
-    shell:
-        'python scripts/prepare_input.py --infile {input[0]} --outfile {output[0]}'
+# rule prepare_input:
+#     input:
+#         'data/{name}.combined.imbalance.gz'
+#     output:
+#         'data/{name}.combined.var_input_list.txt.gz'
+#     shell:
+#         'python scripts/prepare_input.py --infile {input[0]} --outfile {output[0]}'
 rule prepare_config:
     params:
         name = lambda wildcards: wildcards.name,
-        inputfile = 'data/{name}.combined.var_input_list.txt.gz',
+        inputfile = 'data/{name}.combined.imbalance.gz',
         model = config['model']['name'],
         model_dir = config['model']['workdir'],
-        label_idx = config['model']['label_idx']
+        label_idx = config['model']['label_idx'],
+        fasta = config['genome_assembly']['fasta'],
+        size = config['genome_assembly']['size']
     output:
         'data/config.{name}.allelic_imbalance.yaml'
     run:
@@ -189,7 +191,7 @@ rule prepare_config:
         inputfile = os.path.abspath(params.inputfile)
         yaml = '''
 data:
-  {name}:
+  {name}_allelic_imbalance:
     name: '{inputfile}'
     method: '_formatting_allelic_imbalance.snakemake'
 window_size: 1000 # Attention: this should match the window size of the model below
@@ -203,7 +205,11 @@ label:
 genome_assembly:
   fasta: '{fasta_path}'
   size: '{fasta_size}'
-'''.format(name=params.name, inputfile=inputfile,
+performance:
+  mode1:
+    method: '_histogram.snakemake'
+    params: 'some other input here'
+'''.format(name=params.name, inputfile=inputfile, fasta_path=params.fasta, fasta_size=params.size,
             model=params.model, model_dir=params.model_dir,
             label_idx=params.label_idx)
         o = open(output[0], 'w')
