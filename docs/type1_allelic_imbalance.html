@@ -9,10 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Yanyu Liang" />
 
 
-<title>Task</title>
+<title>Deep brain - Type 1 - evaluation on allelic imbalance instances</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -301,88 +300,35 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Task</h1>
-<h4 class="author"><em>Yanyu Liang</em></h4>
+<h1 class="title toc-ignore">Deep brain - Type 1 - evaluation on allelic imbalance instances</h1>
 <h4 class="date"><em>01 May, 2017</em></h4>
 
 </div>
 
 
-<div id="data-preparation" class="section level1">
-<h1><span class="header-section-number">1</span> Data preparation</h1>
-<p>We need to incorporate new data (fetal brain related) to the model. It contains two sub tasks:</p>
-<ol style="list-style-type: decimal">
-<li>Annotate DeepSEA sequence with new labels.
-<ul>
-<li>See pipeline memo <a href="memo_preprocessing.html">here</a></li>
-</ul></li>
-<li>Extract new sequences of interest based on new data set.
-<ul>
-<li>See pipeline memo <a href="memo_extract.html">here</a></li>
-</ul></li>
-</ol>
-</div>
-<div id="train-new-models" class="section level1">
-<h1><span class="header-section-number">2</span> Train new models</h1>
-<p>There are three strategies:</p>
-<ol start="0" style="list-style-type: decimal">
-<li>Baseline classifier. <a href="baseline.html">here</a></li>
-<li>Use DeepSEA sequences and DeepSEA feature representation.
-<ul>
-<li>See results and analysis <a href="type1.html">here</a>.</li>
-<li>See performance on new sequences <a href="type1_newseq.html">here</a></li>
-<li>See ROC/PR curve <a href="http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html">here</a></li>
-<li>See evalution using allelic imbalance site <a href="type1_allelic_imbalance.html">here</a></li>
-</ul></li>
-<li>Use DeepSEA sequences but train a new model using the same architecture as DeepSEA.
-<ul>
-<li>See results and analysis <a href="type2.html">here</a>. <strong>ONGOING</strong></li>
-</ul></li>
-<li>Include new sequences and train a new model using the same architecture. <strong>TODO</strong></li>
-</ol>
-</div>
-<div id="other-analysis" class="section level1">
-<h1><span class="header-section-number">3</span> Other analysis</h1>
-<p>There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.</p>
-<ol style="list-style-type: decimal">
-<li>Examine which filter or a set of filters that contribute most to a particular prediction task.
-<ul>
-<li>See details <a href="motif_analysis.html">here</a>. <strong>ONGOING</strong></li>
-</ul></li>
-<li>How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) <strong>TODO</strong></li>
-<li>How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
-<ul>
-<li>See related discussion <a href="auc.html">here</a></li>
-</ul></li>
-<li>GWAS SNPs
-<ul>
-<li>See <a href="gwas.html">here</a></li>
-</ul></li>
-</ol>
-</div>
-<div id="todo-list" class="section level1">
-<h1><span class="header-section-number">4</span> TODO list</h1>
-<ul>
-<li>4/9/17:
-<ol style="list-style-type: decimal">
-<li><del>ROC/PR AUC interpretation</del> <a href="auc.html">link</a></li>
-<li><del>Extract sequences from new data sets</del> <a href="memo_extract.html">link</a></li>
-</ol></li>
-<li>4/10/17:
-<ol start="3" style="list-style-type: decimal">
-<li>New loss function? Weighted hinge loss? <a href="loss_function.html">link</a> <strong>TODO</strong></li>
-<li>Motif analysis of current model <a href="motif_analysis.html">link</a> <strong>ONGOING</strong></li>
-</ol></li>
-<li>4/14/17:
-<ol start="5" style="list-style-type: decimal">
-<li><del>Build up pipeline using snakemake.</del> See issue1 at <a href="https://github.com/CreRecombinase/DeepVariantPrediction">link</a></li>
-</ol></li>
-<li>4/26/17:
-<ol start="6" style="list-style-type: decimal">
-<li>Build base line classifier <a href="baseline.html">link</a> <strong>TODO</strong></li>
-</ol></li>
-</ul>
-</div>
+<style>
+pre code, pre, code {
+        white-space: pre !important;
+        overflow-x: scroll !important;
+        word-break: keep-all !important;
+        word-wrap: initial !important;
+    }
+</style>
+<pre class="r"><code>source(&#39;my_r.R&#39;)
+library(feather)
+library(ggplot2)
+variant_url &lt;- &#39;https://github.com/liangyy/deep_variant/blob/code/allelic_imbalance/data/E081.combined.imbalance.gz?raw=true&#39;
+variant &lt;- read.table(read_gz_url(variant_url), sep = &#39;\t&#39;, header = T)
+score_url &lt;- &#39;https://github.com/CreRecombinase/DeepVariantPrediction/blob/issue1/score/keras_deepsea_with_040417_2_42_head_copy/allelic_imbalance_E081.E081_allelic_imbalance_result.feather?raw=true&#39;
+score &lt;- read_feather_url(score_url)
+variant$Ref &lt;- NA
+variant$Ref[score$Varient.ID] &lt;- score$Allele1
+variant$Alt &lt;- NA
+variant$Alt[score$Varient.ID] &lt;- score$Allele2
+variant$Imbalance &lt;- &#39;Balanced&#39;
+variant$Imbalance[variant$P.Value &lt; 0.01] &lt;- &#39;Imbalanced&#39;
+ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
 
 
 
