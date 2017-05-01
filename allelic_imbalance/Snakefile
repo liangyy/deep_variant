@@ -173,6 +173,8 @@ rule prepare_input:
         'data/{name}.combined.imbalance.gz'
     output:
         'data/{name}.combined.var_input_list.txt.gz'
+    shell:
+        'python scripts/prepare_input.py --infile {input[0]} --outfile {output[0]}'
 rule prepare_config:
     params:
         name = lambda wildcards: wildcards.name,
