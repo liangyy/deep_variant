@@ -168,17 +168,17 @@ rule calculate_pvalue:
         'python scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
 
 ### prepare input for prediction workflow ###
-rule prepare_input:
-    input:
-        'data/{name}.combined.imbalance.gz'
-    output:
-        'data/{name}.combined.var_input_list.txt.gz'
-    shell:
-        'python scripts/prepare_input.py --infile {input[0]} --outfile {output[0]}'
+# rule prepare_input:
+#     input:
+#         'data/{name}.combined.imbalance.gz'
+#     output:
+#         'data/{name}.combined.var_input_list.txt.gz'
+#     shell:
+#         'python scripts/prepare_input.py --infile {input[0]} --outfile {output[0]}'
 rule prepare_config:
     params:
         name = lambda wildcards: wildcards.name,
-        inputfile = 'data/{name}.combined.var_input_list.txt.gz',
+        inputfile = 'data/{name}.combined.imbalance.gz',
         model = config['model']['name'],
         model_dir = config['model']['workdir'],
         label_idx = config['model']['label_idx']
