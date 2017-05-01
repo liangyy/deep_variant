@@ -35,7 +35,10 @@ source('../../../mylib/my_r.R')
 library(ggplot2)
 library(reshape2)
 rmsprop <- read.table('../data/type2_040617_00_04_09_17.csv', sep = ',', header = T)
-sdg <- read.table('../data/type2_040717_00_04_09_15_19_25_30_36.csv', sep = ',', header = T)
+sdg <- read.table('../data/type2_040717_00_09_19_30_36_41_46_51_56_61_65.csv', sep = ',', header = T)
+# filter extra epoch
+sdg <- sdg[!(sdg$data == 'all' & sdg$epoch > max(sdg[sdg$data != 'all', 'epoch'])),]
+# end
 deepsea <- read.table('../data/aucs.txt', sep = '\t', header = T)
 deepsea$DeepSEA.ROC.AUC <- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))
 deepsea$DeepSEA.PR.AUC <- as.numeric(as.character(deepsea$DeepSEA.PR.AUC))
