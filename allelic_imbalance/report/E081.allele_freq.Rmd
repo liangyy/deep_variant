@@ -8,8 +8,14 @@ output:
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+
 ```{r}
 library(ggplot2)
-mydata <- read.table(data/E081.combined.varscan.filtered.gz, sep = '	', header = T)
+mydata <- read.table('data/E081.combined.varscan.filtered.gz', sep = '\t', header = T)
+mydata$freq <- mydata$Reads2 / (mydata$Reads1 + mydata$Reads2)
 ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('Allele frequency')
 ```

@@ -122,6 +122,8 @@ rule draw_hist_rmd:
         'data/{name}.combined.varscan.filtered.gz'
     output:
         temp('report/{name}.allele_freq.Rmd')
+    params:
+        envir = '../'
     run:
         rmd = '''---
 title: "Deep brain - Allelic imbalance - data processing - histogram"
@@ -133,12 +135,17 @@ output:
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
 ```{{r}}
 library(ggplot2)
-mydata <- read.table('{input}', sep = '\t', header = T)
-ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('Allele frequency')
+mydata <- read.table('{input}', sep = '\\t', header = T)
+mydata$freq <- mydata$Reads2 / (mydata$Reads1 + mydata$Reads2)
+ggplot(mydata) + geom_histogram(aes(x = freq), binwidth = 0.1) + ggtitle('Allele frequency')
 ```
-'''.format(input=input[0])
+'''.format(input=input[0], envir=params.envir)
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
