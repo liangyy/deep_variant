@@ -1,0 +1,15 @@
+---
+title: "Deep brain - Allelic imbalance - data processing - histogram"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r}
+library(ggplot2)
+mydata <- read.table(data/E081.combined.varscan.filtered.gz, sep = '	', header = T)
+ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('Allele frequency')
+```

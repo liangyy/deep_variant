@@ -89,12 +89,12 @@ rule call_snp_varscan_pre:
     input:
         'data/{name}.combined.bam',
         'data/{name}.combined.bam.bai',
-        'data/{name}.combined.fastq.gz'
+        config['genome_assembly']['fasta']
     output:
         temp('data/{name}.combined.pre.varscan.gz')
     shell:
         '''samtools view -b -q 10 {input[0]} | \
-        samtools mpileup -f <(zcat {input[2]}) - > {output[0]}'''
+        samtools mpileup -f {input[2]} - > {output[0]}'''
 
 rule call_snp_varscan:
     input:
@@ -135,7 +135,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 ```{{r}}
 library(ggplot2)
-mydata <- read.table({input}, sep = '\t', header = T)
+mydata <- read.table('{input}', sep = '\t', header = T)
 ggplot(mydata) + geom_histogram(aes(x = VarFreq), binwidth = 0.1) + ggtitle('Allele frequency')
 ```
 '''.format(input=input[0])
