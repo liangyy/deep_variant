@@ -38,7 +38,7 @@ rule sai2sam:
     output:
         temp('temp/{name}.combined.sam')
     params:
-        ref = config['genome_assembly']['size']
+        ref = config['genome_assembly']['fasta']
     shell:
         'bwa samse -n 10 {params.ref} {input[0]} {input[1]} > {output[0]}'
 
@@ -57,7 +57,7 @@ rule bam_sort:
         'data/{name}.combined.bam'
     threads: config['ncpus']
     shell:
-        'samtools sort -@ {threads} -m 4G -f {input[0]} {output[0]}'
+        'samtools sort -@ {threads} -m 4G -o {output[0]} {input[0]}'
 
 rule bam_index:
     input:
@@ -88,14 +88,15 @@ rule gen_align_stats1:
 rule call_snp_varscan:
     input:
         'data/{name}.combined.bam',
-        'data/{name}.combined.bam.bai'
+        'data/{name}.combined.bam.bai',
+        'data/{name}.combined.fastq.gz'
     output:
         temp('data/{name}.combined.varscan.gz')
     params:
         varscan = config['call_varscan']
     shell:
-        '''samtools view -b -q 10 myBam.bam | \
-        samtools pileup -f myRef.fasta - | \
+        '''samtools view -b -q 10 {input[0]} | \
+        samtools mpileup -f <(zcat {input[2]}) - | \
         {params.varscan} pileup2snp --min-coverage 100 \
         --min-reads2 20 | \
         gzip > {output[0]}'''
