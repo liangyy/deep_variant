@@ -85,19 +85,26 @@ rule gen_align_stats1:
 #         'edwBamStats {input[0]} {output[0]}'
 
 ### variant calling ###
-rule call_snp_varscan:
+rule call_snp_varscan_pre:
     input:
         'data/{name}.combined.bam',
         'data/{name}.combined.bam.bai',
         'data/{name}.combined.fastq.gz'
     output:
+        temp('data/{name}.combined.pre.varscan.gz')
+    shell:
+        '''samtools view -b -q 10 {input[0]} | \
+        samtools mpileup -f <(zcat {input[2]}) - > {output[0]}'''
+
+rule call_snp_varscan:
+    input:
+        'data/{name}.combined.pre.varscan.gz'
+    output:
         temp('data/{name}.combined.varscan.gz')
     params:
         varscan = config['call_varscan']
     shell:
-        '''samtools view -b -q 10 {input[0]} | \
-        samtools mpileup -f <(zcat {input[2]}) - | \
-        {params.varscan} pileup2snp --min-coverage 100 \
+        '''{params.varscan} pileup2snp {input[0]} --min-coverage 100 \
         --min-reads2 20 | \
         gzip > {output[0]}'''
 
