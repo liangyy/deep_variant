@@ -16,7 +16,7 @@ rule hdf52feather:
         model = load_model(input.model)
         motifs = model.layers[params.layer_idx].get_weights()[0]
         for i in range(params.nmotifs):
-            motif = motifs[:,:,i].T
+            motif = motifs[::-1,:,i].T
             total_table = pd.DataFrame(motif, columns=[ 'Pos.' + str(i) for i in range(motif.shape[1]) ])
             total_table = total_table.copy()
             feather.write_dataframe(total_table, output[i])
