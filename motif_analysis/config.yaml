@@ -14,10 +14,10 @@ model:
   path: '../../../deep_variant/yanyu/deep_brain/my_train/keras_deepsea_with_040417_2_42_head.hdf5'
   first_layer_idx: 1 # 0-based
   motif_layer_idx: 0 # 0-based
-  nmotifs: 320
+  nmotifs: 10 # 320
   lmotif: 8 # length of the motif
   test_data: # only for PWM visualization
-    path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_10.h5' # '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
     name: 'trainxdata'
 data:
   E081:

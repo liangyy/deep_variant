@@ -32,16 +32,16 @@ amax_value = np.max(activation, axis=1)
 amax_pos = np.argmax(activation, axis=1)
 motif_pwm = np.zeros((args.lmotif, 4, args.nmotifs))
 motif_cumweights = np.zeros((args.nmotifs))
-for seq_i in range(amax_value.shape[0])
-    for motif_j in range(amax_value.shape[1]):
+for seq_i in range(amax_value.shape[0]):
+    for motif_j in range(args.nmotifs):
         if amax_value[seq_i, motif_j] < 0:
             continue
         pos = amax_pos[seq_i, motif_j]
         subx = x[seq_i, pos : pos + args.lmotif]
         motif_pwm[:, :, motif_j] += amax_value[seq_i, motif_j] * subx
         motif_cumweights[motif_j] += amax_value[seq_i, motif_j]
-for motif_j in range(amax_value.shape[1]):
+for motif_j in range(args.nmotifs):
     motif_pwm[:, :, motif_j] /= motif_cumweights[motif_j]
-    total_table = pd.DataFrame(motif_pwm[motif_j].transpose((1,0)), columns=[ 'Pos.' + str(i) for i in range(args.lmotif) ])
+    total_table = pd.DataFrame(motif_pwm[:, :, motif_j].transpose((1,0)), columns=[ 'Pos.' + str(i) for i in range(args.lmotif) ])
     total_table = total_table.copy()
-    feather.write_dataframe(total_table, output[motif_j])
+    feather.write_dataframe(total_table, args.output[motif_j])
