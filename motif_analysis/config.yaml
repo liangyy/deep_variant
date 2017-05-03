@@ -15,6 +15,10 @@ model:
   first_layer_idx: 1 # 0-based
   motif_layer_idx: 0 # 0-based
   nmotifs: 320
+  lmotif: 8 # length of the motif
+  test_data: # only for PWM visualization
+    path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
 data:
   E081:
     data_name: 'E081'

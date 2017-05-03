@@ -21,6 +21,24 @@ rule hdf52feather:
             total_table = total_table.copy()
             feather.write_dataframe(total_table, output[i])
 
+rule hdf52pwm:
+    input:
+        model = config['model']['path'],
+        data = config['model']['test_data']['path']
+    output:
+        files = [ 'pattern/{model}/motif_visualization/pwm_Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
+    params:
+        layer_idx = config['model']['motif_layer_idx'],
+        nmotifs = config['model']['nmotifs'],
+        data_name = config['model']['test_data']['name']
+    shell:
+        'python scripts/hdf5motif2pwm.py --model {input.model} \
+        --data {input.data} \
+        --layer_idx {params.layer_idx} \
+        --nmotifs {params.nmotifs} \
+        --data_name {params.data_name} \
+        --output {output.files}'
+
 rule visual_rmd:
     # input:
     #     [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
