@@ -17,7 +17,7 @@ m = feather.read_dataframe(args.feather)
 width = m.shape[1]
 m = m.T[[0, 2, 1, 3]] # reorder bases to A, C, G, T
 headline = 'MOTIF {motif} {motif}'.format(motif = args.feather)
-matheader = 'letter-probability matrix:'
+matheader = 'letter-probability matrix: alength= 4'
 mat = m.to_string(index = False, header = False)
 o.write(headline + '\n')
 o.write(matheader + '\n')
