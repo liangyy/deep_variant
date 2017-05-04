@@ -41,4 +41,4 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
 
 Database `db/CIS-BP/Homo_sapiens.meme` (see [here](http://cisbp.ccbr.utoronto.ca/)).
 
-1. 5/4/17: top 10 motifs in motif activation of E081, [link](https://github.com/liangyy/deep_variant/blob/master/docs/TOMTOM_050417.pdf)
+1. 5/4/17: top 10 motifs in motif activation of E081, [link](https://liangyy.github.io/deep_variant/TOMTOM_050417.pdf)
