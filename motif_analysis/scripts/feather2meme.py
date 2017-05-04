@@ -13,6 +13,8 @@ import feather
 import pandas as pd
 
 o = open(args.output, 'w')
+o.write('MEME version 4\n\n')
+o.write('ALPHABET= ACGT\n\n')
 for motif in args.feathers:
 	m = feather.read_dataframe(motif)
 	width = m.shape[1]
@@ -22,5 +24,5 @@ for motif in args.feathers:
 	mat = m.to_string(index = False, header = False)
 	o.write(headline + '\n')
 	o.write(matheader + '\n')
-	o.write(mat)
+	o.write(mat + '\n')
 o.close()
