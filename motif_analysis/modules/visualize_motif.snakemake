@@ -60,7 +60,7 @@ output:
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
-```{r setup}
+```{{r setup}}
 knitr::opts_knit$set(root.dir = '{envir}')
 ```
 
@@ -74,7 +74,7 @@ source('scripts/my_r.R')
 path <- 'pattern/{model}/motif_visualization/'
 info <- c('{model}', 'motif_visualization')
 plots <- list()
-for(i in 0 : {nmotifs}){{
+for(i in 0 : ({nmotifs} - 1)){{
     p <- plot_motif_pwm(filename = paste(path, '/pwm_Motif_', i, '.feather', sep = ''), i)
     plots <- save_plot_pwm(info, p, paste('pwm_Motif', i, sep = '.'), 'plots', plots, '{envir}')
 }}
