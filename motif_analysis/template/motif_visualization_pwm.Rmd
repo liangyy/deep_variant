@@ -1,0 +1,45 @@
+---
+title: "Motif Analysis - visualization motifs PWM"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+    
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+Here the order of bases is 'A', 'G', 'C', 'T'. 
+
+```{r, echo=FALSE, warning=FALSE}
+library(feather)
+library(seqLogo)
+library(bsselectR)
+source('scripts/my_r.R')
+path <- 'pattern/Type1/motif_visualization/' # {model}/motif_visualization/'
+info <- c('Type1', 'motif_visualization') # '{model}', 'motif_visualization')
+plots <- list()
+for(i in 0 : 0){# {nmotifs}){
+    p <- plot_motif_pwm(filename = paste(path, '/pwm_Motif_', i, '.feather', sep = ''), i)
+    # motif <- paste('pwm_Motif', i, sep = '.')
+    # path <- 'plots'
+    # folder <- '../'
+    # filename <- paste(paste(c(info, motif), collapse = '_'), '.png', sep = '')
+    # print(filename)
+    # png(filename)
+    # seqLogo(p)
+    # dev.off()
+    # plots[[as.character(motif)]] <- paste(folder, path, filename, sep = '/')
+    plots <- save_plot_pwm(info, p, paste('pwm_Motif', i, sep = '.'), 'plots', plots, '../')# '{envir}')
+}
+bsselect(plots, type = "img", selected = names(plots)[1],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+
+```{r, echo=FALSE, warning=FALSE}
+bsselect(plots, type = "img", selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
