@@ -2,7 +2,7 @@ MEME version 4
 
 ALPHABET= ACGT
 
-MOTIF pwm_Motif_0.feather
+MOTIF pattern/Type1/motif_visualization/pwm_Motif_0.feather pattern/Type1/motif_visualization/pwm_Motif_0.feather
 letter-probability matrix: alength= 4
 0.135681  0.197724  0.599433  0.067162
 0.007542  0.008779  0.545302  0.438377
