@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>01 May, 2017</em></h4>
+<h4 class="date"><em>04 May, 2017</em></h4>
 
 </div>
 
@@ -345,16 +345,16 @@ div.tocify {
 <h1><span class="header-section-number">3</span> Other analysis</h1>
 <p>There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.</p>
 <ol style="list-style-type: decimal">
-<li>Examine which filter or a set of filters that contribute most to a particular prediction task.
+<li><strong>Motif Analysis</strong>: Examine which filter or a set of filters that contribute most to a particular prediction task.
 <ul>
 <li>See details <a href="motif_analysis.html">here</a>. <strong>ONGOING</strong></li>
 </ul></li>
-<li>How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) <strong>TODO</strong></li>
-<li>How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
+<li><strong>Training Strategy</strong>: How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) <strong>TODO</strong></li>
+<li><strong>Performance Evaluation</strong>: How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC?
 <ul>
 <li>See related discussion <a href="auc.html">here</a></li>
 </ul></li>
-<li>GWAS SNPs
+<li><strong>Application</strong>: GWAS SNPs
 <ul>
 <li>See <a href="gwas.html">here</a></li>
 </ul></li>
@@ -379,7 +379,7 @@ div.tocify {
 </ol></li>
 <li>4/26/17:
 <ol start="6" style="list-style-type: decimal">
-<li>Build base line classifier <a href="baseline.html">link</a> <strong>TODO</strong></li>
+<li>Build baseline classifier <a href="baseline.html">link</a> <strong>TODO</strong></li>
 </ol></li>
 </ul>
 </div>
@@ -409,7 +409,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
