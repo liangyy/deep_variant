@@ -24,5 +24,5 @@ for motif in args.feathers:
 	mat = m.to_string(index = False, header = False)
 	o.write(headline + '\n')
 	o.write(matheader + '\n')
-	o.write(mat + '\n')
+	o.write(mat + '\n\n')
 o.close()
