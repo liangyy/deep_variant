@@ -162,10 +162,14 @@ rule visual_html:
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
 
+def extract_interesting_motifs():
+    files = [ 'pattern/{model}/motif_visualization/pwm_Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in config['model']['motif_of_interest'].split(',') ]
+    return files
+
 rule pwd2meme:
     input:
-        file = 'pattern/{model}/motif_visualization/pwm_Motif_{i}.feather'
+        file = extract_interesting_motifs()
     output:
-        memes = 'pattern/{model}/motif_visualization/pwm_Motif_{i}.meme'
+        memes = 'pattern/{model}/motif_visualization/motif_of_interest.meme'
     shell:
-        'python scripts/feather2meme.py --feather {input.file} --output {output.meme}'
+        'python scripts/feather2meme.py --feathers {input.file} --output {output.meme}'

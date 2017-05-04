@@ -19,6 +19,7 @@ model:
   test_data: # only for PWM visualization
     path: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
     name: 'trainxdata'
+  motif_of_interest: '185,106,29,4,275,78,291,278,125,100'
 data:
   E081:
     data_name: 'E081'
