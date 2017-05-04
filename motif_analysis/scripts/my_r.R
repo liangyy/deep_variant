@@ -151,3 +151,18 @@ save_plot2 <- function(info, p, direction, motif, path, plots, folder, rank){
     plots[[paste0(rank, ' : ', as.character(motif))]] <- paste(folder, path, filename, sep = '/')
     plots
 }
+
+plot_motif_pwm <- function(filename = filname, motif_idx = motif_idx){
+    motif <- read_feather(filename)
+    motif <- motif[c(1,3,2,4),] # ATTENTION! seqLogo uses A, C, G, T and that's why we reorder here
+    return(as.data.frame(motif))
+}
+
+save_plot_pwm <- function(info, p, motif, path, plots, folder){
+    filename <- paste(path, '/', paste(c(info, motif), collapse = '_'), '.png', sep = '')
+    png(filename, width = 10, height = 7, units = 'cm', res = 1000)
+    seqLogo(p)
+    dev.off()
+    plots[[as.character(motif)]] <- paste(folder, filename, sep = '/')
+    plots
+}

@@ -41,6 +41,66 @@ rule hdf52pwm:
         --output {output.files} \
         --lmotif {params.lmotif}'
 
+rule visual_pwm_rmd:
+    output:
+        rmd = temp('report/{model}/motif_visualization/pwm.Rmd')
+    params:
+        model = config['model']['name'],
+        envir = '../../../',
+        nmotifs = config['model']['nmotifs']
+    run:
+        rmd = '''
+---
+title: "Motif Analysis - visualization motifs PWM"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+Here the order of bases is 'A', 'G', 'C', 'T'.
+
+```{{r, echo=FALSE, warning=FALSE}}
+library(feather)
+library(seqLogo)
+library(bsselectR)
+source('scripts/my_r.R')
+path <- 'pattern/{model}/motif_visualization/'
+info <- c('{model}', 'motif_visualization')
+plots <- list()
+for(i in 0 : {nmotifs}){{
+    p <- plot_motif_pwm(filename = paste(path, '/pwm_Motif_', i, '.feather', sep = ''), i)
+    plots <- save_plot_pwm(info, p, paste('pwm_Motif', i, sep = '.'), 'plots', plots, '{envir}')
+}}
+bsselect(plots, type = "img", selected = names(plots)[1],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+
+```{{r, echo=FALSE, warning=FALSE}}
+bsselect(plots, type = "img", selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+'''.format(envir=params.envir, model=params.model, nmotifs=params.nmotifs)
+        o = open(output.rmd, 'w')
+        o.write(rmd)
+        o.close()
+
+rule visual_pwm_html:
+    input:
+        rmd = 'report/{model}/motif_visualization/pwm.Rmd',
+        files = [ 'pattern/{model}/motif_visualization/pwm_Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
+    output:
+        'report/{model}/motif_visualization/pwm.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
+
+
 rule visual_rmd:
     # input:
     #     [ 'pattern/{model}/motif_visualization/Motif_{i}.feather'.format(model=config['model']['name'], i=i) for i in range(config['model']['nmotifs']) ]
@@ -49,8 +109,7 @@ rule visual_rmd:
     params:
         model = config['model']['name'],
         envir = '../../../',
-        nmotifs = config['model']['nmotifs'],
-        folder = config['http']
+        nmotifs = config['model']['nmotifs']
     run:
         rmd = '''---
 title: "Motif Analysis - visualization motifs"
