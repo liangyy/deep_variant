@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Training - Type 2</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>28 April, 2017</em></h4>
+<h4 class="date"><em>05 May, 2017</em></h4>
 
 </div>
 
@@ -331,26 +331,28 @@ pre code, pre, code {
 <h1><span class="header-section-number">3</span> Train w/o weights initialization</h1>
 <div id="results" class="section level2">
 <h2><span class="header-section-number">3.1</span> Results</h2>
-<pre class="r"><code>source(&#39;../../../mylib/my_r.R&#39;)
+<pre class="r"><code>source(&#39;my_r.R&#39;)
 library(ggplot2)
 library(reshape2)
 rmsprop &lt;- read.table(&#39;../data/type2_040617_00_04_09_17.csv&#39;, sep = &#39;,&#39;, header = T)
-sdg &lt;- read.table(&#39;../data/type2_040717_00_09_19_30_36_41_46_51_56_61_65.csv&#39;, sep = &#39;,&#39;, header = T)
+sdg &lt;- read.table(&#39;../data/type2_040717_00_09_19_30_41_51_61_69_79_88_89.csv&#39;, sep = &#39;,&#39;, header = T)
 # filter extra epoch
 sdg &lt;- sdg[!(sdg$data == &#39;all&#39; &amp; sdg$epoch &gt; max(sdg[sdg$data != &#39;all&#39;, &#39;epoch&#39;])),]
 # end
 deepsea &lt;- read.table(&#39;../data/aucs.txt&#39;, sep = &#39;\t&#39;, header = T)
-deepsea$DeepSEA.ROC.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))
-deepsea$DeepSEA.PR.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.PR.AUC))</code></pre>
+deepsea$DeepSEA.ROC.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.ROC.AUC))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>deepsea$DeepSEA.PR.AUC &lt;- as.numeric(as.character(deepsea$DeepSEA.PR.AUC))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
 </div>
 <div id="training" class="section level2">
 <h2><span class="header-section-number">3.2</span> Training</h2>
 <pre class="r"><code>rmsprop.loss &lt;- rmsprop[rmsprop$data == &#39;all&#39;, ]
 ggplot(rmsprop.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;RMSprop convergence&#39;)</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-139-1.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>sdg.loss &lt;- sdg[sdg$data == &#39;all&#39;, ]
 ggplot(sdg.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggtitle(&#39;SGD convergence&#39;)</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-139-2.png" width="672" /></p>
+<p><img src="type2_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
 </div>
 <div id="performance" class="section level2">
 <h2><span class="header-section-number">3.3</span> Performance</h2>
@@ -365,9 +367,10 @@ ggplot(sdg.loss) + geom_line(aes(x = epoch, y = value, color = variable)) + ggti
 bestmodel.rms &lt;- select_best(rmsprop.loss, rmsprop)</code></pre>
 <pre><code>##    X data epoch  value variable
 ## 23 0  all     0 0.0699 val_loss</code></pre>
-<pre class="r"><code>bestmodel.sgd &lt;- select_best(sdg.loss, sdg)</code></pre>
-<pre><code>##    X data epoch  value variable
-## 45 0  all    65 0.0676 val_loss</code></pre>
+<pre class="r"><code># bestmodel.sgd &lt;- sdg[sdg$epoch == 89,]
+bestmodel.sgd &lt;- select_best(sdg.loss, sdg)</code></pre>
+<pre><code>##     X data epoch  value variable
+## 175 0  all    88 0.0629 val_loss</code></pre>
 <pre class="r"><code>anno_to_type &lt;- function(anno){
     dnase.ind &lt;- anno == &#39;DNase&#39;
     histone.ind &lt;- grepl(&#39;^H[0-9]&#39;, anno)
@@ -405,10 +408,12 @@ deepsea.aucs$source &lt;- &#39;deepsea&#39;</code></pre>
                    deepsea.aucs[, c(&#39;variable&#39;, &#39;value&#39;, &#39;Annotation.Type&#39;, &#39;source&#39;)])
 ggplot(auc_table[auc_table$variable == &#39;roc_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scale = &#39;free_y&#39;) + ggtitle(&#39;ROC AUC&#39;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-142-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(auc_table[auc_table$variable == &#39;pr_auc&#39;,]) + geom_histogram(aes(x = value, fill = source)) + facet_grid(Annotation.Type~., scales = &#39;free_y&#39;) + ggtitle(&#39;PR AUC&#39;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-142-2.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
 </div>
 <div id="compare-with-type1-best-model" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> Compare with type1 (best model)</h3>
@@ -425,7 +430,8 @@ temp.melted &lt;- melt(temp, id.vars = c(&#39;source&#39;, &#39;Cell.Type&#39;))
 temp.melted[which(temp.melted$value == -1), ]$value &lt;- NA
 temp.melted$variable &lt;- factor(temp.melted$variable, levels = c(&#39;cross_entropy&#39;, &#39;accuracy&#39;, &#39;roc_auc&#39;, &#39;pr_auc&#39;, levels(temp.melted$variable)[4 : 9]))
 ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), position = &#39;dodge&#39;, stat = &#39;identity&#39;) + facet_wrap(~Cell.Type) + theme(axis.text.x = element_text(angle = 30, hjust = 1)) + ggtitle(&#39;Performance of best models on four selected data sets&#39;)</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-143-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 8 rows containing missing values (geom_bar).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p><strong>Issues in training</strong>: Some instances have very large activation at the feature representation layer. See analysis <a href="#activation">below</a>.</p>
 <p><strong>TODO</strong>: Add penalty terms and use sgd with momentum. See technical memo <a href="memo_constraint.html">here</a></p>
 <p><strong>TODO</strong>: Use weighted hinge loss.</p>
@@ -450,17 +456,21 @@ ggplot(temp.melted) + geom_bar(aes(x = variable, y = value, fill = source), posi
 re &lt;- performance_cross_epoch(sdg, deepsea.aucs, &#39;SGD&#39;)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-144-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>re$pr</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-144-2.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
 <pre class="r"><code>re &lt;- performance_cross_epoch(rmsprop, deepsea.aucs, &#39;RMSprop&#39;)
 re$roc</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-144-3.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
 <pre class="r"><code>re$pr</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="type2_files/figure-html/unnamed-chunk-144-4.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="type2_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
 </div>
 </div>
 <div id="kernel-norm" class="section level3">
@@ -765,7 +775,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

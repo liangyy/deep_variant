@@ -31,11 +31,11 @@ options(width=2000)
 ## Results
 
 ```{r}
-source('../../../mylib/my_r.R')
+source('my_r.R')
 library(ggplot2)
 library(reshape2)
 rmsprop <- read.table('../data/type2_040617_00_04_09_17.csv', sep = ',', header = T)
-sdg <- read.table('../data/type2_040717_00_09_19_30_36_41_46_51_56_61_65.csv', sep = ',', header = T)
+sdg <- read.table('../data/type2_040717_00_09_19_30_41_51_61_69_79_88_89.csv', sep = ',', header = T)
 # filter extra epoch
 sdg <- sdg[!(sdg$data == 'all' & sdg$epoch > max(sdg[sdg$data != 'all', 'epoch'])),]
 # end
@@ -66,6 +66,7 @@ select_best <- function(rmsprop.loss, rmsprop){
     return(bestmode.rms)
 }
 bestmodel.rms <- select_best(rmsprop.loss, rmsprop)
+# bestmodel.sgd <- sdg[sdg$epoch == 89,]
 bestmodel.sgd <- select_best(sdg.loss, sdg)
 anno_to_type <- function(anno){
     dnase.ind <- anno == 'DNase'
