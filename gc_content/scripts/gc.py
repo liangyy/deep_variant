@@ -28,7 +28,10 @@ x = my_python.getData(args.x, args.name_x)
 x = x[:, :, :2]
 gc = np.sum(x[:,:,1:3], axis = (1,2)) / x.shape[1]
 y = my_python.getData(args.y, args.name_y)
-y = y[:, args.idx_y]
+if args.idx_y < 0:
+    pass
+else:
+    y = y[:, args.idx_y]
 y_pred = my_python.getData(args.yp, args.name_yp)
 y_pred = y_pred[:, args.idx_yp]
 
