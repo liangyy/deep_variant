@@ -11,13 +11,21 @@ rule gc_per_set:
         name_y = lambda wildcards: config[wildcards.data]['data_y']['name'],
         idx_y = lambda wildcards: config[wildcards.data]['data_y']['label_num'],
         name_yp = lambda wildcards: config[wildcards.data]['data_ypred']['name'],
-        idx_yp = lambda wildcards: config[wildcards.data]['data_ypred']['label_num']
+        idx_yp = lambda wildcards: config[wildcards.data]['data_ypred']['label_num'],
+        doublex = lambda wildcards: config[wildcards.data]['data_x']['double'],
+        doubley = lambda wildcards: config[wildcards.data]['data_y']['double'],
+        doubleyp = lambda wildcards: config[wildcards.data]['data_yp']['double'],
+        removey = lambda wildcards: config[wildcards.data]['data_y']['remove'],
+        removeyp = lambda wildcards: config[wildcards.data]['data_yp']['remove']
     shell:
         'python scripts/gc.py --x {input.x} --y {input.y} \
         --yp {input.yp} --name_yp {params.name_yp} \
         --idx_yp {params.idx_yp} \
         --name_x {params.name_x} --name_y {params.name_y} \
-        --idx_y {params.idx_y} --out {output[0]}'
+        --idx_y {params.idx_y} --out {output[0]} \
+        --doublex {params.doublex} --doubley {params.doubley} \
+        --doubleyp {params.doubleyp} --removey {params.removey} \
+        --removeyp {params.removeyp}'
 
 def get_inputs(prefix):
     i = config['summary'][prefix].split(',')
