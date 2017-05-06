@@ -1,0 +1,95 @@
+summary:
+  extracted: 'E081,E082,Noonan,E129'
+  deepsea: 'deepsea_E081,deepsea_E082,deepsea_Noonan,deepsea_E129'
+E081:
+  data_ypred:
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    label_num: 1 # 1-based
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'
+E082:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    label_num: 2
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'
+Noonan:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    label_num: 2
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'
+E129:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'
+deepsea_E081:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    label_num: 1
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/DeepSEA_test_12__with_label.hdf5'
+    name: 'traindata'
+  data_x:
+    path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+deepsea_E082:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/DeepSEA_test_12__with_label.hdf5'
+    name: 'traindata'
+  data_x:
+    path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+deepsea_Noonan:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'
+deepsea_E129:
+  data_ypred:
+    label_num: 2
+    path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+    name: 'y_pred'
+  data_y:
+    path: 'path_to_extract_label'
+    name: 'name'
+  data_x:
+    path: 'path_to_extract_seq'
+    name: 'name'

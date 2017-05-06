@@ -1,1 +1,50 @@
 # This pipeline takes sequence set and report the GC content of positive and negative sequences
+rule gc_per_set:
+    input:
+        x = lambda wildcards: config[wildcards.data]['data_x']['path'],
+        y = lambda wildcards: config[wildcards.data]['data_y']['path'],
+        yp = lambda wildcards: config[wildcards.data]['data_ypred']['path']
+    output:
+        'results/{data}.gc.feather'
+    params:
+        name_x = lambda wildcards: config[wildcards.data]['data_x']['name'],
+        name_y = lambda wildcards: config[wildcards.data]['data_y']['name'],
+        idx_y = lambda wildcards: config[wildcards.data]['data_y']['label_num'],
+        name_yp = lambda wildcards: config[wildcards.data]['data_ypred']['name'],
+        idx_yp = lambda wildcards: config[wildcards.data]['data_ypred']['label_num']
+    shell:
+        'python scripts/gc.py --x {input.x} --y {input.y} \
+        --yp {input.yp} --name_yp {params.name_yp} \
+        --idx_yp {params.idx_yp} \
+        --name_x {params.name_x} --name_y {params.name_y} \
+        --idx_y {params.idx_y} --out {output[0]}'
+
+def get_inputs(prefix):
+    i = config['summary'][prefix].split(',')
+    ret = []
+    for j in i:
+        ret.append('results/{data}.gc.feather'.format(data=i))
+    return ret
+
+rule summary_rmd:
+    output:
+        temp('report/{prefix}.gc_content.Rmd')
+    params:
+        envir = '../'
+    run:
+        rmd = '''
+# do something here
+# histogram and gc_content versus predicted value
+'''.format(envir = params.envir)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule summary_html:
+    input:
+        files = lambda wildcards: get_inputs(wildcards.prefix),
+        rmd = 'report/{prefix}.gc_content.Rmd'
+    output:
+        'report/{prefix}.gc_content.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
