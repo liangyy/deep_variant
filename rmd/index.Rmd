@@ -40,7 +40,7 @@ There are some other directions and issues we need to explore and tackle. The an
 4. **Application**
     - GWAS SNPs. See [here](gwas.html)
 5. **Data Quality**: 
-    - GC content. [DeepSEA test set](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/gc_content/report/deepsea.gc_content.html), [Sequences extracted from BED file](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/gc_content/report/extracted.gc_content.html)
+    - GC content. [DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html), [Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html)
 
 # TODO list
 
