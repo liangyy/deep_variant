@@ -14,9 +14,9 @@ rule gc_per_set:
         idx_yp = lambda wildcards: config[wildcards.data]['data_ypred']['label_num'],
         doublex = lambda wildcards: config[wildcards.data]['data_x']['double'],
         doubley = lambda wildcards: config[wildcards.data]['data_y']['double'],
-        doubleyp = lambda wildcards: config[wildcards.data]['data_yp']['double'],
+        doubleyp = lambda wildcards: config[wildcards.data]['data_ypred']['double'],
         removey = lambda wildcards: config[wildcards.data]['data_y']['remove'],
-        removeyp = lambda wildcards: config[wildcards.data]['data_yp']['remove']
+        removeyp = lambda wildcards: config[wildcards.data]['data_ypred']['remove']
     shell:
         'python scripts/gc.py --x {input.x} --y {input.y} \
         --yp {input.yp} --name_yp {params.name_yp} \
@@ -31,7 +31,7 @@ def get_inputs(prefix):
     i = config['summary'][prefix].split(',')
     ret = []
     for j in i:
-        ret.append('results/{data}.gc.feather'.format(data=i))
+        ret.append('results/{data}.gc.feather'.format(data=j))
     return ret
 
 rule summary_inner_rmd:

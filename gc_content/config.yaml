@@ -16,7 +16,7 @@ E081:
     remove: '1073109-1073114'
   data_x:
     path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
-    name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
+    name: 'trainxdata'
     double: 'Yes'
 E082:
   data_ypred:
@@ -32,7 +32,7 @@ E082:
     double: 'No'
     remove: '1238543-1238548'
   data_x:
-    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
     name: 'trainxdata'
     double: 'Yes'
 Noonan:
@@ -60,6 +60,7 @@ E129:
     double: 'No'
     remove: 'None'
   data_y:
+    label_num: -1
     path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/label.hdf5'
     name: 'data/E129-H3K9me3.narrowPeak.sorted.intersect'
     double: 'No'
