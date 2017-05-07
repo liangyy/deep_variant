@@ -34,23 +34,173 @@ def get_inputs(prefix):
         ret.append('results/{data}.gc.feather'.format(data=i))
     return ret
 
-rule summary_rmd:
+rule summary_inner_rmd:
+    output:
+        temp('report/{prefix}.gc_content.inner.Rmd')
+    params:
+        envir = '../',
+        filelist = config['summary']['extracted']
+    run:
+        rmd = '''
+---
+title: "Quality Control - GC content of sequences (inner)"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+# Distribution of GC content
+
+```{{r, echo=TRUE, warning=FALSE}}
+library(feather)
+library(ggplot2)
+envir <- '{envir}'
+path <- 'results/'
+info <- '{prefix}'
+filelist <- '{filelist}'
+file_prefixs <- strsplit(filelist, ',')[[1]]
+for(i in file_prefixs){{
+    e <- read_feather(paste0('./results/', i, '.gc.feather'))
+    p <- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = GC.Content, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = GC.Content,  fill = 'positive'), alpha = .5) + ggtitle(paste0('GC content of data in ', i)) + theme(legend.position="bottom") + theme(title = element_text(size=5), text = element_text(size=5))
+    ggsave(filename = paste0(info, '_', i, '_hist.png'), path = 'plots/', width = 3, height = 3, plot = p)
+}}
+```
+
+# Predictive power of GC content
+
+Model y ~ GC.Content, link function: logit
+
+```{{r, results='asis'}}
+panderOptions('knitr.auto.asis', FALSE)
+library(precrec)
+library(gridExtra)
+for (i in file_prefixs){{
+    cat('\n')
+    cat("## Predictive power of ", i, paste0(" {{#", i, "}}"), "\n")
+    e <- read_feather(paste0('./results/', i, '.gc.feather'))
+    lr <- glm(y ~ GC.Content, data = e, family = binomial)
+    pander(summary(lr)$coefficients)
+    cat('\n')
+    joined <- join_scores(e$y.predict, lr$fitted.values)
+    msmdat <- mmdata(joined, e$y, modnames = c('deep_learning', 'gc_content'))
+    mscurves <- evalmod(msmdat)
+    plot(mscurves)
+    cat('\n')
+    pander(auc(mscurves))
+    cat('\n')
+}}
+```
+
+# Correlation between Predicted score and GC content
+
+```{{r, results='asis'}}
+panderOptions('knitr.auto.asis', FALSE)
+for (i in file_prefixs){{
+    cat('\n')
+    cat("## Predictive power of ", i, paste0(" {{#", i, "}}"), "\n")
+    e <- read_feather(paste0('./results/', i, '.gc.feather'))
+    e$logodds.ratio <- log(e$y.predict / (1 - e$y.predict))
+    p <- ggplot(e) + geom_bin2d(aes(x = GC.Content, y = logodds.ratio)) + ggtitle(paste('Log odds ratio of predicted value \n vs. GC content in ', i))
+    # print(p)
+    cat('\n')
+    lr <- lm(logodds.ratio ~ GC.Content, data = e)
+    pander(summary(lr))
+    cat('\n')
+}}
+```
+'''.format(envir = params.envir, prefix = wildcards.prefix, filelist = params.filelist)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule summary_inner_html:
+    input:
+        files = lambda wildcards: get_inputs(wildcards.prefix),
+        rmd = 'report/{prefix}.gc_content.inner.Rmd'
+    output:
+        'report/{prefix}.gc_content.inner.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
+
+rule summary_outer_rmd:
+    input:
+        'report/{prefix}.gc_content.inner.html'
     output:
         temp('report/{prefix}.gc_content.Rmd')
     params:
-        envir = '../'
+        envir = '../',
+        filelist = config['summary']['extracted']
     run:
         rmd = '''
-# do something here
-# histogram and gc_content versus predicted value
-'''.format(envir = params.envir)
+---
+title: "Quality Control - GC content of sequences"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+# Distribution of GC content
+
+```{r, echo=FALSE, warning=FALSE}
+library(feather)
+library(ggplot2)
+library(bsselectR)
+envir <- '{envir}'
+path <- 'results/'
+info <- '{prefix}'
+filelist <- '{filelist}'
+file_prefixs <- strsplit(filelist, ',')[[1]]
+plots <- list()
+for(i in file_prefixs){{
+    plots[[i]] <- paste0(envir, '/plots/', paste0(info, i, '_hist.png'))
+}}
+bsselect(plots, type = "img", selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+
+# Predictive power of GC content
+
+Model y ~ GC.Content, link function: logit
+
+```{{r, echo=FALSE, warning=FALSE}}
+for (i in file_prefixs){{
+    tables[[i]] <- paste0('{envir}', '{inner_html}', '#', i)
+}}
+bsselect(tables, type = "iframe", selected = names(tables)[1],
+         live_search = TRUE, show_tick = TRUE, frame_height = 500, frame_width = 1000)
+```
+
+# Correlation between Predicted score and GC content
+
+```{{r, echo=FALSE, warning=FALSE}}
+tables_new <- list()
+for (i in file_prefixs){{
+    tables_new[[i]] <- paste0('{envir}', '{inner_html}', '#', i)
+}}
+bsselect(tables_new, type = "iframe", selected = names(tables_new)[1],
+         live_search = TRUE, show_tick = TRUE, frame_height = 500, frame_width = 1000)
+```
+'''.format(prefix = wildcards.prefix, inner_html = input[0], envir = params.envir, filelist = params.filelist)
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
 
 rule summary_html:
     input:
-        files = lambda wildcards: get_inputs(wildcards.prefix),
         rmd = 'report/{prefix}.gc_content.Rmd'
     output:
         'report/{prefix}.gc_content.html'
