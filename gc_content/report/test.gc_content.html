@@ -138,56 +138,63 @@ $(document).ready(function () {
 <h1><span class="header-section-number">1</span> Distribution of GC content</h1>
 
 <html>
-<select id="OvULH7ZNec" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="..//plots/test_E081_hist.png">E081</option>
+<select id="2ltT5AwX0e" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="..//plots/test_E081_hist.png">E081</option>
 <option value="..//plots/test_E082_hist.png" selected>E082</option></select>
-<img src="..//plots/test_E082_hist.png" name="G6lTWmUndF" height="500" width="500"/>
+<img src="..//plots/test_E082_hist.png" name="PwwroiDCvL" height="500" width="500"/>
 <script>$(document).ready(function(){
-                 $("#OvULH7ZNec").change(function(){
-                 $("img[name=G6lTWmUndF]").attr("src",$(this).val());
+                 $("#2ltT5AwX0e").change(function(){
+                 $("img[name=PwwroiDCvL]").attr("src",$(this).val());
 
                  });
 
   });</script>
 </html>
-<div id="htmlwidget-4169a53d8cbd3cad5255" style="width:5px;height:5px;" class="bsselect html-widget" width="5" height="5"></div>
-<script type="application/json" data-for="htmlwidget-4169a53d8cbd3cad5255">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d8f41fee57b4d31d7eac" style="width:5px;height:5px;" class="bsselect html-widget" width="5" height="5"></div>
+<script type="application/json" data-for="htmlwidget-d8f41fee57b4d31d7eac">{"x":[],"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="predictive-power-of-gc-content" class="section level1">
 <h1><span class="header-section-number">2</span> Predictive power of GC content</h1>
-<p>Model y ~ GC.Content, link function: logit</p>
+<ul>
+<li><strong>Motivation</strong>: To see how much information contained in GC content to distinguish positive and negative seuqences in the given data set</li>
+<li><strong>Model</strong>: y ~ GC.Content, link function: logit</li>
+</ul>
 
 <html>
-<select id="FPeEYjEgKK" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../report/test.gc_content.inner.html#E081" selected>E081</option>
+<select id="qx7vLhp7Uf" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../report/test.gc_content.inner.html#E081" selected>E081</option>
 <option value="../report/test.gc_content.inner.html#E082">E082</option></select>
-<iframe src="../report/test.gc_content.inner.html#E081" frameborder="0" height="500" width="1000" id="CbZmUZRm65"></iframe>
+<iframe src="../report/test.gc_content.inner.html#E081" frameborder="0" height="500" width="1000" id="s8xxjAdMlL"></iframe>
 <script>$(document).ready(function(){
-                   $("#FPeEYjEgKK").change(function(){
-                   $("#CbZmUZRm65").attr("src",$(this).val());
+                   $("#qx7vLhp7Uf").change(function(){
+                   $("#s8xxjAdMlL").attr("src",$(this).val());
 
                    });
 
     });</script>
 </html>
-<div id="htmlwidget-329a92c77e926fc91c17" style="width:672px;height:480px;" class="bsselect html-widget" width="672" height="480"></div>
-<script type="application/json" data-for="htmlwidget-329a92c77e926fc91c17">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e124f7f5ba2da15cc356" style="width:672px;height:480px;" class="bsselect html-widget" width="672" height="480"></div>
+<script type="application/json" data-for="htmlwidget-e124f7f5ba2da15cc356">{"x":[],"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="correlation-between-predicted-score-and-gc-content" class="section level1">
 <h1><span class="header-section-number">3</span> Correlation between Predicted score and GC content</h1>
+<ul>
+<li><strong>Motivation</strong>: To see to what extend deep learning prediction is correlated with GC content</li>
+<li><strong>Model</strong>: <span class="math inline">\(log(rac{y.predict}{1 - y.predict})\)</span> ~ GC.content, linear regression</li>
+</ul>
 
 <html>
-<select id="xDCuiza1Bk" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../report/test.gc_content.inner.html#cor_E081" selected>E081</option>
+<select id="txfks1hWMz" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../report/test.gc_content.inner.html#cor_E081" selected>E081</option>
 <option value="../report/test.gc_content.inner.html#cor_E082">E082</option></select>
-<iframe src="../report/test.gc_content.inner.html#cor_E081" frameborder="0" height="500" width="1000" id="7IMc48dKzI"></iframe>
+<iframe src="../report/test.gc_content.inner.html#cor_E081" frameborder="0" height="500" width="1000" id="xwEYdIGvTv"></iframe>
 <script>$(document).ready(function(){
-                   $("#xDCuiza1Bk").change(function(){
-                   $("#7IMc48dKzI").attr("src",$(this).val());
+                   $("#txfks1hWMz").change(function(){
+                   $("#xwEYdIGvTv").attr("src",$(this).val());
 
                    });
 
     });</script>
 </html>
-<div id="htmlwidget-f63834eab6ff970531bf" style="width:672px;height:480px;" class="bsselect html-widget" width="672" height="480"></div>
-<script type="application/json" data-for="htmlwidget-f63834eab6ff970531bf">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e6f6abc0e207b4845bfc" style="width:672px;height:480px;" class="bsselect html-widget" width="672" height="480"></div>
+<script type="application/json" data-for="htmlwidget-e6f6abc0e207b4845bfc">{"x":[],"evals":[],"jsHooks":[]}</script>
 </div>
 
 
