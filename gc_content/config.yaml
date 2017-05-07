@@ -1,6 +1,7 @@
 summary:
   extracted: 'E081,E082,Noonan,E129'
   deepsea: 'deepsea_E081,deepsea_E082,deepsea_Noonan,deepsea_E129'
+  test: 'E081,E082'
 E081:
   data_ypred:
     path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'

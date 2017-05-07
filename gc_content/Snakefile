@@ -39,7 +39,7 @@ rule summary_inner_rmd:
         temp('report/{prefix}.gc_content.inner.Rmd')
     params:
         envir = '../',
-        filelist = config['summary']['extracted']
+        filelist = lambda wildcards: config['summary'][wildcards.prefix]
     run:
         rmd = '''
 ---
@@ -78,6 +78,7 @@ for(i in file_prefixs){{
 Model y ~ GC.Content, link function: logit
 
 ```{{r, results='asis'}}
+library(pander)
 panderOptions('knitr.auto.asis', FALSE)
 library(precrec)
 library(gridExtra)
@@ -104,11 +105,12 @@ for (i in file_prefixs){{
 panderOptions('knitr.auto.asis', FALSE)
 for (i in file_prefixs){{
     cat('\n')
-    cat("## Predictive power of ", i, paste0(" {{#", i, "}}"), "\n")
+    cat("## Correlation btw Predicted score and GC content in ", i, paste0(" {{#", 'cor_', i, "}}"), "\n")
     e <- read_feather(paste0('./results/', i, '.gc.feather'))
+    a <- cor(e$GC.Content, e$y.predict, method = 'spearman')
     e$logodds.ratio <- log(e$y.predict / (1 - e$y.predict))
-    p <- ggplot(e) + geom_bin2d(aes(x = GC.Content, y = logodds.ratio)) + ggtitle(paste('Log odds ratio of predicted value \n vs. GC content in ', i))
-    # print(p)
+    p <- ggplot(e) + geom_bin2d(aes(x = GC.Content, y = logodds.ratio)) + ggtitle(paste('Log odds ratio of predicted value \n vs. GC content in ', i)) + annotate("text", label = paste0("GC content ~ y.predict: \n Spearman's rho = ", round(a, 2)), x = 0.2, y = -15, size = 4, colour = "red")
+    print(p)
     cat('\n')
     lr <- lm(logodds.ratio ~ GC.Content, data = e)
     pander(summary(lr))
@@ -136,7 +138,7 @@ rule summary_outer_rmd:
         temp('report/{prefix}.gc_content.Rmd')
     params:
         envir = '../',
-        filelist = config['summary']['extracted']
+        filelist = lambda wildcards: config['summary'][wildcards.prefix]
     run:
         rmd = '''
 ---
@@ -155,7 +157,7 @@ knitr::opts_knit$set(root.dir = '{envir}')
 
 # Distribution of GC content
 
-```{r, echo=FALSE, warning=FALSE}
+```{{r, echo=FALSE, warning=FALSE}}
 library(feather)
 library(ggplot2)
 library(bsselectR)
@@ -166,7 +168,7 @@ filelist <- '{filelist}'
 file_prefixs <- strsplit(filelist, ',')[[1]]
 plots <- list()
 for(i in file_prefixs){{
-    plots[[i]] <- paste0(envir, '/plots/', paste0(info, i, '_hist.png'))
+    plots[[i]] <- paste0(envir, '/plots/', paste0(info, '_', i, '_hist.png'))
 }}
 bsselect(plots, type = "img", selected = names(plots)[2],
          live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
@@ -174,9 +176,11 @@ bsselect(plots, type = "img", selected = names(plots)[2],
 
 # Predictive power of GC content
 
-Model y ~ GC.Content, link function: logit
+* **Motivation**: To see how much information contained in GC content to distinguish positive and negative seuqences in the given data set
+* **Model**: y ~ GC.Content, link function: logit
 
 ```{{r, echo=FALSE, warning=FALSE}}
+tables <- list()
 for (i in file_prefixs){{
     tables[[i]] <- paste0('{envir}', '{inner_html}', '#', i)
 }}
@@ -186,10 +190,13 @@ bsselect(tables, type = "iframe", selected = names(tables)[1],
 
 # Correlation between Predicted score and GC content
 
+* **Motivation**: To see to what extend deep learning prediction is correlated with GC content
+* **Model**: $\log(\\frac{{y.predict}}{{1 - y.predict}})$ ~ GC.content, linear regression
+
 ```{{r, echo=FALSE, warning=FALSE}}
 tables_new <- list()
 for (i in file_prefixs){{
-    tables_new[[i]] <- paste0('{envir}', '{inner_html}', '#', i)
+    tables_new[[i]] <- paste0('{envir}', '{inner_html}', '#', 'cor_', i)
 }}
 bsselect(tables_new, type = "iframe", selected = names(tables_new)[1],
          live_search = TRUE, show_tick = TRUE, frame_height = 500, frame_width = 1000)
