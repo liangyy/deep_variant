@@ -5,34 +5,37 @@ parser = argparse.ArgumentParser(prog='assemble.py', description='''
     certain motif as features to predict outcome by logistic regression
         ''')
 parser.add_argument('--motif', help='''
-    Motif file in JASPAR format.
+    Motif file in JASPAR format
 ''')
 parser.add_argument('--background', help='''
     Background frequency (A,G,C,T)
 ''')
-parser.add_argument('--seq', help='''
-    Sequence file
+parser.add_argument('--xtrain', help='''
+    Sequence file for training
 ''')
-parser.add_argument('--y', help='''
-    Corresponing labels used for training.
+parser.add_argument('--xvalid', help='''
+    Sequence file for validation
 ''')
 parser.add_argument('--threshold', type=float, help='''
-    Log likelihood ratio threshold to determine if the motif locates in sequence.
+    Log likelihood ratio threshold to determine if the motif locates in sequence
 ''')
 parser.add_argument('--output', help='''
-    Save model in Keras format.
+    Save model in Keras format
 ''')
 args = parser.parse_args()
 
 import sys
+if '../gc_content/scripts/' not in sys.path:
+    sys.path.insert(0, '../gc_content/scripts/')
+import my_python
 import numpy as np
 import re
 import h5py
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Flatten, Lambda, Input, Merge
-from keras.layers import Conv1D, MaxPooling1D
+from keras.layers import Conv1D, MaxPooling1D, Input
 from keras.layers.merge import concatenate
+
 alphabet_order = {  'A':0,
                     'G':1,
                     'C':2,
@@ -76,33 +79,23 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
 def get_background_freq(data):
     freq = [ float(i) for i in data.split(',') ]
     return np.array([freq]).T
-f = h5py.File(args.seq, 'r')
-xtrain = f['trainxdata'][()]
-shape = xtrain.shape[1:]
-print('start to load x')
+
+xvalid = my_python.getData(args.xvalid, 'trainxdata')
+xshape = xvalid.shape[1:]
+
 background_freq = get_background_freq(args.background)
-print('start to load motifs')
 motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
-print('start to load y')
-f = h5py.File(args.y, 'r')
-ytrain =  f['traindata'][()]
-y_shape = ytrain.shape[-1]
-f.close()
-print('start to build branches')
+
+inputx = Input(shape=xshape)
 branches = []
-xtrains = []
-xvalids = []
 for m in motifs:
-    print(m)
-    branch = Sequential()
-    branch.add(Conv1D(input_shape=shape, filters=1,
+    motif_conv = Conv1D(input_shape=shape, filters=1,
                              kernel_size=m.transpose((1,0)).shape[0],
                              padding="valid",
                              strides=1,
-                             activation='relu'))
-    branch.add(MaxPooling1D(pool_size=shape[0] - m.shape[1] + 1))
-    branches.append(branch)
-    xtrains.append(xtrain)
+                             activation='relu')(inputx)
+    motif_max = MaxPooling1D(pool_size=shape[0] - m.shape[1] + 1)(motif_conv)
+    branches.append(motif_max)
 
 model = Sequential()
 model.add(concatenate(branches))
