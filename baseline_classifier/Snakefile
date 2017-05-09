@@ -4,23 +4,24 @@
 
 rule assemble:
     input:
-        motif = config['motifs'],
-        seq = config['data']['train']['x'],
-        label = config['data']['train']['y']
+        motif = lambda wildcards: config[wildcards.motif_name]['motifs'],
+        seq = lambda wildcards: config[wildcards.motif_name]['data']['train']['x'],
+        label = lambda wildcards: config[wildcards.motif_name]['data']['train']['y']
     params:
-        llr = config['threshold']
+        llr = lambda wildcards: config[wildcards.motif_name]['threshold'],
+        background = lambda wildcards: config[wildcards.motif_name]['background']
     output:
         'prototype/{motif_name}.init.hdf5'
     shell:
-        '''python scripts/assemble.py --motif {input.motif} --background {input.seq} --y {input.label}\
-        --threshold {params.llr} --output {output[0]}'''
+        '''python scripts/assemble.py --motif {input.motif} --seq {input.seq} --y {input.label}\
+        --threshold {params.llr} --output {output[0]} --background {params.background}'''
 
 rule train:
     input:
         model = 'prototype/{motif_name}.init.hdf5',
-        train = config['data']['train'],
-        valid = config['data']['valid'],
-        niter = config['niter']
+        train = lambda wildcards: config[wildcards.motif_name]['data']['train'],
+        valid = lambda wildcards: config[wildcards.motif_name]['data']['valid'],
+        niter = lambda wildcards: config[wildcards.motif_name]['niter']
     params:
         outfolder = 'train/{motif_name}'
     output:

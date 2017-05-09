@@ -8,7 +8,10 @@ parser.add_argument('--motif', help='''
     Motif file in JASPAR format.
 ''')
 parser.add_argument('--background', help='''
-    Sequences used for training.
+    Background frequency (A,G,C,T)
+''')
+parser.add_argument('--seq', help='''
+    Sequence file
 ''')
 parser.add_argument('--y', help='''
     Corresponing labels used for training.
@@ -27,7 +30,7 @@ import re
 import h5py
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Flatten, Lambda
+from keras.layers import Dense, Activation, Flatten, Lambda, Input
 from keras.layers import Conv1D, MaxPooling1D
 
 alphabet_order = {  'A':0,
@@ -47,7 +50,7 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
                 if counter == 0:
                     try:
                         motif = np.array(motif)
-                        print(motif.sum(axis = 0))
+                        # print(motif.sum(axis = 0))
                         motif = np.log10(zero + motif / motif.sum(axis = 0)) - background_freq_log
                         motifs.append(motif)
                     except UnboundLocalError:
@@ -71,20 +74,25 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
     return motifs
 
 def get_background_freq(data):
-    f = h5py.File(data, 'r')
-    x = f['trainxdata'][()]
-    f.close()
-    return (np.array([x.mean(axis = (0, 1))]).T, x.shape[1:])
-
-(background_freq, shape) = get_background_freq(args.background)
+    freq = [ float(i) for i in data.split(',') ]
+    return np.array([freq]).T
+f = h5py.File(args.seq, 'r')
+xtrain = f['trainxdata'][()]
+shape = xtrain.shape[1:]
+print('start to load x')
+background_freq = get_background_freq(args.background)
+print('start to load motifs')
 motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
+print('start to load y')
 f = h5py.File(args.y, 'r')
-y_shape = f['traindata'][()].shape[-1]
+ytrain =  f['traindata'][()]
+y_shape = ytrain.shape[-1]
 f.close()
-
+print('start to build branches')
 x = Input(shape=shape)
 branches = []
 for m in motifs:
+    print(m)
     branch = Sequential()
     branch.add(x)
     branch.add(Convolution1D(nb_filter=1,
