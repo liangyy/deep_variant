@@ -107,4 +107,8 @@ for m in motifs:
 cat_conv = concatenate(branches, axis=-1)
 model = Model(inputs=inputx, outputs=cat_conv)
 model.compile(loss='binary_crossentropy', optimizer='sgd')
-model.summary()
+
+layer_num = 1
+for m in motifs:
+    model.layers[layer_num].set_weights([m.transpose((1,0))[::-1], -args.threshold])
+    layer_num += 1
