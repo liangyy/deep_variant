@@ -5,7 +5,7 @@ Test:
   threshold: 2 # LLR (base = 2) threshold to tell whether the sequence contains the motif
   data:
     train:
-      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
+      x: 'test/test.hdf5' # '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
       y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_train/DeepSEA_train_12__with_label.hdf5' # in standard format
     valid:
       x: 'test/test.hdf5'

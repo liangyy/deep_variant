@@ -17,7 +17,7 @@ rule assemble:
         feature_train = 'data/{motif_name}.train.feature.hdf5',
         feature_valid = 'data/{motif_name}.valid.feature.hdf5'
     shell:
-        '''python scripts/assemble.py --motif {input.motif} --xtrain {input.xtrain} --xvalid {input.xvalid}\
+        '''python -u scripts/assemble.py --motif {input.motif} --xtrain {input.xtrain} --xvalid {input.xvalid}\
         --threshold {params.llr} --output {output.model} --background {params.background} \
         --output_train {output.feature_train} --output_valid {output.feature_valid} \
         --ytrain {input.ytrain} --yvalid {input.yvalid}'''
@@ -26,7 +26,7 @@ rule train:
     input:
         model = 'prototype/{motif_name}.init.hdf5',
         train = 'data/{motif_name}.train.feature.hdf5',
-        valid = 'data/{motif_name}.valid.feature.hdf5'
+        valid = 'data/{motif_name}.valid.feature.hdf5',
         niter = lambda wildcards: config[wildcards.motif_name]['niter']
     params:
         outfolder = 'train/{motif_name}'

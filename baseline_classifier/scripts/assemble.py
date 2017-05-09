@@ -47,10 +47,14 @@ import numpy as np
 import re
 import h5py
 
+import os
+os.environ['THEANO_FLAGS'] = "device=gpu"
+os.environ['floatX'] = 'float32'
 from keras.models import Model
-from keras.layers import Conv1D, MaxPooling1D, Input
+from keras.layers import Conv1D, MaxPooling1D, Input, Flatten
 from keras.layers.merge import concatenate
 
+sys.setrecursionlimit(10000)
 alphabet_order = {  'A':0,
                     'G':1,
                     'C':2,
@@ -99,7 +103,7 @@ def get_background_freq(data):
     return np.array([freq]).T
 
 def save_data(x, y, filename):
-    f = hdf5.File(filename, 'w')
+    f = h5py.File(filename, 'w')
     f.create_dataset('trainxdata', data=x)
     f.create_dataset('traindata', data=y)
     f.close()
@@ -108,8 +112,11 @@ xvalid = my_python.getData(args.xvalid, 'trainxdata')
 xshape = xvalid.shape[1:]
 
 background_freq = get_background_freq(args.background)
+
+print('Reading Motif')
 motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 
+print('Building Model')
 inputx = Input(shape=xshape)
 branches = []
 counter = 0
@@ -117,7 +124,7 @@ nmotifs = len(motifs)
 for im in range(nmotifs):
     m = motifs[im]
     counter += 1
-    print(counter)
+    # print(counter)
     motif_conv = Conv1D(filters=1,
                              kernel_size=m.transpose((1,0)).shape[0],
                              padding="valid",
@@ -128,9 +135,13 @@ for im in range(nmotifs):
 
 
 cat_conv = concatenate(branches, axis=-1)
+cat_conv = Flatten()(cat_conv)
 model = Model(inputs=inputx, outputs=cat_conv)
+
+print('Compiling Model')
 model.compile(loss='binary_crossentropy', optimizer='sgd')
 
+print('Assigning Weights')
 layer_num = 1
 for im in range(nmotifs):
     m = motifs[im]
@@ -141,12 +152,15 @@ for im in range(nmotifs):
     model.layers[layer_num].set_weights([temp, np.array([-args.threshold])])
     layer_num += 1
 
+print('Saving Model')
 model.save(args.output)
 
+print('Predicting on Validation Set')
 feature_valid = model.predict(xvalid, verbose=1)
 yvalid = my_python.getData(args.yvalid, 'traindata')
 save_data(feature_valid, yvalid, args.output_valid)
 
+print('Predicting on Training Set')
 xtrain = my_python.getData(args.xtrain, 'trainxdata')
 feature_train = model.predict(xtrain, verbose=1)
 ytrain = my_python.getData(args.ytrain, 'traindata')
