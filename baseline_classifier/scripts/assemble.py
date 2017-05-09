@@ -74,6 +74,9 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
                     char_num = [ float(num) for num in line ]
                     motif[alphabet_order[char]] = char_num
                     counter += 1
+    motif = np.array(motif)
+    motif = np.log10(zero + motif / motif.sum(axis = 0)) - background_freq_log
+    motifs.append(motif)
     return motifs
 
 def get_background_freq(data):
