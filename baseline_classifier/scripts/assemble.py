@@ -89,13 +89,11 @@ ytrain =  f['traindata'][()]
 y_shape = ytrain.shape[-1]
 f.close()
 print('start to build branches')
-x = Input(shape=shape)
 branches = []
 for m in motifs:
     print(m)
     branch = Sequential()
-    branch.add(x)
-    branch.add(Convolution1D(nb_filter=1,
+    branch.add(Convolution1D(input_shape=shape, nb_filter=1,
                              filter_length=m.transpose((1,0)).shape,
                              padding="valid",
                              strides=1,
