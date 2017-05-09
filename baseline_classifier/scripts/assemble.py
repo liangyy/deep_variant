@@ -92,7 +92,9 @@ motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 inputx = Input(shape=xshape)
 branches = []
 counter = 0
-for m in motifs:
+nmotifs = 5 # len(motifs)
+for im in range(nmotifs):
+    m = motifs[im]
     counter += 1
     print(counter)
     motif_conv = Conv1D(filters=1,
@@ -109,6 +111,11 @@ model = Model(inputs=inputx, outputs=cat_conv)
 model.compile(loss='binary_crossentropy', optimizer='sgd')
 
 layer_num = 1
-for m in motifs:
-    model.layers[layer_num].set_weights([m.transpose((1,0))[::-1], -args.threshold])
+for im in range(nmotifs):
+    m = motifs[im]    
+    size_temp = list(m.transpose((1,0))[::-1].shape)
+    size_temp.append(1)
+    temp = np.zeros(size_temp)
+    temp[:,:,0] = m.transpose((1,0))[::-1]
+    model.layers[layer_num].set_weights([temp, np.array([-args.threshold])])
     layer_num += 1
