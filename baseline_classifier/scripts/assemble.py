@@ -43,18 +43,18 @@ alphabet_order = {  'A':0,
 
 def read_motif_from_jaspar(filename, background_freq, alphabet_order):
     counter = 0
-    zero = 1e-12
+    pseudocount = 1e-10
     motifs = []
-    background_freq_log = np.log10(background_freq + zero)
+    background_freq_log = np.log10(background_freq)
     with open(filename, 'r') as i:
         for line in i:
             line = line.strip()
             if len(line) > 0 and line[0] == '>':
                 if counter == 0:
                     try:
-                        motif = np.array(motif)
+                        motif = np.array(motif) + pseudocount
                         # print(motif.sum(axis = 0))
-                        motif = np.log10(zero + motif / motif.sum(axis = 0)) - background_freq_log
+                        motif = np.log10(motif / motif.sum(axis = 0)) - background_freq_log
                         motifs.append(motif)
                     except UnboundLocalError:
                         pass
@@ -74,8 +74,8 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
                     char_num = [ float(num) for num in line ]
                     motif[alphabet_order[char]] = char_num
                     counter += 1
-    motif = np.array(motif)
-    motif = np.log10(zero + motif / motif.sum(axis = 0)) - background_freq_log
+    motif = np.array(motif) + pseudocount
+    motif = np.log10(motif / motif.sum(axis = 0)) - background_freq_log
     motifs.append(motif)
     return motifs
 
@@ -112,7 +112,7 @@ model.compile(loss='binary_crossentropy', optimizer='sgd')
 
 layer_num = 1
 for im in range(nmotifs):
-    m = motifs[im]    
+    m = motifs[im]
     size_temp = list(m.transpose((1,0))[::-1].shape)
     size_temp.append(1)
     temp = np.zeros(size_temp)
