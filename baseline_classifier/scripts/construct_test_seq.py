@@ -12,7 +12,7 @@ args = parser.parse_args()
 import h5py
 import numpy as np
 
-x = np.zeros((len(args.seqs, 1000, 4)))
+x = np.zeros((len(args.seqs), 1000, 4))
 char_id = {'A':0, 'G':1, 'C':2, 'T':3}
 for i in range(len(args.seqs)):
     seq = args.seqs[i]

@@ -92,7 +92,7 @@ motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 inputx = Input(shape=xshape)
 branches = []
 counter = 0
-nmotifs = 5 # len(motifs)
+nmotifs = len(motifs)
 for im in range(nmotifs):
     m = motifs[im]
     counter += 1
