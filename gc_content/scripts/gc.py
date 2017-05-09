@@ -31,7 +31,7 @@ import pandas as pd
 import feather
 
 x = my_python.getData(args.x, args.name_x)
-x = x[:, :, :2]
+# x = x[:, :, :2]
 if args.doublex == 'Yes':
     x = x[:int(x.shape[0] / 2)]
 gc = np.sum(x[:,:,1:3], axis = (1,2)) / x.shape[1]
