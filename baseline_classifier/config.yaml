@@ -1,0 +1,6 @@
+motifs: 'motifs/pfm_vertebrates.txt'
+niter: 50
+thresold: 2 # LLR (base = 2) threshold to tell whether the sequence contains the motif
+data:
+  train: # in standard format
+  valid: # in standard format

@@ -1,0 +1,33 @@
+# This section build a neural net with motifs as filters
+# And train a logistic classifier on the top of it
+# Instead of training directly, it writes a training scripts that is ready to be submitted to cluster
+
+rule assemble:
+    input:
+        motif = config['motifs'],
+        seq = config['data']['train']
+    params:
+        llr = config['threshold']
+    output:
+        'prototype/{motif_name}.init.hdf5'
+    shell:
+        '''python scripts/assemble.py --motif {input.motif} --background {input.seq} \
+        --threshold {params.llr} --output {output[0]}'''
+
+rule train:
+    input:
+        model = 'prototype/{motif_name}.init.hdf5',
+        train = config['data']['train'],
+        valid = config['data']['valid'],
+        niter = config['niter']
+    params:
+        outfolder = 'train/{motif_name}'
+    output:
+        'sbatch/{motif_name}.sbatch'
+    run:
+        sbatch = '''
+write training script here
+'''.format(model=input.model, train=input.train, valid=model.valid, niter=model.niter, outdir=params.outfolder, taskname=wildcards.motif_name)
+        o = open(output[0], 'w')
+        o.write(sbatch)
+        o.close()
