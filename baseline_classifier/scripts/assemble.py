@@ -2,7 +2,10 @@ import argparse
 parser = argparse.ArgumentParser(prog='assemble.py', description='''
     Given a file containing motifs info and the sequences we are working on,
     assemble a classifier that uses the indicator of if the sequence contains
-    certain motif as features to predict outcome by logistic regression
+    certain motif as features to predict outcome by logistic regression.
+
+    Output input -> feature model and generate data for training and validation
+    in standard format
         ''')
 parser.add_argument('--motif', help='''
     Motif file in JASPAR format
@@ -21,6 +24,18 @@ parser.add_argument('--threshold', type=float, help='''
 ''')
 parser.add_argument('--output', help='''
     Save model in Keras format
+''')
+parser.add_argument('--output_train', help='''
+    Save training data with feature representation in hdf5
+''')
+parser.add_argument('--output_valid', help='''
+    Save validation data with feature representation in hdf5
+''')
+parser.add_argument('--ytrain', help='''
+    Label file for training
+''')
+parser.add_argument('--yvalid', help='''
+    Sequence file for validation
 ''')
 args = parser.parse_args()
 
@@ -83,6 +98,12 @@ def get_background_freq(data):
     freq = [ float(i) for i in data.split(',') ]
     return np.array([freq]).T
 
+def save_data(x, y, filename):
+    f = hdf5.File(filename, 'w')
+    f.create_dataset('trainxdata', data=x)
+    f.create_dataset('traindata', data=y)
+    f.close()
+
 xvalid = my_python.getData(args.xvalid, 'trainxdata')
 xshape = xvalid.shape[1:]
 
@@ -119,3 +140,14 @@ for im in range(nmotifs):
     temp[:,:,0] = m.transpose((1,0))[::-1]
     model.layers[layer_num].set_weights([temp, np.array([-args.threshold])])
     layer_num += 1
+
+model.save(args.output)
+
+feature_valid = model.predict(xvalid, verbose=1)
+yvalid = my_python.getData(args.yvalid, 'traindata')
+save_data(feature_valid, yvalid, args.output_valid)
+
+xtrain = my_python.getData(args.xtrain, 'trainxdata')
+feature_train = model.predict(xtrain, verbose=1)
+ytrain = my_python.getData(args.ytrain, 'traindata')
+save_data(feature_train, ytrain, args.output_train)

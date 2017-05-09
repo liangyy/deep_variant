@@ -6,21 +6,27 @@ rule assemble:
     input:
         motif = lambda wildcards: config[wildcards.motif_name]['motifs'],
         xtrain = lambda wildcards: config[wildcards.motif_name]['data']['train']['x'],
-        xvalid = lambda wildcards: config[wildcards.motif_name]['data']['valid']['x']
+        xvalid = lambda wildcards: config[wildcards.motif_name]['data']['valid']['x'],
+        ytrain = lambda wildcards: config[wildcards.motif_name]['data']['train']['y'],
+        yvalid = lambda wildcards: config[wildcards.motif_name]['data']['valid']['y'],
     params:
         llr = lambda wildcards: config[wildcards.motif_name]['threshold'],
         background = lambda wildcards: config[wildcards.motif_name]['background']
     output:
-        'prototype/{motif_name}.init.hdf5'
+        model = 'prototype/{motif_name}.init.hdf5',
+        feature_train = 'data/{motif_name}.train.feature.hdf5',
+        feature_valid = 'data/{motif_name}.valid.feature.hdf5'
     shell:
         '''python scripts/assemble.py --motif {input.motif} --xtrain {input.xtrain} --xvalid {input.xvalid}\
-        --threshold {params.llr} --output {output[0]} --background {params.background}'''
+        --threshold {params.llr} --output {output.model} --background {params.background} \
+        --output_train {output.feature_train} --output_valid {output.feature_valid} \
+        --ytrain {input.ytrain} --yvalid {input.yvalid}'''
 
 rule train:
     input:
         model = 'prototype/{motif_name}.init.hdf5',
-        train = lambda wildcards: config[wildcards.motif_name]['data']['train'],
-        valid = lambda wildcards: config[wildcards.motif_name]['data']['valid'],
+        train = 'data/{motif_name}.train.feature.hdf5',
+        valid = 'data/{motif_name}.valid.feature.hdf5'
         niter = lambda wildcards: config[wildcards.motif_name]['niter']
     params:
         outfolder = 'train/{motif_name}'
