@@ -88,13 +88,16 @@ motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 
 inputx = Input(shape=xshape)
 branches = []
+counter = 0
 for m in motifs:
-    motif_conv = Conv1D(input_shape=shape, filters=1,
+    counter += 1
+    print(counter)
+    motif_conv = Conv1D(filters=1,
                              kernel_size=m.transpose((1,0)).shape[0],
                              padding="valid",
                              strides=1,
                              activation='relu')(inputx)
-    motif_max = MaxPooling1D(pool_size=shape[0] - m.shape[1] + 1)(motif_conv)
+    motif_max = MaxPooling1D(pool_size=xshape[0] - m.shape[1] + 1)(motif_conv)
     branches.append(motif_max)
 
 model = Sequential()
