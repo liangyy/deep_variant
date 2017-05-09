@@ -5,13 +5,14 @@
 rule assemble:
     input:
         motif = config['motifs'],
-        seq = config['data']['train']
+        seq = config['data']['train']['x'],
+        label = config['data']['train']['y']
     params:
         llr = config['threshold']
     output:
         'prototype/{motif_name}.init.hdf5'
     shell:
-        '''python scripts/assemble.py --motif {input.motif} --background {input.seq} \
+        '''python scripts/assemble.py --motif {input.motif} --background {input.seq} --y {input.label}\
         --threshold {params.llr} --output {output[0]}'''
 
 rule train:

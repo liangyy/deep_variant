@@ -10,6 +10,9 @@ parser.add_argument('--motif', help='''
 parser.add_argument('--background', help='''
     Sequences used for training.
 ''')
+parser.add_argument('--y', help='''
+    Corresponing labels used for training.
+''')
 parser.add_argument('--threshold', type=float, help='''
     Log likelihood ratio threshold to determine if the motif locates in sequence.
 ''')
@@ -70,13 +73,14 @@ def read_motif_from_jaspar(filename, background_freq, alphabet_order):
 def get_background_freq(data):
     f = h5py.File(data, 'r')
     x = f['trainxdata'][()]
-    y = f['traindata'][()]
     f.close()
-    return (np.array([x.mean(axis = (0, 1))]).T, x.shape[1:], y.shape[-1])
+    return (np.array([x.mean(axis = (0, 1))]).T, x.shape[1:])
 
-(background_freq, shape, y_shape) = get_background_freq(args.background)
+(background_freq, shape) = get_background_freq(args.background)
 motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
-
+f = h5py.File(args.y, 'r')
+y_shape = f['traindata'][()].shape[-1]
+f.close()
 
 x = Input(shape=shape)
 branches = []
