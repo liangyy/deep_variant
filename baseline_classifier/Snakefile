@@ -5,15 +5,15 @@
 rule assemble:
     input:
         motif = lambda wildcards: config[wildcards.motif_name]['motifs'],
-        seq = lambda wildcards: config[wildcards.motif_name]['data']['train']['x'],
-        label = lambda wildcards: config[wildcards.motif_name]['data']['train']['y']
+        xtrain = lambda wildcards: config[wildcards.motif_name]['data']['train']['x'],
+        xvalid = lambda wildcards: config[wildcards.motif_name]['data']['valid']['x']
     params:
         llr = lambda wildcards: config[wildcards.motif_name]['threshold'],
         background = lambda wildcards: config[wildcards.motif_name]['background']
     output:
         'prototype/{motif_name}.init.hdf5'
     shell:
-        '''python scripts/assemble.py --motif {input.motif} --seq {input.seq} --y {input.label}\
+        '''python scripts/assemble.py --motif {input.motif} --xtrain {input.xtrain} --xvalid {input.xvalid}\
         --threshold {params.llr} --output {output[0]} --background {params.background}'''
 
 rule train:
