@@ -32,7 +32,7 @@ import numpy as np
 import re
 import h5py
 
-from keras.models import Sequential
+from keras.models import Model
 from keras.layers import Conv1D, MaxPooling1D, Input
 from keras.layers.merge import concatenate
 
@@ -100,7 +100,8 @@ for m in motifs:
     motif_max = MaxPooling1D(pool_size=xshape[0] - m.shape[1] + 1)(motif_conv)
     branches.append(motif_max)
 
-model = Sequential()
-model.add(concatenate(branches))
+
+cat_conv = concatenate(branches, axis=-1)
+model = Model(inputs=inputx, outputs=cat_conv)
 model.compile(loss='binary_crossentropy', optimizer='sgd')
 model.summary()
