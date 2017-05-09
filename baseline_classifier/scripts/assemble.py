@@ -30,9 +30,9 @@ import re
 import h5py
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Flatten, Lambda, Input
+from keras.layers import Dense, Activation, Flatten, Lambda, Input, Merge
 from keras.layers import Conv1D, MaxPooling1D
-
+from keras.layers.merge import concatenate
 alphabet_order = {  'A':0,
                     'G':1,
                     'C':2,
@@ -90,18 +90,21 @@ y_shape = ytrain.shape[-1]
 f.close()
 print('start to build branches')
 branches = []
+xtrains = []
+xvalids = []
 for m in motifs:
     print(m)
     branch = Sequential()
-    branch.add(Conv1D(input_shape=shape, nb_filter=1,
-                             filter_length=m.transpose((1,0)).shape,
+    branch.add(Conv1D(input_shape=shape, filters=1,
+                             kernel_size=m.transpose((1,0)).shape[0],
                              padding="valid",
                              strides=1,
                              activation='relu'))
     branch.add(MaxPooling1D(pool_size=shape[0] - m.shape[1] + 1))
     branches.append(branch)
+    xtrains.append(xtrain)
 
 model = Sequential()
-model.add(Merge(branches, mode='concat'))
+model.add(concatenate(branches))
 model.compile(loss='binary_crossentropy', optimizer='sgd')
 model.summary()
