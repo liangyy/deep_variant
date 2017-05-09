@@ -93,7 +93,7 @@ branches = []
 for m in motifs:
     print(m)
     branch = Sequential()
-    branch.add(Convolution1D(input_shape=shape, nb_filter=1,
+    branch.add(Conv1D(input_shape=shape, nb_filter=1,
                              filter_length=m.transpose((1,0)).shape,
                              padding="valid",
                              strides=1,
