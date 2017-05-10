@@ -76,17 +76,17 @@ model.model.compile(loss='binary_crossentropy', optimizer='sgd')
 
 print('Assigning Weights')
 model.assign_weight(args.threshold)
-#
-# print('Saving Model')
-# model.save(args.output)
-#
-# print('Predicting on Validation Set')
-# feature_valid = model.predict(xvalid, verbose=1)
-# yvalid = my_python.getData(args.yvalid, 'traindata')
-# my_python.save_data(feature_valid, yvalid, args.output_valid)
-#
-# print('Predicting on Training Set')
-# xtrain = my_python.getData(args.xtrain, 'trainxdata')
-# feature_train = model.predict(xtrain, verbose=1)
-# ytrain = my_python.getData(args.ytrain, 'traindata')
-# my_python.save_data(feature_train, ytrain, args.output_train)
+
+print('Saving Model')
+model.model.save(args.output)
+
+print('Predicting on Validation Set')
+feature_valid = model.model.predict(xvalid, verbose=1)
+yvalid = my_python.getData(args.yvalid, 'traindata')
+my_python.save_data(feature_valid, yvalid, args.output_valid)
+
+print('Predicting on Training Set')
+xtrain = my_python.getData(args.xtrain, 'trainxdata')
+feature_train = model.model.predict(xtrain, verbose=1)
+ytrain = my_python.getData(args.ytrain, 'traindata')
+my_python.save_data(feature_train, ytrain, args.output_train)
