@@ -40,7 +40,7 @@ parser.add_argument('--yvalid', help='''
 args = parser.parse_args()
 
 import sys
-if '../gc_content/scripts/' not in sys.path:
+if 'scripts/' not in sys.path:
     sys.path.insert(0, '../gc_content/scripts/')
 import my_python
 import numpy as np
@@ -50,7 +50,7 @@ import h5py
 import os
 os.environ['THEANO_FLAGS'] = "device=gpu"
 os.environ['floatX'] = 'float32'
-from keras.models import Model
+from keras.models import Model, Sequential
 from keras.layers import Conv1D, MaxPooling1D, Input, Flatten
 from keras.layers.merge import concatenate
 
@@ -60,108 +60,33 @@ alphabet_order = {  'A':0,
                     'C':2,
                     'T':3  }
 
-def read_motif_from_jaspar(filename, background_freq, alphabet_order):
-    counter = 0
-    pseudocount = 1e-10
-    motifs = []
-    background_freq_log = np.log10(background_freq)
-    with open(filename, 'r') as i:
-        for line in i:
-            line = line.strip()
-            if len(line) > 0 and line[0] == '>':
-                if counter == 0:
-                    try:
-                        motif = np.array(motif) + pseudocount
-                        # print(motif.sum(axis = 0))
-                        motif = np.log10(motif / motif.sum(axis = 0)) - background_freq_log
-                        motifs.append(motif)
-                    except UnboundLocalError:
-                        pass
-                    motif = [ [] for e in range(len(alphabet_order.keys())) ]
-                    counter += 1
-                else:
-                    print("The format is wrong at " + line, file=sys.stderr)
-                    sys.exit()
-            else:
-                if line == '':
-                    counter = 0
-                    continue
-                else:
-                    line = re.sub('[\[\]]', '', line)
-                    line = line.split()
-                    char = line.pop(0)
-                    char_num = [ float(num) for num in line ]
-                    motif[alphabet_order[char]] = char_num
-                    counter += 1
-    motif = np.array(motif) + pseudocount
-    motif = np.log10(motif / motif.sum(axis = 0)) - background_freq_log
-    motifs.append(motif)
-    return motifs
-
-def get_background_freq(data):
-    freq = [ float(i) for i in data.split(',') ]
-    return np.array([freq]).T
-
-def save_data(x, y, filename):
-    f = h5py.File(filename, 'w')
-    f.create_dataset('trainxdata', data=x)
-    f.create_dataset('traindata', data=y)
-    f.close()
-
 xvalid = my_python.getData(args.xvalid, 'trainxdata')
 xshape = xvalid.shape[1:]
 
-background_freq = get_background_freq(args.background)
+background_freq = my_python.get_background_freq(args.background)
 
 print('Reading Motif')
-motifs = read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
+motifs = my_python.read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 
 print('Building Model')
-inputx = Input(shape=xshape)
-branches = []
-counter = 0
-nmotifs = len(motifs)
-for im in range(nmotifs):
-    m = motifs[im]
-    counter += 1
-    # print(counter)
-    motif_conv = Conv1D(filters=1,
-                             kernel_size=m.transpose((1,0)).shape[0],
-                             padding="valid",
-                             strides=1,
-                             activation='relu')(inputx)
-    motif_max = MaxPooling1D(pool_size=xshape[0] - m.shape[1] + 1)(motif_conv)
-    branches.append(motif_max)
+model = my_python.ModelCNN(xshape, motifs)
 
-
-cat_conv = concatenate(branches, axis=-1)
-cat_conv = Flatten()(cat_conv)
-model = Model(inputs=inputx, outputs=cat_conv)
-
-print('Compiling Model')
-model.compile(loss='binary_crossentropy', optimizer='sgd')
-
-print('Assigning Weights')
-layer_num = 1
-for im in range(nmotifs):
-    m = motifs[im]
-    size_temp = list(m.transpose((1,0))[::-1].shape)
-    size_temp.append(1)
-    temp = np.zeros(size_temp)
-    temp[:,:,0] = m.transpose((1,0))[::-1]
-    model.layers[layer_num].set_weights([temp, np.array([-args.threshold])])
-    layer_num += 1
-
-print('Saving Model')
-model.save(args.output)
-
-print('Predicting on Validation Set')
-feature_valid = model.predict(xvalid, verbose=1)
-yvalid = my_python.getData(args.yvalid, 'traindata')
-save_data(feature_valid, yvalid, args.output_valid)
-
-print('Predicting on Training Set')
-xtrain = my_python.getData(args.xtrain, 'trainxdata')
-feature_train = model.predict(xtrain, verbose=1)
-ytrain = my_python.getData(args.ytrain, 'traindata')
-save_data(feature_train, ytrain, args.output_train)
+# print('Compiling Model')
+# model.compile(loss='binary_crossentropy', optimizer='sgd')
+#
+# print('Assigning Weights')
+# model.assign_weight(args.threshold)
+#
+# print('Saving Model')
+# model.save(args.output)
+#
+# print('Predicting on Validation Set')
+# feature_valid = model.predict(xvalid, verbose=1)
+# yvalid = my_python.getData(args.yvalid, 'traindata')
+# my_python.save_data(feature_valid, yvalid, args.output_valid)
+#
+# print('Predicting on Training Set')
+# xtrain = my_python.getData(args.xtrain, 'trainxdata')
+# feature_train = model.predict(xtrain, verbose=1)
+# ytrain = my_python.getData(args.ytrain, 'traindata')
+# my_python.save_data(feature_train, ytrain, args.output_train)
