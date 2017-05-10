@@ -154,6 +154,7 @@ class ModelCNN:
 		model.add(MaxPooling1D(pool_size=xshape[0] - lmotif + 1))
 		model.add(Reshape((2, int(len(new_motifs)  / 2))))
 		model.add(MaxPooling1D(pool_size=2))
+		model.add(Flatten())
 		self.xshape = xshape
 		self.model = model
 		self.weights = new_motifs
