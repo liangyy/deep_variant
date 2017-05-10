@@ -9,7 +9,7 @@ import numpy as np
 os.environ['THEANO_FLAGS'] = "device=gpu"
 os.environ['floatX'] = 'float32'
 from keras.models import Model, Sequential
-from keras.layers import Conv1D, MaxPooling1D, Input, Flatten, Reshape
+from keras.layers import Conv1D, MaxPooling1D, Input, Flatten, Reshape, Activation, Dense
 from keras.layers.merge import concatenate
 
 def getFilename(string):
@@ -89,6 +89,13 @@ def save_data(x, y, filename):
     f.create_dataset('traindata', data=y)
     f.close()
 
+def load_data(x, y, filename):
+    f = h5py.File(filename, 'r')
+	x = f['trainxdata'][()]
+	y = f['traindata'][()]
+    f.close()
+	return (x, y)
+
 class ModelAPI:
 	def __init__(self, xshape, motifs):
 		inputx = Input(shape=xshape)
@@ -164,3 +171,12 @@ class ModelCNN:
 		for i in range(self.nmotifs):
 			motif_weights[:,:,i] = self.weights[i].transpose((1,0))[::-1]
 		self.model.layers[0].set_weights([motif_weights, np.ones((self.nmotifs,)) * -threshold])
+
+def logistic_head(input_dim, output_dim, l1, l2):
+	print('logistic head -- Building the model')
+	model = Sequential()
+	model.add(Dense(output_dim, input_shape=(input_dim,), kernel_regularizer=regularizers.l1_l2(l1=l1, l2=l2)))
+	model.add(Activation('sigmoid'))
+	print('logistic head -- Compiling the model')
+	model.compile(loss='binary_crossentropy', optimizer=SGD(), metrics=['accuracy'])
+	return model

@@ -10,3 +10,19 @@ JASPAR:
     valid:
       x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
       y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_train/DeepSEA_valid_12__with_label.hdf5' # in standard format
+Training:
+  # 1:
+  #   l1: 1e-5
+  #   l2: 1e-5
+  # 2:
+  #   l1: 1e-6
+  #   l2: 1e-5
+  # 3:
+  #   l1: 1e-6
+  #   l2: 1e-6
+  # 4:
+  #   l1: 1e-5
+  #   l2: 1e-6
+  5:
+    l1: 0
+    l2: 0
