@@ -41,7 +41,7 @@ args = parser.parse_args()
 
 import sys
 if 'scripts/' not in sys.path:
-    sys.path.insert(0, '../gc_content/scripts/')
+    sys.path.insert(0, 'scripts/')
 import my_python
 import numpy as np
 import re
@@ -51,7 +51,7 @@ import os
 os.environ['THEANO_FLAGS'] = "device=gpu"
 os.environ['floatX'] = 'float32'
 from keras.models import Model, Sequential
-from keras.layers import Conv1D, MaxPooling1D, Input, Flatten
+from keras.layers import Conv1D, MaxPooling1D, Input, Flatten, Reshape
 from keras.layers.merge import concatenate
 
 sys.setrecursionlimit(10000)

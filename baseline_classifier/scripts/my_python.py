@@ -2,8 +2,16 @@ import sys
 
 from ntpath import basename
 import os
+import re
 import subprocess
 import h5py
+import numpy as np
+os.environ['THEANO_FLAGS'] = "device=gpu"
+os.environ['floatX'] = 'float32'
+from keras.models import Model, Sequential
+from keras.layers import Conv1D, MaxPooling1D, Input, Flatten, Reshape
+from keras.layers.merge import concatenate
+
 def getFilename(string):
 	return '.'.join(basename(string).split('.')[:-1])
 
@@ -123,14 +131,14 @@ class ModelCNN:
 		# determine the size of the biggest motif
 		lmotif = 0
 		for i in motifs:
-			lmotif = max(lmotifs, motifs.shape[1])
+			lmotif = max(lmotif, i.shape[1])
 
 		# adding zeros to all motifs to make them at the same length
 		new_motifs_left = []
 		new_motifs_right = []
 		for i in motifs:
-			empty_left = np.zeros((4, lmotifs))
-			empty_right = np.zeros((4, lmotifs))
+			empty_left = np.zeros((4, lmotif))
+			empty_right = np.zeros((4, lmotif))
 			empty_left[:, :i.shape[1]] = i
 			empty_right[:, -i.shape[1]:] = i
 			new_motifs_left.append(empty_left)
@@ -138,17 +146,17 @@ class ModelCNN:
 		new_motifs = new_motifs_left + new_motifs_right
 		# build a sequential model
 		model = Sequential()
-		model.add(Conv1D(filters=len(new_motifs),
+		model.add(Conv1D(input_shape=xshape, filters=len(new_motifs),
 								 kernel_size=lmotif,
 								 padding="valid",
 								 strides=1,
 								 activation='relu'))
-		model.add(MaxPooling1D(pool_size=xshape[0] - lmotifs + 1))
-		model.add(Reshape(2, lmotif))
+		model.add(MaxPooling1D(pool_size=xshape[0] - lmotif + 1))
+		model.add(Reshape((2, int(len(new_motifs)  / 2))))
 		model.add(MaxPooling1D(pool_size=2))
 		self.xshape = xshape
 		self.model = model
 		self.weights = new_motifs
-		self.nmotifs = nmotifs * 2
-		return model
+		self.nmotifs = len(new_motifs)
+		
 	
