@@ -69,13 +69,13 @@ print('Reading Motif')
 motifs = my_python.read_motif_from_jaspar(args.motif, background_freq, alphabet_order)
 
 print('Building Model')
-model = my_python.ModelCNN(xshape, motifs)
+model = my_python.ModelAPI(xshape, motifs)
 
-# print('Compiling Model')
-# model.compile(loss='binary_crossentropy', optimizer='sgd')
-#
-# print('Assigning Weights')
-# model.assign_weight(args.threshold)
+print('Compiling Model')
+model.model.compile(loss='binary_crossentropy', optimizer='sgd')
+
+print('Assigning Weights')
+model.assign_weight(args.threshold)
 #
 # print('Saving Model')
 # model.save(args.output)

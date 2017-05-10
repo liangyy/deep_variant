@@ -117,7 +117,7 @@ class ModelAPI:
 	def assign_weight(self, threshold):
 		layer_num = 1
 		for im in range(self.nmotifs):
-		    m = self.motifs[im]
+		    m = self.weights[im]
 		    size_temp = list(m.transpose((1,0))[::-1].shape)
 		    size_temp.append(1)
 		    temp = np.zeros(size_temp)
@@ -159,12 +159,7 @@ class ModelCNN:
 		self.weights = new_motifs
 		self.nmotifs = len(new_motifs)
 	def assign_weight(self, threshold):
-		self.model.layers[0].set_weights([self.weights, np.ones((self.nmotifs, 1)) * -threshold]])
-		for im in range(self.nmotifs):
-		    m = self.motifs[im]
-		    size_temp = list(m.transpose((1,0))[::-1].shape)
-		    size_temp.append(1)
-		    temp = np.zeros(size_temp)
-		    temp[:,:,0] = m.transpose((1,0))[::-1]
-		    self.model.layers[layer_num].set_weights([temp, np.array([-threshold])])
-		    layer_num += 1
+		motif_weights = np.zeros((self.weights[0].shape[1], self.weights[0].shape[0], self.nmotifs))
+		for i in range(self.nmotifs):
+			motif_weights[:,:,i] = self.weights[i].transpose((1,0))[::-1]
+		self.model.layers[0].set_weights([motif_weights, np.ones((self.nmotifs,)) * -threshold])
