@@ -23,6 +23,6 @@ Training:
   # 4:
   #   l1: 1e-5
   #   l2: 1e-6
-  5:
+  default:
     l1: 0
     l2: 0
