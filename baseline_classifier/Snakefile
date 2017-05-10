@@ -27,20 +27,21 @@ rule train:
         train = 'data/{motif_name}.train.feature.hdf5',
         valid = 'data/{motif_name}.valid.feature.hdf5'
     params:
-        outfolder = lambda wildcards: 'train/{motif_name}/{wildcards.group}/',
+        outfolder = lambda wildcards: 'train/{{motif_name}}_{groupname}/'.format(groupname=wildcards.group),
         niter = lambda wildcards: config[wildcards.motif_name]['niter'],
         l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
-        l2 = lambda wildcards: config['Training'][wildcards.group]['l2']
+        l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
+        batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
+        partition = config['partition']
     output:
         'sbatch/{motif_name}_{group}.train.sbatch'
     run:
-        sbatch = '''
-#!/bin/bash
+        sbatch = '''#!/bin/bash
 #SBATCH --job-name={taskname}_{group}
 #SBATCH --output={taskname}_{group}.out
 #SBATCH --error={taskname}_{group}.err
 #SBATCH --time=24:00:00
-#SBATCH --partition=gpu
+#SBATCH --partition={partition}
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=50G
@@ -48,7 +49,7 @@ rule train:
 #SBATCH --gres=gpu:1
 cd /project2/xinhe/yanyul
 source setup.sh
-source activate keras
+source activate deepvarpred_test
 module load cuda/7.5
 cd repo/deep_variant/baseline_classifier
 mkdir {outdir}
@@ -60,7 +61,7 @@ python scripts/train_logistic_on_cluster.py \
 --epoch {niter} \
 --l1 {l1} \
 --l2 {l2}
-'''.format(taskname=wildcards.motid_name, train=input.train, valid=input.valid, niter=params.niter, outdir=params.outfolder, l1=params.l1, l2=params.l2, group=wildcards.group)
+'''.format(taskname=wildcards.motif_name, train=input.train, valid=input.valid, niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder, l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
