@@ -18,6 +18,19 @@ knitr::opts_chunk$set(echo = TRUE)
 options(width=2000)
 ```
 
+# About alignment bias
+
+It has not been implemented. **TODO**
+
+The basic steps to deal with alignment bias is as follow:
+
+1. Align and call all possible heterozygous site
+2. Use `WASP` to look for reads at possible heterozygous site
+3. Re-align those reads and filter out the ones that cannot be aligned to the same position after flip the base
+4. Call heterozygous site with quality control and compute the degree of imbalance
+
+# Results
+
 ```{r}
 source('my_r.R')
 library(feather)
@@ -34,3 +47,16 @@ variant$Imbalance <- 'Balanced'
 variant$Imbalance[variant$P.Value < 0.01] <- 'Imbalanced'
 ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of \n Heterozygous sites in DNase-seq of E081')
 ```
+
+## Thresholds
+
+```{r}
+
+```
+
+## Sensitivity
+
+Here we evaluate the sensitivity of the model in identifying the allelic imbalance event. 
+
+## Specificity
+
