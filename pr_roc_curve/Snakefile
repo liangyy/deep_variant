@@ -1,30 +1,30 @@
 # This pipeline takes y, predicted y and output PR, ROC curves calculated by scikit-learn
 # toolkit and saves it as a feather table for downstream analysis
 
-configfile: 'config.yaml'
+# configfile: 'config.yaml'
 
 def get_names(config, wildcards):
     files = []
-    for group in config:
+    for group in config[wildcards.run_name]:
         if 'data' not in config[wildcards.run_name][group]:
             continue
         for data in config[wildcards.run_name][group]['data']:
-            files.append('curve/{{run_name}}.{group}/pr_{data}.feather'.format(group=group, data=data))
-            files.append('curve/{{run_name}}.{group}/roc_{data}.feather'.format(group=group, data=data))
+            files.append('curve/{run_name}.{group}/pr_{data}.feather'.format(group=group, data=data, run_name=wildcards.run_name))
+            files.append('curve/{run_name}.{group}/roc_{data}.feather'.format(group=group, data=data, run_name=wildcards.run_name))
     return files
 
 rule combine:
     input:
         files = lambda wildcards: get_names(config, wildcards)
     output:
-        'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
+        'result/{run_name}_curves.feather'
     shell:
         'python scripts/combine.py --files {input.files} --output {output[0]}'
 
 rule pr:
     input:
-        y = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['y']['path'],
-        yp = lambda wildcards: config[wildcards.group]['data'][wildcards.data]['ypred']['path']
+        y = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['y']['path'],
+        yp = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['ypred']['path']
     params:
         y_name = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['y']['name'],
         y_idx = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['y']['label_idx'],
@@ -78,11 +78,11 @@ rule roc:
 
 rule report_rmd:
     input:
-        'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
+        'result/{run_name}_curves.feather'
     params:
-        config['prefix']
+        lambda wildcards: wildcards.run_name
     output:
-        temp('report/{run_name}_plot.Rmd'.format(run_name=config['prefix']))
+        temp('report/{run_name}_plot.Rmd')
     run:
         rmd = '''---
 title: "Deep brain - Performance ROC/PR curves"
@@ -157,9 +157,9 @@ bsselect(plots.pr, type = "img", selected = names(plots.pr)[1],
 
 rule report_html:
     input:
-        rmd = 'report/{run_name}_plot.Rmd'.format(run_name=config['prefix']),
-        data = 'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
+        rmd = 'report/{run_name}_plot.Rmd',
+        data = 'result/{run_name}_curves.feather'
     output:
-        'report/{run_name}_plot.html'.format(run_name=config['prefix'])
+        'report/{run_name}_plot.html'
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
