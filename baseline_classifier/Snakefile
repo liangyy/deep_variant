@@ -65,3 +65,16 @@ python scripts/train_logistic_on_cluster.py \
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
+
+# The training is done by submitting a training script to cluster. The output is a collection of trained models along optimization.
+# The best model is selected based on certain criteria, for instance, validation loss
+# The final step is to combine feature extraction with selected logistic head as below
+
+rule add_head:
+    input:
+        head = lambda wildcards: config['selected_head'][wildcards.head_name],
+        motif_feature = 'prototype/{motif_name}.init.hdf5',
+    output:
+        'model/{motif_name}_{head_name}.hdf5'
+    shell:
+        'python scripts/merge_body_and_head.py --body {input.motif_feature} --head {input.head} --out {output[0]}'

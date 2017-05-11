@@ -27,3 +27,5 @@ Training:
     l1: 0
     l2: 0
 partition: 'gpu2'
+selected_head:
+  best: 'train/default/path_to_best_model'
