@@ -1,5 +1,9 @@
 # This section makes prediction given input sequences. It generates sbatch script that is ready for submission
 
+rule all:
+    input:
+        [ 'sbatch/{dataset}.sbatch'.format(dataset=i) for i in config['data'] ]
+
 rule predict:
     input:
         x = lambda wildcards: config['data'][wildcards.dataset],
@@ -11,9 +15,9 @@ rule predict:
         'sbatch/{dataset}.sbatch'
     run:
         sbatch = '''#!/bin/bash
-#SBATCH --job-name={taskname}.predict
-#SBATCH --output={taskname}.predict.out
-#SBATCH --error={taskname}.predict.err
+#SBATCH --job-name={taskname}
+#SBATCH --output={taskname}.out
+#SBATCH --error={taskname}.err
 #SBATCH --time=24:00:00
 #SBATCH --partition={partition}
 #SBATCH --ntasks=1
@@ -26,7 +30,7 @@ source setup.sh
 source activate deepvarpred_test
 module load cuda/7.5
 cd repo/deep_variant/prediction
-python predict.py --x {x} --out {out} --model {model}
+python scripts/predict.py --x {x} --out {out} --model {model}
 '''.format(x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition)
         o = open(output[0], 'w')
         o.write(sbatch)
