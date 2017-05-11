@@ -1,0 +1,3 @@
+# This section makes prediction given input sequences and it also outputs config file that is ready for pr_roc_curve section
+# It groups the results of interesting input sequences together and for each set of sequences, user needs to specify the true
+# label y, primary sequence x, and the name of the sequence set.
