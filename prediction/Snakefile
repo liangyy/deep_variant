@@ -1,3 +1,33 @@
-# This section makes prediction given input sequences and it also outputs config file that is ready for pr_roc_curve section
-# It groups the results of interesting input sequences together and for each set of sequences, user needs to specify the true
-# label y, primary sequence x, and the name of the sequence set.
+# This section makes prediction given input sequences. It generates sbatch script that is ready for submission
+
+rule predict:
+    input:
+        x = lambda wildcards: config['data'][wildcards.dataset],
+        model = config['model']
+    params:
+        ypred = 'result/{dataset}.ypred.hdf5',
+        partition = config['partition']
+    output:
+        'sbatch/{dataset}.sbatch'
+    run:
+        sbatch = '''#!/bin/bash
+#SBATCH --job-name={taskname}.predict
+#SBATCH --output={taskname}.predict.out
+#SBATCH --error={taskname}.predict.err
+#SBATCH --time=24:00:00
+#SBATCH --partition={partition}
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+module load cuda/7.5
+cd repo/deep_variant/prediction
+python predict.py --x {x} --out {out} --model {model}
+'''.format(x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition)
+        o = open(output[0], 'w')
+        o.write(sbatch)
+        o.close()
