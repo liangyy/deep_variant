@@ -3,19 +3,19 @@
 
 configfile: 'config.yaml'
 
-def get_names(config):
+def get_names(config, run_name):
     files = []
     for group in config:
         if 'data' not in config[group]:
             continue
         for data in config[group]['data']:
-            files.append('curve/{group}/pr_{data}.feather'.format(group=group, data=data))
-            files.append('curve/{group}/roc_{data}.feather'.format(group=group, data=data))
+            files.append('curve/{run_name}.{group}/pr_{data}.feather'.format(group=group, data=data, run_name=run_name))
+            files.append('curve/{run_name}.{group}/roc_{data}.feather'.format(group=group, data=data, run_name=run_name))
     return files
 
 rule combine:
     input:
-        files = get_names(config)
+        files = lambda wildcards: get_names(config, wildcards.run_name)
     output:
         'result/{run_name}_curves.feather'.format(run_name=config['prefix'])
     shell:
@@ -37,7 +37,7 @@ rule pr:
         data_name = lambda wildcards: wildcards.data,
         info = lambda wildcards: config[wildcards.group]['info'],
     output:
-        temp('curve/{group}/pr_{data}.feather')
+        temp('curve/{run_name}.{group}/pr_{data}.feather')
     shell:
         'python scripts/curve.py --ypath {input.y} --yppath {input.yp} \
                         --yname {params.y_name} --ypname {params.yp_name} \
