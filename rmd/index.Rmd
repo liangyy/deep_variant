@@ -18,11 +18,14 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
 There are three strategies:
 
 0. Baseline classifier. [here](baseline.html)
+    - ROC/PR curve [here](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html)
+    - Evalution using allelic imbalance site **TODO**
+    - Compare performance with DeepSEA representation **TODO**
 1. Use DeepSEA sequences and DeepSEA feature representation. 
     - See results and analysis [here](type1.html). 
     - See performance on new sequences [here](type1_newseq.html)
-    - See ROC/PR curve [here](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html)
-    - See evalution using allelic imbalance site [here](type1_allelic_imbalance.html)
+    - ROC/PR curve [here](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html)
+    - Evalution using allelic imbalance site [here](type1_allelic_imbalance.html)
 2. Use DeepSEA sequences but train a new model using the same architecture as DeepSEA. 
     - See results and analysis [here](type2.html). **ONGOING**
 3. Include new sequences and train a new model using the same architecture. **TODO**
@@ -38,7 +41,7 @@ There are some other directions and issues we need to explore and tackle. The an
 3. **Performance Evaluation**
     -How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion [here](auc.html)
 4. **Application**
-    - GWAS SNPs. See [here](gwas.html)
+    - IBD GWAS SNPs. See [here](SNP_enrichment.html) Rmarkdown script is at [here](https://uchicago.box.com/s/zdntptc8udymivtyoapxpu365rpo3b18)
 5. **Data Quality**: 
     - GC content. [DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html), [Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html)
 

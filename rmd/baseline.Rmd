@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(width=2000)
 ```
 
-# Overview
+# Gkm-SVM
 
 Baseline method is used to compare the performance. In DeepSEA, gkm-SVM is selected as baseline classifier. Here are several issues in making such comparison:
 
@@ -31,3 +31,7 @@ Therefore, the comparison cannot be made under rigoriously the same conditions, 
 # Alternative choice
 
 Instead of using gkm-SVM, another choice is to use JASPAR verberates core motifs ([link](http://jaspar.genereg.net/html/DOWNLOAD/JASPAR_CORE/pfm/nonredundant/pfm_vertebrates.txt)) and use the features that are generated from the motif scores (519 motifs in total). 
+
+# Implementation
+
+The classifier that uses motif score as feature is implemented at [here](https://github.com/liangyy/deep_variant/tree/code/baseline_classifier) and it is trained using DeepSEA training sets and validation sets (four labels are trained, E081, E082, E129, and Noonan). The performance of the best model (in terms of validation loss) is evaluated using DeepSEA test sequences and sequences that are extracted from bed files directly, [link](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html).

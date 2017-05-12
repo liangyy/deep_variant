@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>07 May, 2017</em></h4>
+<h4 class="date"><em>12 May, 2017</em></h4>
 
 </div>
 
@@ -326,13 +326,18 @@ div.tocify {
 <h1><span class="header-section-number">2</span> Train new models</h1>
 <p>There are three strategies:</p>
 <ol start="0" style="list-style-type: decimal">
-<li>Baseline classifier. <a href="baseline.html">here</a></li>
+<li>Baseline classifier. <a href="baseline.html">here</a>
+<ul>
+<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html">here</a></li>
+<li>Evalution using allelic imbalance site <strong>TODO</strong></li>
+<li>Compare performance with DeepSEA representation <strong>TODO</strong></li>
+</ul></li>
 <li>Use DeepSEA sequences and DeepSEA feature representation.
 <ul>
 <li>See results and analysis <a href="type1.html">here</a>.</li>
 <li>See performance on new sequences <a href="type1_newseq.html">here</a></li>
-<li>See ROC/PR curve <a href="http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html">here</a></li>
-<li>See evalution using allelic imbalance site <a href="type1_allelic_imbalance.html">here</a></li>
+<li>ROC/PR curve <a href="http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html">here</a></li>
+<li>Evalution using allelic imbalance site <a href="type1_allelic_imbalance.html">here</a></li>
 </ul></li>
 <li>Use DeepSEA sequences but train a new model using the same architecture as DeepSEA.
 <ul>
@@ -356,7 +361,7 @@ div.tocify {
 <li><strong>Performance Evaluation</strong> -How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion <a href="auc.html">here</a></li>
 <li><strong>Application</strong>
 <ul>
-<li>GWAS SNPs. See <a href="gwas.html">here</a></li>
+<li>IBD GWAS SNPs. See <a href="SNP_enrichment.html">here</a> Rmarkdown script is at <a href="https://uchicago.box.com/s/zdntptc8udymivtyoapxpu365rpo3b18">here</a></li>
 </ul></li>
 <li><strong>Data Quality</strong>:
 <ul>
