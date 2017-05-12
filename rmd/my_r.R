@@ -82,3 +82,44 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     }
 }
 ## end
+
+read_gz_url <- function(url_string){
+  con <- gzcon(url(url_string))
+  txt <- readLines(con)
+  return(textConnection(txt))
+}
+
+read_feather_url <- function(url_string){
+  cmd <- paste('curl', url_string, '>', 'temp.feather')
+  system(cmd)
+  data <- read_feather('temp.feather')
+  cmd <- paste('rm', 'temp.feather')
+  return(data)
+}
+
+logit <- function(p){
+  return(log10(p / (1 - p)))
+}
+
+# derived from http://stackoverflow.com/questions/7549694/adding-regression-line-equation-and-r2-on-graph
+lm_eqn = function(m) {
+  
+  l <- list(a = format(coef(m)[1], digits = 2),
+            b = format(abs(coef(m)[2]), digits = 2),
+            r2 = format(summary(m)$r.squared, digits = 3));
+  if (length(coef(m)) == 2){
+    if (coef(m)[2] >= 0)  {
+      eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2,l)
+    } else {
+      eq <- substitute(italic(y) == a - b %.% italic(x)*","~~italic(r)^2~"="~r2,l)    
+    }
+  }else{
+    if (coef(m)[1] >= 0)  {
+      eq <- substitute(italic(y) == a %.% italic(x)*","~~italic(r)^2~"="~r2,l)
+    } else {
+      eq <- substitute(italic(y) == a %.% italic(x)*","~~italic(r)^2~"="~r2,l)    
+    }    
+  }
+  as.character(as.expression(eq));                 
+}
+# end

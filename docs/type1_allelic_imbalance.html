@@ -301,7 +301,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Deep brain - Type 1 - evaluation on allelic imbalance instances</h1>
-<h4 class="date"><em>01 May, 2017</em></h4>
+<h4 class="date"><em>11 May, 2017</em></h4>
 
 </div>
 
@@ -314,21 +314,220 @@ pre code, pre, code {
         word-wrap: initial !important;
     }
 </style>
+<div id="about-alignment-bias" class="section level1">
+<h1><span class="header-section-number">1</span> About alignment bias</h1>
+<p>It has not been implemented. <strong>TODO</strong></p>
+<p>The basic steps to deal with alignment bias is as follow:</p>
+<ol style="list-style-type: decimal">
+<li>Align and call all possible heterozygous site</li>
+<li>Use <code>WASP</code> to look for reads at possible heterozygous site</li>
+<li>Re-align those reads and filter out the ones that cannot be aligned to the same position after flip the base</li>
+<li>Call heterozygous site with quality control and compute the degree of imbalance</li>
+</ol>
+</div>
+<div id="results" class="section level1">
+<h1><span class="header-section-number">2</span> Results</h1>
+<div id="load-data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Load Data</h2>
 <pre class="r"><code>source(&#39;my_r.R&#39;)
 library(feather)
 library(ggplot2)
+library(reshape2)
 variant_url &lt;- &#39;https://github.com/liangyy/deep_variant/blob/code/allelic_imbalance/data/E081.combined.imbalance.gz?raw=true&#39;
 variant &lt;- read.table(read_gz_url(variant_url), sep = &#39;\t&#39;, header = T)
-score_url &lt;- &#39;https://github.com/CreRecombinase/DeepVariantPrediction/blob/issue1/score/keras_deepsea_with_040417_2_42_head_copy/allelic_imbalance_E081.E081_allelic_imbalance_result.feather?raw=true&#39;
-score &lt;- read_feather_url(score_url)
-variant$Ref &lt;- NA
+score_url &lt;- &#39;https://raw.githubusercontent.com/CreRecombinase/DeepVariantPrediction/issue1/score/keras_deepsea_with_040417_2_42_head_copy/allelic_imbalance_E081.E081_allelic_imbalance_result.feather&#39;
+score &lt;- read_feather_url(score_url)</code></pre>
+<pre><code>## Warning: Coercing int64 to double</code></pre>
+<pre class="r"><code>variant$Ref &lt;- NA
 variant$Ref[score$Varient.ID] &lt;- score$Allele1
 variant$Alt &lt;- NA
-variant$Alt[score$Varient.ID] &lt;- score$Allele2
+variant$Alt[score$Varient.ID] &lt;- score$Allele2</code></pre>
+</div>
+<div id="call-imbalance" class="section level2">
+<h2><span class="header-section-number">2.2</span> Call Imbalance</h2>
+<pre class="r"><code>imbalance.threshold &lt;- 0.01 # Fisher&#39;s exact test p-value
 variant$Imbalance &lt;- &#39;Balanced&#39;
-variant$Imbalance[variant$P.Value &lt; 0.01] &lt;- &#39;Imbalanced&#39;
-ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
+variant$Imbalance[variant$P.Value &lt; imbalance.threshold] &lt;- &#39;Imbalanced&#39;</code></pre>
+</div>
+<div id="quality-control" class="section level2">
+<h2><span class="header-section-number">2.3</span> Quality Control</h2>
+<div id="remove-strand-imbalanced-instances" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Remove strand imbalanced instances</h3>
+<p><span class="math inline">\(\frac{|read_+ - read_-|}{read_+ + read_-} &lt; 0.3\)</span></p>
+<pre class="r"><code>strand.threshold &lt;- 0.3
+strand.read1 &lt;- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
+strand.read2 &lt;- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
+ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle(&#39;Score of Strand Imbalance&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>strand.pass &lt;- (strand.read1 &lt; strand.threshold) &amp; (strand.read2 &lt; strand.threshold)</code></pre>
+<p>The asymmetric result of read1 and read2 may come from alignment bias.</p>
+</div>
+<div id="remove-low-coverage-instances" class="section level3">
+<h3><span class="header-section-number">2.3.2</span> Remove low coverage instances</h3>
+<pre class="r"><code>coverage.threshold &lt;- 100
+coverage &lt;- variant$Reads1 + variant$Reads2
+coverage.pass &lt;- coverage &gt; coverage.threshold</code></pre>
+</div>
+</div>
+<div id="qc-summary" class="section level2">
+<h2><span class="header-section-number">2.4</span> QC Summary</h2>
+<pre class="r"><code>both.pass &lt;- strand.pass &amp; coverage.pass
+variant$pass &lt;- both.pass
+temp &lt;- as.data.frame(cbind(strand.pass, coverage.pass, both.pass))
+temp &lt;- melt(temp, id.vars = c())
+temp &lt;- temp[temp$value,]
+ggplot(temp) + geom_bar(aes(x = variable)) + ggtitle(&#39;Quality Control \n Count of bad instances&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(variant) + geom_bar(aes(x = both.pass, fill = Imbalance), position = &#39;dodge&#39;) + ggtitle(&#39;Filtering Result&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+</div>
+<div id="predicted-imbalance" class="section level2">
+<h2><span class="header-section-number">2.5</span> Predicted imbalance</h2>
+<div id="overview" class="section level3">
+<h3><span class="header-section-number">2.5.1</span> Overview</h3>
+<pre class="r"><code>variant.pass &lt;- variant[variant$pass,]
+ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="observed-log-odds-ratio-vs.predicted-log-odds-ratio" class="section level3">
+<h3><span class="header-section-number">2.5.2</span> Observed Log Odds Ratio vs. Predicted Log Odds Ratio</h3>
+<pre class="r"><code>variant.pass$Log10.Odds.Ratio.Observed &lt;- log10(variant.pass$Odds.Ratio)
+variant.pass$Log10.Odds.Ratio.Predicted &lt;- log10(variant.pass$Ref / variant.pass$Alt)
+model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
+ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Log Odds Ratio vs \n Predicted Log Odds Ratio&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="predictive-power-of-predicted-pref-and-palt" class="section level3">
+<h3><span class="header-section-number">2.5.3</span> Predictive power of predicted p(ref) and p(alt)</h3>
+<p>Model: imbalance ~ f(ref, alt), link = binomial. <span class="math inline">\(f_1 = |x - y|\)</span>. <span class="math inline">\(f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|\)</span></p>
+<pre class="r"><code>model.logistic.abs &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Ref - Alt), family=binomial(link=&#39;logit&#39;), data=variant.pass)
+model.logistic.lor &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link=&#39;logit&#39;), data=variant.pass)</code></pre>
+<pre class="r"><code>library(pander)
+panderOptions(&#39;knitr.auto.asis&#39;, FALSE)
+pander(model.logistic.abs)</code></pre>
+<table style="width:90%;">
+<caption>Fitting generalized (binomial/logit) linear model: as.numeric(Imbalance == “Imbalanced”) ~ abs(Ref - Alt)</caption>
+<colgroup>
+<col width="29%" />
+<col width="15%" />
+<col width="18%" />
+<col width="13%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">z value</th>
+<th align="center">Pr(&gt;|z|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>abs(Ref - Alt)</strong></td>
+<td align="center">4.601</td>
+<td align="center">1.137</td>
+<td align="center">4.045</td>
+<td align="center">5.239e-05</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">-0.7945</td>
+<td align="center">0.04488</td>
+<td align="center">-17.7</td>
+<td align="center">4.024e-70</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>pander(model.logistic.lor)</code></pre>
+<table>
+<caption>Fitting generalized (binomial/logit) linear model: as.numeric(Imbalance == “Imbalanced”) ~ abs(Log10.Odds.Ratio.Predicted)</caption>
+<colgroup>
+<col width="46%" />
+<col width="13%" />
+<col width="15%" />
+<col width="12%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">z value</th>
+<th align="center">Pr(&gt;|z|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>abs(Log10.Odds.Ratio.Predicted)</strong></td>
+<td align="center">5.186</td>
+<td align="center">0.6739</td>
+<td align="center">7.696</td>
+<td align="center">1.405e-14</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">-0.899</td>
+<td align="center">0.04614</td>
+<td align="center">-19.49</td>
+<td align="center">1.458e-84</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>library(precrec)
+joined &lt;- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
+msmdat &lt;- mmdata(joined, as.numeric(variant.pass$Imbalance == &#39;Imbalanced&#39;), modnames = c(&#39;f1&#39;, &#39;f2&#39;))
+mscurves &lt;- evalmod(msmdat)
+plot(mscurves)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>pander(auc(mscurves))</code></pre>
+<table style="width:53%;">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="18%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">modnames</th>
+<th align="center">dsids</th>
+<th align="center">curvetypes</th>
+<th align="center">aucs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">f1</td>
+<td align="center">1</td>
+<td align="center">ROC</td>
+<td align="center">0.5168</td>
+</tr>
+<tr class="even">
+<td align="center">f1</td>
+<td align="center">1</td>
+<td align="center">PRC</td>
+<td align="center">0.3674</td>
+</tr>
+<tr class="odd">
+<td align="center">f2</td>
+<td align="center">1</td>
+<td align="center">ROC</td>
+<td align="center">0.5722</td>
+</tr>
+<tr class="even">
+<td align="center">f2</td>
+<td align="center">1</td>
+<td align="center">PRC</td>
+<td align="center">0.417</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 
 
 
@@ -355,7 +554,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

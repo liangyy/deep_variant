@@ -31,32 +31,107 @@ The basic steps to deal with alignment bias is as follow:
 
 # Results
 
+## Load Data
 ```{r}
 source('my_r.R')
 library(feather)
 library(ggplot2)
+library(reshape2)
 variant_url <- 'https://github.com/liangyy/deep_variant/blob/code/allelic_imbalance/data/E081.combined.imbalance.gz?raw=true'
 variant <- read.table(read_gz_url(variant_url), sep = '\t', header = T)
-score_url <- 'https://github.com/CreRecombinase/DeepVariantPrediction/blob/issue1/score/keras_deepsea_with_040417_2_42_head_copy/allelic_imbalance_E081.E081_allelic_imbalance_result.feather?raw=true'
+score_url <- 'https://raw.githubusercontent.com/CreRecombinase/DeepVariantPrediction/issue1/score/keras_deepsea_with_040417_2_42_head_copy/allelic_imbalance_E081.E081_allelic_imbalance_result.feather'
 score <- read_feather_url(score_url)
 variant$Ref <- NA
 variant$Ref[score$Varient.ID] <- score$Allele1
 variant$Alt <- NA
 variant$Alt[score$Varient.ID] <- score$Allele2
-variant$Imbalance <- 'Balanced'
-variant$Imbalance[variant$P.Value < 0.01] <- 'Imbalanced'
-ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of \n Heterozygous sites in DNase-seq of E081')
 ```
 
-## Thresholds
+## Call Imbalance
 
 ```{r}
-
+imbalance.threshold <- 0.01 # Fisher's exact test p-value
+variant$Imbalance <- 'Balanced'
+variant$Imbalance[variant$P.Value < imbalance.threshold] <- 'Imbalanced'
 ```
 
-## Sensitivity
+## Quality Control
 
-Here we evaluate the sensitivity of the model in identifying the allelic imbalance event. 
+### Remove strand imbalanced instances
 
-## Specificity
+$\frac{|read_+ - read_-|}{read_+ + read_-} < 0.3$
+
+```{r}
+strand.threshold <- 0.3
+strand.read1 <- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
+strand.read2 <- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
+ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle('Score of Strand Imbalance')
+strand.pass <- (strand.read1 < strand.threshold) & (strand.read2 < strand.threshold)
+```
+
+The asymmetric result of read1 and read2 may come from alignment bias.
+
+### Remove low coverage instances
+
+```{r}
+coverage.threshold <- 100
+coverage <- variant$Reads1 + variant$Reads2
+coverage.pass <- coverage > coverage.threshold
+```
+
+## QC Summary
+
+```{r}
+both.pass <- strand.pass & coverage.pass
+variant$pass <- both.pass
+temp <- as.data.frame(cbind(strand.pass, coverage.pass, both.pass))
+temp <- melt(temp, id.vars = c())
+temp <- temp[temp$value,]
+ggplot(temp) + geom_bar(aes(x = variable)) + ggtitle('Quality Control \n Count of bad instances')
+ggplot(variant) + geom_bar(aes(x = both.pass, fill = Imbalance), position = 'dodge') + ggtitle('Filtering Result')
+```
+
+## Predicted imbalance
+
+### Overview
+
+```{r}
+variant.pass <- variant[variant$pass,]
+ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of \n Heterozygous sites in DNase-seq of E081')
+```
+
+### Observed Log Odds Ratio vs. Predicted Log Odds Ratio
+
+```{r}
+variant.pass$Log10.Odds.Ratio.Observed <- log10(variant.pass$Odds.Ratio)
+variant.pass$Log10.Odds.Ratio.Predicted <- log10(variant.pass$Ref / variant.pass$Alt)
+model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
+ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs \n Predicted Log Odds Ratio')
+```
+
+### Predictive power of predicted p(ref) and p(alt)
+
+Model: imbalance ~ f(ref, alt), link = binomial. $f_1 = |x - y|$. 
+$f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|$
+
+```{r}
+model.logistic.abs <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Ref - Alt), family=binomial(link='logit'), data=variant.pass)
+model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link='logit'), data=variant.pass)
+```
+
+```{r, results='asis'}
+library(pander)
+panderOptions('knitr.auto.asis', FALSE)
+pander(model.logistic.abs)
+pander(model.logistic.lor)
+```
+
+```{r, results='asis'}
+library(precrec)
+joined <- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
+msmdat <- mmdata(joined, as.numeric(variant.pass$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2'))
+mscurves <- evalmod(msmdat)
+plot(mscurves)
+pander(auc(mscurves))
+```
 
