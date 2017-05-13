@@ -1,4 +1,8 @@
 # This module takes the intermediate output of pr_roc_curve module (the curve feather file) do the bar plot to
 # compare the performance of multiple classifiers under multiple data sets
 
-rule  
+rule calculate_auc:
+    input:
+        lambda wildcards: config[wildcards.model]
+    output:
+        'result/auc_{model}.feather'
