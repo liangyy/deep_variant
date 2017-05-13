@@ -27,7 +27,7 @@ rule train:
         train = 'data/{motif_name}.train.feature.hdf5',
         valid = 'data/{motif_name}.valid.feature.hdf5'
     params:
-        outfolder = lambda wildcards: 'train/{{motif_name}}_{groupname}/'.format(groupname=wildcards.group),
+        outfolder = lambda wildcards: 'train/{{motif_name}}.{headname}_{groupname}/'.format(headname=config['type_of_head'], groupname=wildcards.group),
         niter = lambda wildcards: config[wildcards.motif_name]['niter'],
         l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
         l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
@@ -35,12 +35,12 @@ rule train:
         partition = config['partition'],
         head = config['type_of_head']
     output:
-        'sbatch/{motif_name}_{group}.train.sbatch'
+        'sbatch/{motif_name}.{head}_{group}.train.sbatch'
     run:
         sbatch = '''#!/bin/bash
-#SBATCH --job-name={taskname}_{group}
-#SBATCH --output={taskname}_{group}.out
-#SBATCH --error={taskname}_{group}.err
+#SBATCH --job-name={taskname}.{head}_{group}
+#SBATCH --output={taskname}.{head}_{group}.out
+#SBATCH --error={taskname}.{head}_{group}.err
 #SBATCH --time=24:00:00
 #SBATCH --partition={partition}
 #SBATCH --ntasks=1

@@ -1,4 +1,4 @@
-JASPAR_SVM:
+JASPAR:
   motifs: 'motifs/pfm_vertebrates.txt'
   background: '0.27665749,0.22330697,0.22330697,0.27665749'
   niter: 80

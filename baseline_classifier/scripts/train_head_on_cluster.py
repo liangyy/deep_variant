@@ -1,38 +1,38 @@
 import argparse
 parser = argparse.ArgumentParser(prog='train_head_on_cluster.py', description='''
-    Given the input training data and validation data, train a classifier head
-    with user specified l1 and l2 penalty on weights (bias is excluded) using
+	Given the input training data and validation data, train a classifier head
+	with user specified l1 and l2 penalty on weights (bias is excluded) using
 	Keras
 ''')
 parser.add_argument('--train', help='''
-    Sequence and label for training
+	Sequence and label for training
 ''')
 parser.add_argument('--valid', help='''
-    Sequence and label for validation
+	Sequence and label for validation
 ''')
 parser.add_argument('--outdir', help='''
-    Output directory
+	Output directory
 ''')
 parser.add_argument('--batch_size', help='''
-    The size of minibatch used for optimization
+	The size of minibatch used for optimization
 ''')
 parser.add_argument('--epoch', help='''
-    Number of epochs (iterations)
+	Number of epochs (iterations)
 ''')
 parser.add_argument('--l1', type=float, help='''
-    L1 penalty
+	L1 penalty
 ''')
 parser.add_argument('--l2', type=float, help='''
-    L2 penalty
+	L2 penalty
 ''')
 parser.add_argument('--head', choices=['svm', 'logistic'], help='''
-    Specify the type of head
+	Specify the type of head
 ''')
 args = parser.parse_args()
 
 import sys
 if 'scripts/' not in sys.path:
-    sys.path.insert(0, 'scripts/')
+	sys.path.insert(0, 'scripts/')
 import my_python
 import os
 os.environ['THEANO_FLAGS'] = "device=gpu"
@@ -70,10 +70,10 @@ if len(files) == 0:
 	print('No previous models detected, build a new one from scratch!')
 	magic_1 = np.random.random_integers(10000)
 	np.random.seed(magic_1)
-    if args.head == 'logistic':
-        model = my_python.logistic_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
-    elif args.head == 'svm':
-        model = my_python.svm_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
+	if args.head == 'logistic':
+		model = my_python.logistic_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
+	elif args.head == 'svm':
+		model = my_python.svm_head(X_valid.shape[-1], y_valid.shape[-1], args.l2)
 	print('Write log to ' + logfile)
 	loghandle = open(logfile, 'w')
 	loghandle.write('Date\tMagicNum_Init\tMagicNum_Fit\tEpochNum_BeforeStart\n')
@@ -110,5 +110,5 @@ np.random.seed(magic_2)
 checkpointer = ModelCheckpoint(filepath=args.outdir+os.sep+"{epoch:02d}-{val_loss:.4f}-{loss:.4f}.hdf5", monitor='val_loss', verbose=1, save_best_only=False, period=1)
 # earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
 model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True,
-          verbose=1, validation_data=(X_valid, y_valid), callbacks=[checkpointer], initial_epoch=resume_flag)
+		  verbose=1, validation_data=(X_valid, y_valid), callbacks=[checkpointer], initial_epoch=resume_flag)
 print(breaker)
