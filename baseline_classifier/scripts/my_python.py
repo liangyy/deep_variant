@@ -175,10 +175,18 @@ class ModelCNN:
         self.model.layers[0].set_weights([motif_weights, np.ones((self.nmotifs,)) * -threshold])
 
 def logistic_head(input_dim, output_dim, l1, l2):
-    print('logistic head -- Building the model')
+    print('logistic head -- Building the model (l1 = {l1}, l2 = {l2})'.format(l1=l1, l2=l2))
     model = Sequential()
     model.add(Dense(output_dim, input_shape=(input_dim,), kernel_regularizer=regularizers.l1_l2(l1=l1, l2=l2)))
     model.add(Activation('sigmoid'))
     print('logistic head -- Compiling the model')
     model.compile(loss='binary_crossentropy', optimizer=SGD(), metrics=['accuracy'])
+    return model
+def logistic_head(input_dim, output_dim, l2):
+    print('svm head -- Building the model (lambda = {l2})'.format(l2=l2))
+    model = Sequential()
+    model.add(Dense(output_dim, input_shape=(input_dim,), kernel_regularizer=regularizers.l2(l2=l2)))
+    model.add(Activation('linear'))
+    print('svm head -- Compiling the model')
+    model.compile(loss='hinge', optimizer=SGD(), metrics=['accuracy'])
     return model

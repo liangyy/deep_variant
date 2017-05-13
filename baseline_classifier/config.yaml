@@ -27,5 +27,6 @@ Training:
     l1: 0
     l2: 0
 partition: 'gpu2'
+type_of_head: 'logistic'
 selected_head:
   best: '31-0.2108-0.1964.hdf5'

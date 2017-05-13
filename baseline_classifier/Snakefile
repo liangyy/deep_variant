@@ -32,7 +32,8 @@ rule train:
         l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
         l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
         batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
-        partition = config['partition']
+        partition = config['partition'],
+        head = config['type_of_head']
     output:
         'sbatch/{motif_name}_{group}.train.sbatch'
     run:
@@ -53,15 +54,19 @@ source activate deepvarpred_test
 module load cuda/7.5
 cd repo/deep_variant/baseline_classifier
 mkdir {outdir}
-python scripts/train_logistic_on_cluster.py \
+python scripts/train_head_on_cluster.py \
 --train {train} \
 --valid {valid} \
 --outdir {outdir} \
 --batch_size {batch_size} \
 --epoch {niter} \
 --l1 {l1} \
---l2 {l2}
-'''.format(taskname=wildcards.motif_name, train=input.train, valid=input.valid, niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder, l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition)
+--l2 {l2} \
+--head {head}
+'''.format(taskname=wildcards.motif_name, train=input.train, valid=input.valid,
+niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder,
+l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition,
+head=params.head)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()

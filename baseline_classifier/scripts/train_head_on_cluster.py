@@ -1,7 +1,7 @@
 import argparse
-parser = argparse.ArgumentParser(prog='train_logistic_on_cluster.py', description='''
-    Given the input training data and validation data, train a logistic regression
-	head with user specified l1 and l2 penalty on weights (bias is excluded) using
+parser = argparse.ArgumentParser(prog='train_head_on_cluster.py', description='''
+    Given the input training data and validation data, train a classifier head
+    with user specified l1 and l2 penalty on weights (bias is excluded) using
 	Keras
 ''')
 parser.add_argument('--train', help='''
@@ -24,6 +24,9 @@ parser.add_argument('--l1', type=float, help='''
 ''')
 parser.add_argument('--l2', type=float, help='''
     L2 penalty
+''')
+parser.add_argument('--head', choices=['svm', 'logistic'], help='''
+    Specify the type of head
 ''')
 args = parser.parse_args()
 
@@ -67,7 +70,10 @@ if len(files) == 0:
 	print('No previous models detected, build a new one from scratch!')
 	magic_1 = np.random.random_integers(10000)
 	np.random.seed(magic_1)
-	model = my_python.logistic_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
+    if args.head == 'logistic':
+        model = my_python.logistic_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
+    elif args.head == 'svm':
+        model = my_python.svm_head(X_valid.shape[-1], y_valid.shape[-1], args.l1, args.l2)
 	print('Write log to ' + logfile)
 	loghandle = open(logfile, 'w')
 	loghandle.write('Date\tMagicNum_Init\tMagicNum_Fit\tEpochNum_BeforeStart\n')
