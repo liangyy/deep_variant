@@ -6,3 +6,15 @@ rule calculate_auc:
         lambda wildcards: config[wildcards.model]
     output:
         'result/auc_{model}.feather'
+    shell:
+        'python scripts/auc.py --curve {input[0]} --out {output[0]}'
+rule summary:
+    # input:
+    #     [ 'result/auc_{model}.feather'.format(model=model) for model in config ]
+    output:
+        temp()'report/auc_comparison.Rmd')
+    params:
+        '--'.join(config)
+    run:
+        rmd = '''
+'''

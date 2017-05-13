@@ -1,0 +1,3 @@
+deepsea_logistic: 'path_to_curve_outout_from_pr_roc_auc'
+jaspar_logistic: 'path_to_curve'
+jaspar_svm: 'path_to_curve'
