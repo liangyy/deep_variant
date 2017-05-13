@@ -182,11 +182,19 @@ def logistic_head(input_dim, output_dim, l1, l2):
 	print('logistic head -- Compiling the model')
 	model.compile(loss='binary_crossentropy', optimizer=SGD(), metrics=['accuracy'])
 	return model
+
+import keras.backend as K
+
+def binary_accuracy_svm(y_true, y_pred):
+    return K.mean(K.equal(y_true, y_pred > 0), axis=-1)
+def hinge_svm(y_true, y_pred):
+    return K.mean(K.maximum(1. - (y_true - 0.5) * 2 * y_pred, 0.), axis=-1)
+
 def svm_head(input_dim, output_dim, l2):
 	print('svm head -- Building the model (lambda = {l2})'.format(l2=l2))
 	model = Sequential()
 	model.add(Dense(output_dim, input_shape=(input_dim,), kernel_regularizer=regularizers.l2(l2)))
 	model.add(Activation('linear'))
 	print('svm head -- Compiling the model')
-	model.compile(loss='hinge', optimizer=SGD(), metrics=['accuracy'])
+	model.compile(loss=hinge_svm, optimizer=SGD(), metrics=[binary_accuracy_svm])
 	return model
