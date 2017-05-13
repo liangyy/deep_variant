@@ -1,0 +1,41 @@
+JASPAR_SVM:
+  motifs: 'motifs/pfm_vertebrates.txt'
+  background: '0.27665749,0.22330697,0.22330697,0.27665749'
+  niter: 80
+  threshold: 2 # LLR (base = 2) threshold to tell whether the sequence contains the motif
+  data:
+    train:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
+      y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_train/DeepSEA_train_12__with_label.hdf5' # in standard format
+    valid:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
+      y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_train/DeepSEA_valid_12__with_label.hdf5' # in standard format
+Training:
+  1e-5:
+    l1: 0
+    l2: 1e-5
+  1e-4:
+    l1: 0
+    l2: 1e-4
+  1e-3:
+    l1: 0
+    l2: 1e-3
+  1e-2:
+    l1: 0
+    l2: 1e-2
+  1e-1:
+    l1: 0
+    l2: 1e-1
+  1:
+    l1: 0
+    l2: 1
+  10:
+    l1: 0
+    l2: 10
+  100:
+    l1: 0
+    l2: 100
+partition: 'gpu2'
+type_of_head: 'svm'
+selected_head:
+# best: '31-0.2108-0.1964.hdf5'
