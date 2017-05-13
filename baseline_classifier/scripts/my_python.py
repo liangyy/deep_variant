@@ -196,5 +196,9 @@ def svm_head(input_dim, output_dim, l2):
 	model.add(Dense(output_dim, input_shape=(input_dim,), kernel_regularizer=regularizers.l2(l2)))
 	model.add(Activation('linear'))
 	print('svm head -- Compiling the model')
-	model.compile(loss=hinge_svm, optimizer=SGD(), metrics=[binary_accuracy_svm])
+	if l2 < 100:
+		sgd = SGD()
+	else:
+		sgd = SGD(lr=0.01/l2)
+	model.compile(loss=hinge_svm, optimizer=sgd, metrics=[binary_accuracy_svm])
 	return model

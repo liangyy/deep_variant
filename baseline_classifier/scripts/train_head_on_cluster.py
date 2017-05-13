@@ -107,8 +107,8 @@ print(breaker)
 
 print('3 - Training')
 np.random.seed(magic_2)
-checkpointer = ModelCheckpoint(filepath=args.outdir+os.sep+"{epoch:02d}-{val_loss:.4f}-{loss:.4f}.hdf5", monitor='val_loss', verbose=1, save_best_only=False, period=1)
-# earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+checkpointer = ModelCheckpoint(filepath=args.outdir+os.sep+"{epoch:02d}-{loss:.4f}-{val_loss:.4f}.hdf5", monitor='val_loss', verbose=1, save_best_only=False, period=1)
+earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
 model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, shuffle=True,
-		  verbose=1, validation_data=(X_valid, y_valid), callbacks=[checkpointer], initial_epoch=resume_flag)
+		  verbose=1, validation_data=(X_valid, y_valid), callbacks=[checkpointer, earlystopper], initial_epoch=resume_flag)
 print(breaker)
