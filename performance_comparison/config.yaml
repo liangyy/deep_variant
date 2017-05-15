@@ -1,3 +1,3 @@
-deepsea_logistic: 'path_to_curve_outout_from_pr_roc_auc'
-jaspar_logistic: 'path_to_curve'
+deepsea_logistic: '../pr_roc_curve/result/deepsea_vs_newseq_curves.feather'
+jaspar_logistic: '../pr_roc_curve/result/JASPAR_curves.feather'
 jaspar_svm: 'path_to_curve'
