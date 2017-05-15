@@ -3,18 +3,65 @@
 
 rule calculate_auc:
     input:
-        lambda wildcards: config[wildcards.model]
+        lambda wildcards: config[wildcards.task][wildcards.model]
     output:
         'result/auc_{model}.feather'
     shell:
         'python scripts/auc.py --curve {input[0]} --out {output[0]}'
-rule summary:
+rule summary_rmd:
     # input:
     #     [ 'result/auc_{model}.feather'.format(model=model) for model in config ]
     output:
-        temp('report/auc_comparison.Rmd')
+        temp('report/{task}.auc_comparison.Rmd')
     params:
         '--'.join(config)
     run:
-        rmd = '''
-'''
+        rmd = '''---
+title: "Training - Compare AUCs"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Distribution of GC content
+
+```{{r}}
+library(feather)
+library(ggplot2)
+model_list <- '{models}'
+aucs <- c()
+for(i in strsplit(model_list, '--')[[1]]){{
+    temp <- read_feather(paste0('result/auc_', i, '.feather'))
+    temp$model <- i
+    aucs <- rbind(aucs, temp)
+}}
+aucs$grp <- paste(aucs$model, aucs$info)
+temp <- unique(aucs$info)
+cols[[temp[1]]] <- 'red'
+cols[[temp[2]]] = 'black'
+ggplot(aucs) + geom_bar(aes(x = data, y = score, group = grp,
+color = info, fill = model), stat = 'identity', position = 'dodge') +
+facet_wrap(~curve) + scale_colour_manual(values = cols) +
+scale_fill_brewer(palette="OrRd") +
+labs(color = 'sequence source') + ggtitle('AUCs')
+```
+'''.format(models=params[0])
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule summary_html:
+    input:
+        rmd = 'report/{task}.auc_comparison.Rmd',
+        files = [ 'result/auc_{model}.feather'.format(model=model) for model in config ]
+    output:
+        'report/{task}.auc_comparison.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
