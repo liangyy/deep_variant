@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Baseline - Training</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>12 May, 2017</em></h4>
+<h4 class="date"><em>15 May, 2017</em></h4>
 
 </div>
 
@@ -333,6 +333,10 @@ pre code, pre, code {
 <div id="implementation" class="section level1">
 <h1><span class="header-section-number">3</span> Implementation</h1>
 <p>The classifier that uses motif score as feature is implemented at <a href="https://github.com/liangyy/deep_variant/tree/code/baseline_classifier">here</a> and it is trained using DeepSEA training sets and validation sets (four labels are trained, E081, E082, E129, and Noonan). The performance of the best model (in terms of validation loss) is evaluated using DeepSEA test sequences and sequences that are extracted from bed files directly, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html">link</a>.</p>
+</div>
+<div id="update" class="section level1">
+<h1><span class="header-section-number">4</span> Update</h1>
+<p>To avoid overfitting, SVM head is implemented as well. Here, to get the probabilistic interpretation, at test time, the sigmoid function is applied on the top of output</p>
 </div>
 
 

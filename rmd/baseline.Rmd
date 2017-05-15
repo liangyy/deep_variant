@@ -35,3 +35,7 @@ Instead of using gkm-SVM, another choice is to use JASPAR verberates core motifs
 # Implementation
 
 The classifier that uses motif score as feature is implemented at [here](https://github.com/liangyy/deep_variant/tree/code/baseline_classifier) and it is trained using DeepSEA training sets and validation sets (four labels are trained, E081, E082, E129, and Noonan). The performance of the best model (in terms of validation loss) is evaluated using DeepSEA test sequences and sequences that are extracted from bed files directly, [link](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html).
+
+# Update
+
+To avoid overfitting, SVM head is implemented as well. Here, to get the probabilistic interpretation, at test time, the sigmoid function is applied on the top of output
