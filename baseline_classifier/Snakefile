@@ -77,7 +77,7 @@ head=params.head)
 
 rule add_head:
     input:
-        head = lambda wildcards: 'train/{motif_name}_{group}/{head}'.format(motif_name=wildcards.motif_name, group=wildcards.group, head=config['selected_head'][wildcards.head_name]),
+        head = lambda wildcards: 'train/{motif_name}.{headname}_{head}'.format(motif_name=wildcards.motif_name, headname=config['type_of_head'], head=config['selected_head'][wildcards.head_name]),
         motif_feature = 'prototype/{motif_name}.init.hdf5'
     output:
         'model/{motif_name}_{group}.{head_name}.hdf5'

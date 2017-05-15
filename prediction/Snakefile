@@ -2,7 +2,7 @@
 
 rule all:
     input:
-        [ 'sbatch/{dataset}.sbatch'.format(dataset=i) for i in config['data'] ]
+        [ 'sbatch/{prefix}_{dataset}.sbatch'.format(dataset=i, prefix=config['prefix']) for i in config['data'] ]
 
 rule predict:
     input:
@@ -12,7 +12,7 @@ rule predict:
         ypred = 'result/{dataset}.ypred.hdf5',
         partition = config['partition']
     output:
-        'sbatch/{dataset}.sbatch'
+        'sbatch/{prefix}_{{dataset}}.sbatch'.format(prefix=config['prefix'])
     run:
         sbatch = '''#!/bin/bash
 #SBATCH --job-name={taskname}

@@ -9,9 +9,16 @@ parser.add_argument('--head')
 parser.add_argument('--out')
 args = parser.parse_args()
 
+import sys
+if 'scripts/' not in sys.path:
+    sys.path.insert(0, 'scripts/')
+import my_python
 from keras.models import load_model
 body = load_model(args.body)
-head = load_model(args.head)
+try:
+    head = load_model(args.head)
+except UnboundLocalError:
+    head = load_model(args.head, custom_objects = {'binary_accuracy_svm': my_python.binary_accuracy_svm, 'hinge_svm': my_python.hinge_svm}) 
 noutput = head.layers[-1].output_shape[-1]
 from keras.layers import Dense, Activation
 body.add(Dense(noutput, name='head_dense'))

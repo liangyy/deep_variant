@@ -1,0 +1,9 @@
+model: '/project2/xinhe/yanyul/repo/deep_variant/baseline_classifier/model/JASPAR_svm.best.hdf5'
+data:
+  deepsea: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+  E081: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+  E082: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+  E129: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+  Noonan: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/Noonan_union.bed_bin200.bed.sorted.merged.final.expended.hdf5'
+partition: 'gpu2'
+prefix: 'svm'

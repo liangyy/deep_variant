@@ -1,4 +1,4 @@
 deep_brain:
   deepsea_logistic: '../pr_roc_curve/result/deepsea_vs_newseq_curves.feather'
   jaspar_logistic: '../pr_roc_curve/result/JASPAR_curves.feather'
-  jaspar_svm: 'path_to_curve'
+#  jaspar_svm: 'path_to_curve'

@@ -5,7 +5,7 @@ rule calculate_auc:
     input:
         lambda wildcards: config[wildcards.task][wildcards.model]
     output:
-        'result/auc_{model}.feather'
+        'result/{task}/auc_{model}.feather'
     shell:
         'python scripts/auc.py --curve {input[0]} --out {output[0]}'
 rule summary_rmd:
@@ -14,7 +14,8 @@ rule summary_rmd:
     output:
         temp('report/{task}.auc_comparison.Rmd')
     params:
-        '--'.join(config)
+        lambda wildcards: '--'.join(config[wildcards.task]),
+	lambda wildcards: wildcards.task
     run:
         rmd = '''---
 title: "Training - Compare AUCs"
@@ -38,21 +39,21 @@ library(ggplot2)
 model_list <- '{models}'
 aucs <- c()
 for(i in strsplit(model_list, '--')[[1]]){{
-    temp <- read_feather(paste0('result/auc_', i, '.feather'))
+    temp <- read_feather(paste0('result/{task}/auc_', i, '.feather'))
     temp$model <- i
     aucs <- rbind(aucs, temp)
 }}
 aucs$grp <- paste(aucs$model, aucs$info)
 temp <- unique(aucs$info)
-cols[[temp[1]]] <- 'red'
-cols[[temp[2]]] = 'black'
+cols <- c('red', 'black')
+names(cols) <- temp
 ggplot(aucs) + geom_bar(aes(x = data, y = score, group = grp,
 color = info, fill = model), stat = 'identity', position = 'dodge') +
 facet_wrap(~curve) + scale_colour_manual(values = cols) +
 scale_fill_brewer(palette="OrRd") +
 labs(color = 'sequence source') + ggtitle('AUCs')
 ```
-'''.format(models=params[0])
+'''.format(models=params[0], task=params[1])
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
@@ -60,7 +61,7 @@ labs(color = 'sequence source') + ggtitle('AUCs')
 rule summary_html:
     input:
         rmd = 'report/{task}.auc_comparison.Rmd',
-        files = [ 'result/auc_{model}.feather'.format(model=model) for model in config ]
+        files = lambda wildcards: [ 'result/{task}/auc_{model}.feather'.format(model=model, task=wildcards.task) for model in config[wildcards.task] ]
     output:
         'report/{task}.auc_comparison.html'
     shell:

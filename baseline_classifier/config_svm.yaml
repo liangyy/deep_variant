@@ -47,4 +47,4 @@ Training:
 partition: 'gpu2'
 type_of_head: 'svm'
 selected_head:
-# best: '31-0.2108-0.1964.hdf5'
+  best: '1e-5/06-0.1488-0.1609.hdf5'
