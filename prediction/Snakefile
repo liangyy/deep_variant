@@ -9,15 +9,15 @@ rule predict:
         x = lambda wildcards: config['data'][wildcards.dataset],
         model = config['model']
     params:
-        ypred = 'result/{dataset}.ypred.hdf5',
+        ypred = 'result/{prefix}_{{dataset}}.ypred.hdf5'.format(prefix=config['prefix']),
         partition = config['partition']
     output:
         'sbatch/{prefix}_{{dataset}}.sbatch'.format(prefix=config['prefix'])
     run:
         sbatch = '''#!/bin/bash
-#SBATCH --job-name={taskname}
-#SBATCH --output={taskname}.out
-#SBATCH --error={taskname}.err
+#SBATCH --job-name={prefix}_{taskname}
+#SBATCH --output={prefix}_{taskname}.out
+#SBATCH --error={prefix}_{taskname}.err
 #SBATCH --time=24:00:00
 #SBATCH --partition={partition}
 #SBATCH --ntasks=1
@@ -31,7 +31,7 @@ source activate deepvarpred_test
 module load cuda/7.5
 cd repo/deep_variant/prediction
 python scripts/predict.py --x {x} --out {out} --model {model}
-'''.format(x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition)
+'''.format(prefix=config['prefix'], x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
