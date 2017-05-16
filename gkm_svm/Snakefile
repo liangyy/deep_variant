@@ -1,0 +1,33 @@
+# This section build the pipeline to make prediction using gkm-SVM
+# desribed in [this](https://github.com/Dongwon-Lee/lsgkm) repository
+
+# The pipeline contains two part:
+# 1. training: hdf5 -> fasta; training
+# 2. prediction: hdf5 -> fasta; predicting
+# due to the capability of the software, we may randomly select a
+# subset of sequences to make prediction on
+
+rule sampling_from_training_set:
+    input:
+        lambda wildcards: config['training_data'][wildcards.trdata_name]
+    params:
+        n = config['repeat'],
+        prefix = 'data/{trdata_name}.{model_name}',
+        size = config['size'],
+        seed = config['seed']
+    output:
+        pos = temp([ 'data/{{trdata_name}}.{{model_name}}.{id}.train.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
+        neg = temp([ 'data/{{trdata_name}}.{{model_name}}.{id}.train.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])
+    shell:
+        'scripts/hdf5_to_fasta.py --hdf5 {input[0]} --nsubset {params.n} \
+        --prefix {params.prefix} --size {params.size} \
+        --seed {params.seed}'
+
+rule hdf5_to_fasta:
+
+rule training:
+    input:
+    output:
+        'model/{model_name}_{id}.model.txt'
+
+rule prediction:
