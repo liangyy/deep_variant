@@ -31,8 +31,6 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 knitr::opts_knit$set(root.dir = '../')
 ```
 
-# Distribution of GC content
-
 ```{{r}}
 library(feather)
 library(ggplot2)
