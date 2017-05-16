@@ -21,13 +21,15 @@ def read_standard(filename):
     f.close()
     return (x, y)
 def save_standard(data, filename):
-    f = h5py.File(filename)
+    f = h5py.File(filename, 'w')
     f.create_dataset('trainxdata', data=data)
     f.close()
 
 x, y = read_standard(args.hdf5)
 pos_idx = np.where(y == 1)[0]
+print(pos_idx)
 neg_idx = np.where(y == 0)[0]
+print(neg_idx)
 npos = pos_idx.shape[0]
 nneg = neg_idx.shape[0]
 ppos = float(args.size) / npos
@@ -40,6 +42,8 @@ np.random.seed(args.seed)
 for i in range(1, args.nsubset + 1):
     rpos = np.random.rand(npos) < ppos
     rneg = np.random.rand(nneg) < pneg
+    print(pos_idx[rpos])
+    print(neg_idx[rneg])
     subpos = x[pos_idx[rpos]]
     subneg = x[neg_idx[rneg]]
     save_standard(subpos, '{prefix}.{id}.train.pos.hdf5'.format(prefix=args.prefix, id=i))
