@@ -14,8 +14,8 @@ rule sampling_from_training_set:
         n = config['repeat'],
         prefix = lambda wildcards: 'data/{trdata_name}_{label}'.format(trdata_name=wildcards.trdata_name, label = wildcards.label),
         size = config['size'],
-        seed = config['seed']
-        label = config['label'][wildcards.label]
+        seed = config['seed'],
+        label = lambda wildcards: config['label'][wildcards.label]
     output:
         pos = temp([ 'data/{{trdata_name}}_{{label}}.{id}.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
         neg = temp([ 'data/{{trdata_name}}_{{label}}.{id}.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])

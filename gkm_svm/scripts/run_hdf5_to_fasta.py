@@ -29,16 +29,18 @@ def save_standard(data, filename):
 
 x, y = read_standard(args.hdf5)
 pos_idx = np.where(y[:, args.label-1] == 1)[0]
-print(pos_idx)
+print(pos_idx[:10])
 neg_idx = np.where(y[:, args.label-1] == 0)[0]
-print(neg_idx)
+print(neg_idx[:10])
 npos = pos_idx.shape[0]
 nneg = neg_idx.shape[0]
-ppos = float(args.size) / npos
-pneg = float(args.size) / nneg
+
 if npos < args.size or nneg < args.size:
     print('The size set for output is too big. Exiting', file=sys.stderr)
     sys.exit()
+
+ppos = float(args.size) / npos
+pneg = float(args.size) / nneg
 
 np.random.seed(args.seed)
 for i in range(1, args.nsubset + 1):
@@ -48,5 +50,5 @@ for i in range(1, args.nsubset + 1):
     print(neg_idx[rneg])
     subpos = x[pos_idx[rpos]]
     subneg = x[neg_idx[rneg]]
-    save_standard(subpos, '{prefix}.{id}.train.pos.hdf5'.format(prefix=args.prefix, id=i))
-    save_standard(subneg, '{prefix}.{id}.train.neg.hdf5'.format(prefix=args.prefix, id=i))
+    save_standard(subpos, '{prefix}.{id}.pos.hdf5'.format(prefix=args.prefix, id=i))
+    save_standard(subneg, '{prefix}.{id}.neg.hdf5'.format(prefix=args.prefix, id=i))

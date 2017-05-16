@@ -1,7 +1,10 @@
+label:
+  first: 1
+  second: 2
 training_data:
-  deepsea_train_10: '../../../deep_variant/yanyu/DanQ/my_train/data/train_10.h5'
+  deepsea_train_10: '../../../deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
 validation_data:
-  deepsea_valid_10: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_10.h5'
+  deepsea_valid_10: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
 size: 5 # per label
 repeat: 3
 seed: 2017
