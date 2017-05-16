@@ -3,7 +3,8 @@ parser = argparse.ArgumentParser(prog='hdf5_to_fasta.py', description='''
     Randomly generate subset of input sequences (positive, negative sets
     are balanced)
 ''')
-parser.add_argument('--hdf5')
+parser.add_argument('--x')
+parser.add_argument('--y')
 parser.add_argument('--nsubset', type=int)
 parser.add_argument('--prefix')
 parser.add_argument('--seed', type=int)
@@ -16,18 +17,18 @@ import h5py
 import numpy as np
 import sys
 
-def read_standard(filename):
+def read_standard(filename, name):
     f = h5py.File(filename, 'r')
-    x = f['trainxdata'][()]
-    y = f['traindata'][()]
+    x = f[name][()]
     f.close()
-    return (x, y)
+    return x
 def save_standard(data, filename):
     f = h5py.File(filename, 'w')
     f.create_dataset('trainxdata', data=data)
     f.close()
 
-x, y = read_standard(args.hdf5)
+x = read_standard(args.x, 'trainxdata')
+y = read_standard(args.y, 'traindata')
 pos_idx = np.where(y[:, args.label-1] == 1)[0]
 print(pos_idx[:10])
 neg_idx = np.where(y[:, args.label-1] == 0)[0]

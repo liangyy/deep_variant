@@ -9,7 +9,8 @@
 
 rule sampling_from_training_set:
     input:
-        lambda wildcards: config['training_data'][wildcards.trdata_name]
+        x = lambda wildcards: config['training_data']['x'][wildcards.trdata_name],
+        y = lambda wildcards: config['training_data']['y'][wildcards.trdata_name]
     params:
         n = config['repeat'],
         prefix = lambda wildcards: 'data/{trdata_name}_{label}'.format(trdata_name=wildcards.trdata_name, label = wildcards.label),
@@ -20,7 +21,8 @@ rule sampling_from_training_set:
         pos = temp([ 'data/{{trdata_name}}_{{label}}.{id}.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
         neg = temp([ 'data/{{trdata_name}}_{{label}}.{id}.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])
     shell:
-        '''python scripts/run_hdf5_to_fasta.py --hdf5 {input[0]} --nsubset {params.n} \
+        '''python scripts/run_hdf5_to_fasta.py --x {input.x} \
+        --y {input.y} --nsubset {params.n} \
         --prefix {params.prefix} --size {params.size} \
         --seed {params.seed} --label {params.label} '''
 
