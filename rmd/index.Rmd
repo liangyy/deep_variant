@@ -20,7 +20,7 @@ There are three strategies:
 0. Baseline classifier. [here](baseline.html)
     - ROC/PR curve [here](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html)
     - Evalution using allelic imbalance site **TODO**
-    - Compare performance with DeepSEA representation **TODO**
+    - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html)
 1. Use DeepSEA sequences and DeepSEA feature representation. 
     - See results and analysis [here](type1.html). 
     - See performance on new sequences [here](type1_newseq.html)
