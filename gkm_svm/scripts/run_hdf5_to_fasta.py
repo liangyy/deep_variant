@@ -8,6 +8,8 @@ parser.add_argument('--nsubset', type=int)
 parser.add_argument('--prefix')
 parser.add_argument('--seed', type=int)
 parser.add_argument('--size', type=int)
+parser.add_argument('--label', type=int)
+
 args = parser.parse_args()
 
 import h5py
@@ -26,9 +28,9 @@ def save_standard(data, filename):
     f.close()
 
 x, y = read_standard(args.hdf5)
-pos_idx = np.where(y == 1)[0]
+pos_idx = np.where(y[:, args.label-1] == 1)[0]
 print(pos_idx)
-neg_idx = np.where(y == 0)[0]
+neg_idx = np.where(y[:, args.label-1] == 0)[0]
 print(neg_idx)
 npos = pos_idx.shape[0]
 nneg = neg_idx.shape[0]

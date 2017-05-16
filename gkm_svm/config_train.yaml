@@ -1,4 +1,9 @@
 model_name: 'gkm_svm'
+label:
+  E081: 1
+  E082: 2
+  E129: 3
+  Noonan: 4
 training_data:
   deepsea_train: 'path_to_training_set_in_hdf5'
 validation_data:

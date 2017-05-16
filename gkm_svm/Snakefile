@@ -12,16 +12,17 @@ rule sampling_from_training_set:
         lambda wildcards: config['training_data'][wildcards.trdata_name]
     params:
         n = config['repeat'],
-        prefix = lambda wildcards: 'data/{trdata_name}'.format(trdata_name=wildcards.trdata_name),
+        prefix = lambda wildcards: 'data/{trdata_name}_{label}'.format(trdata_name=wildcards.trdata_name, label = wildcards.label),
         size = config['size'],
         seed = config['seed']
+        label = config['label'][wildcards.label]
     output:
-        pos = temp([ 'data/{{trdata_name}}.{id}.train.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
-        neg = temp([ 'data/{{trdata_name}}.{id}.train.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])
+        pos = temp([ 'data/{{trdata_name}}_{{label}}.{id}.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
+        neg = temp([ 'data/{{trdata_name}}_{{label}}.{id}.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])
     shell:
         '''python scripts/run_hdf5_to_fasta.py --hdf5 {input[0]} --nsubset {params.n} \
         --prefix {params.prefix} --size {params.size} \
-        --seed {params.seed}'''
+        --seed {params.seed} --label {params.label} '''
 
 # rule hdf5_to_fasta:
 
