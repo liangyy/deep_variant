@@ -26,11 +26,16 @@ rule sampling_from_training_set:
         --prefix {params.prefix} --size {params.size} \
         --seed {params.seed} --label {params.label} '''
 
-# rule hdf5_to_fasta:
+rule split_validation:
+    
+rule hdf5_to_fasta:
+    input:
+        ''
 
+#
 # rule training:
 #     input:
 #     output:
 #         'model/{model_name}_{id}.model.txt'
-
+#
 # rule prediction:
