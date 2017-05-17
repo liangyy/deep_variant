@@ -1,5 +1,6 @@
 import sys
-
+import h5py
+import numpy as np
 def read_standard(filename, name):
     f = h5py.File(filename, 'r')
     x = f[name][()]
@@ -23,20 +24,20 @@ def binary_to_fasta(x, filename, window_size):
     if window_size > lx or window_size < 200:
         print('Window size is too big. Exiting', file=sys.stderr)
         sys.exit()
-    half = int(window_size / 2)
+    half = int((window_size - 200) / 2)
     if window_size % 2 == 0:
-        subx = x[:, 400 - half : 800 + half, :]
+        subx = x[:, 400 - half : 600 + half, :]
     else:
         subx = x[:, 400 - half - 1 : 800 + half, :]
     o = open(filename, 'w')
-    for i in range(x.shape[0]):
-        seq = _binary_to_seq(x[i])
+    for i in range(subx.shape[0]):
+        seq = _binary_to_seq(subx[i])
         o.write('>{i}\n'.format(i=i))
         o.write(seq + '\n')
     o.close()
-def _binary_to_seq(bianry):
+def _binary_to_seq(binary):
     pick_list = np.array([0,1,2,3])
-    alphabet_dic = { 0:'A': 1:'G', 2:'C', 3:'T' }
+    alphabet_dic = { 0:'A', 1:'G', 2:'C', 3:'T' }
     seq = ''
     for j in range(binary.shape[0]):
         bin_char = binary[j, :]

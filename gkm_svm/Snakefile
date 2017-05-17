@@ -9,8 +9,8 @@
 
 rule sampling_from_training_set:
     input:
-        x = lambda wildcards: config['training_data']['x'][wildcards.trdata_name],
-        y = lambda wildcards: config['training_data']['y'][wildcards.trdata_name]
+        x = lambda wildcards: config['training_data'][wildcards.trdata_name]['x'],
+        y = lambda wildcards: config['training_data'][wildcards.trdata_name]['y']
     params:
         n = config['repeat'],
         prefix = lambda wildcards: 'data/{trdata_name}_{label}'.format(trdata_name=wildcards.trdata_name, label = wildcards.label),

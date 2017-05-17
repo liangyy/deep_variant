@@ -12,3 +12,4 @@ validation_data:
 size: 5 # per label
 repeat: 3
 seed: 2017
+window_size: 300
