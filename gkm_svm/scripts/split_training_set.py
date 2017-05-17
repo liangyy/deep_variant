@@ -31,8 +31,10 @@ npos = pos_idx.shape[0]
 nneg = neg_idx.shape[0]
 
 if npos < args.size or nneg < args.size:
-    print('The size set for output is too big. Exiting', file=sys.stderr)
-    sys.exit()
+    print('The size set for output is too big. Set too max limit', file=sys.stderr)
+    args.size = min(npos, args.size)
+    args.size = min(nneg, args.size)
+    # sys.exit()
 
 ppos = float(args.size) / npos
 pneg = float(args.size) / nneg

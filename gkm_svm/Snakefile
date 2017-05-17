@@ -56,10 +56,12 @@ rule training:
         neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
     output:
         'model/{trdata_name}_{label}.{id}.model.txt'
+    log:
+        'logs/train_{trdata_name}_{label}.{id}.log' # .format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
     params:
         lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
     shell:
-        'gkmtrain {input.pos} {input.neg} {params[0]}'
+        '''gkmtrain {input.pos} {input.neg} {params[0]} > {log}'''
 
 rule validation_raw_output:
     input:
@@ -67,8 +69,10 @@ rule validation_raw_output:
         data = 'data/{vldata_name}_{label}.all.fa'
     output:
         temp('result/{trdata_name}_{label}.{id}.{vldata_name}.txt')
+    log:
+        'logs/valid_{trdata_name}_{label}.{id}.{vldata_name}.log'
     shell:
-        '''gkmpredict {input.data} {input.model} {output[0]} ; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
+        '''gkmpredict {input.data} {input.model} {output[0]} > {log}; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
 
 rule logit_raw_and_to_feather:
     input:
