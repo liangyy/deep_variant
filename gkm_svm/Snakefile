@@ -28,10 +28,10 @@ rule sampling_from_training_set:
 
 rule hdf5_to_fasta_valid:
     input:
-        x = lambda wildcards: config['validation_data'][wildcards.trdata_name]['x']
+        x = lambda wildcards: config['validation_data'][wildcards.vldata_name]['x']
         # y = lambda wildcards: config['validation_data'][wildcards.trdata_name]['y']
     output:
-        'data/{trdata_name}_{label}.all.fa'
+        'data/{vldata_name}_{label}.all.fa'
         # neg = 'data/{trdata_name}_{label}.neg.fa'
     params:
         config['window_size']
@@ -55,35 +55,40 @@ rule training:
         pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
         neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
     output:
-        'model/{model_name}_{id}.model.txt'
+        'model/{trdata_name}_{label}.{id}.model.txt'
+    params:
+        lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
     shell:
-        'gkmtrain {input.pos} {input.neg} {output[0]}'
+        'gkmtrain {input.pos} {input.neg} {params[0]}'
 
 rule validation_raw_output:
     input:
         model = 'model/{trdata_name}_{label}.{id}.model.txt',
-        data = 'data/{trdata_name}_{label}.all.fa'
+        data = 'data/{vldata_name}_{label}.all.fa'
     output:
-        temp('result/{trdata_name}_{label}.{id}.validation.txt')
+        temp('result/{trdata_name}_{label}.{id}.{vldata_name}.txt')
     shell:
         '''gkmpredict {input.data} {input.model} {output[0]} ; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
 
 rule logit_raw_and_to_feather:
     input:
-        pred = 'result/{trdata_name}_{label}.{id}.validation.txt',
-        y = lambda wildcards: config['validation_data'][wildcards.trdata_name]['y']
+        pred = 'result/{trdata_name}_{label}.{id}.{vldata_name}.txt',
+        y = lambda wildcards: config['validation_data'][wildcards.vldata_name]['y']
     params:
         label = lambda wildcards: config['label'][wildcards.label]
     output:
-        'result/{trdata_name}_{label}.{id}.validation.feather'
+        'result/{trdata_name}_{label}.{id}.{vldata_name}.feather'
     shell:
         'python scripts/raw_to_feather.py --predict {input.pred} --truth {input.y} --label {params.label} --out {output[0]}'
 
 def get_all_results(config):
     files = []
+    trdata_name = next (iter (config['training_data'].keys()))
+    vldata_name = next (iter (config['validation_data'].keys()))
+    # print([trdata_name, vldata_name])
     for label in config['label']:
         for i in range(config['repeat']):
-            files.append('result/{trdata_name}_{label}.{id}.validation.feather'.format(trdata_name=config['training_data'], label=label, id=i))
+            files.append('result/{trdata_name}_{label}.{id}.{vldata_name}.feather'.format(trdata_name=trdata_name, vldata_name=vldata_name, label=label, id=i+1))
     return files
 
 rule report_training_rmd:
@@ -93,7 +98,7 @@ rule report_training_rmd:
         'report/{trdata_name}.training_report.Rmd'
     params:
         labels = '$$'.join(config['label']),
-        repeats = '$$'.join([ i for i in range(config['repeat']) ])
+        repeats = '$$'.join([ str(i) for i in range(config['repeat']) ])
     run:
         rmd = '''something here
 '''.format()
