@@ -27,6 +27,17 @@ rule sampling_from_training_set:
         --seed {params.seed} --label {params.label} '''
 
 rule hdf5_to_fasta_valid:
+    input:
+        x = lambda wildcards: config['validation_data'][wildcards.trdata_name]['x']
+        # y = lambda wildcards: config['validation_data'][wildcards.trdata_name]['y']
+    output:
+        'data/{trdata_name}_{label}.all.fa'
+        # neg = 'data/{trdata_name}_{label}.neg.fa'
+    params:
+        config['window_size']
+    shell:
+        '''python scripts/hdf5_to_fasta.py --split 1 --window {params[0]} \
+        --data {input.x} --out {output[0]}'''
 
 rule hdf5_to_fasta_train:
     input:
@@ -36,13 +47,56 @@ rule hdf5_to_fasta_train:
     params:
         config['window_size']
     shell:
-        'python scripts/hdf5_to_fasta.py --split 1 --window {params[0]} \
-        --data {input[0]} --out {output[0]}'
+        '''python scripts/hdf5_to_fasta.py --split 1 --window {params[0]} \
+        --data {input[0]} --out {output[0]}'''
 
-#
-# rule training:
-#     input:
-#     output:
-#         'model/{model_name}_{id}.model.txt'
-#
-# rule prediction:
+rule training:
+    input:
+        pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
+        neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
+    output:
+        'model/{model_name}_{id}.model.txt'
+    shell:
+        'gkmtrain {input.pos} {input.neg} {output[0]}'
+
+rule validation_raw_output:
+    input:
+        model = 'model/{trdata_name}_{label}.{id}.model.txt',
+        data = 'data/{trdata_name}_{label}.all.fa'
+    output:
+        temp('result/{trdata_name}_{label}.{id}.validation.txt')
+    shell:
+        '''gkmpredict {input.data} {input.model} {output[0]} ; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
+
+rule logit_raw_and_to_feather:
+    input:
+        pred = 'result/{trdata_name}_{label}.{id}.validation.txt',
+        y = lambda wildcards: config['validation_data'][wildcards.trdata_name]['y']
+    params:
+        label = lambda wildcards: config['label'][wildcards.label]
+    output:
+        'result/{trdata_name}_{label}.{id}.validation.feather'
+    shell:
+        'python scripts/raw_to_feather.py --predict {input.pred} --truth {input.y} --label {params.label} --out {output[0]}'
+
+def get_all_results(config):
+    files = []
+    for label in config['label']:
+        for i in range(config['repeat']):
+            files.append('result/{trdata_name}_{label}.{id}.validation.feather'.format(trdata_name=config['training_data'], label=label, id=i))
+    return files
+
+rule report_training_rmd:
+    input:
+        files = get_all_results(config)
+    output:
+        'report/{trdata_name}.training_report.Rmd'
+    params:
+        labels = '$$'.join(config['label']),
+        repeats = '$$'.join([ i for i in range(config['repeat']) ])
+    run:
+        rmd = '''something here
+'''.format()
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()

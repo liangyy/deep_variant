@@ -7,8 +7,8 @@ parser.add_argument('--split', type=int, help='''
     use --split 1, otherwise use --split 0
 ''')
 parser.add_argument('--window', type=int)
-parser.add_argument('--data')
-parser.add_argument('--out')
+parser.add_argument('--data', nargs='+')
+parser.add_argument('--out', nargs='+')
 args = parser.parse_args()
 
 import h5py
@@ -19,11 +19,11 @@ if 'scripts/' not in sys.path:
 import my_python
 
 if args.split == 1:
-    x = my_python.read_standard(args.data, 'trainxdata')
-    my_python.binary_to_fasta(x, args.out, args.window)
+    x = my_python.read_standard(args.data[0], 'trainxdata')
+    my_python.binary_to_fasta(x, args.out[0], args.window)
 elif args.split == 0:
-    x = my_python.read_standard(args.data, 'trainxdata')
-    y = my_python.read_standard(args.data, 'traindata')
+    x = my_python.read_standard(args.data[0], 'trainxdata')
+    y = my_python.read_standard(args.data[1], 'traindata')
     x, y = my_python.check_and_shrink(x, y)
     xpos = x[y == 1]
     xneg = x[y == 0]
