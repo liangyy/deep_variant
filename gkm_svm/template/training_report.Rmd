@@ -1,0 +1,71 @@
+---
+title: "Deep brain - Training gkm-SVM"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+    theme: cosmo
+    toc_float: true
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+<style>
+.col2 {
+  columns: 2 200px;         /* number of columns and width in pixels*/
+  -webkit-columns: 2 200px; /* chrome, safari */
+  -moz-columns: 2 200px;    /* firefox */
+}
+.col3 {
+  columns: 3 100px;
+  -webkit-columns: 3 100px;
+  -moz-columns: 3 100px;
+}
+</style>
+  
+# Import results
+  
+```{r}
+library(feather)
+library(ggplot2)
+library(precrec)
+labels <- 'first$$second'
+repeats <- '1$$2$$3'
+trdata_name <- 'deepsea_train_small'
+vldata_name <- 'deepsea_valid'
+all_scores <- list()
+all_labels <- list()
+for(label in strsplit(labels, '$$', fixed = T)[[1]]){
+  scores <- list()
+  for(i in strsplit(repeats, '$$', fixed = T)[[1]]){
+    filename <- paste0('result/', trdata_name, '_', label, '.', i, '.', vldata_name, '.feather')
+    data <- read_feather(filename)
+    scores[[i]] <- data$y.predict
+    # msmdat <- mmdata(joined, e$y, modnames = c('deep_learning', 'gc_content'))
+    # mscurves <- evalmod(msmdat)
+  }
+  all_labels[[label]] <- data$y
+  all_scores[[label]] <- scores
+}
+```
+
+# ROC/PR curves by label
+
+```{r, results='asis'}
+library(pander)
+panderOptions('knitr.auto.asis', FALSE)
+for (label in strsplit(labels, '$$', fixed = T)[[1]]){{
+    cat('\n')
+    cat('##', label, '\n')
+    msmdat <- mmdata(all_scores[[label]], all_labels[[label]], modnames = names(all_scores[[label]]))
+    mscurves <- evalmod(msmdat)
+    plot(mscurves)
+    cat('\n')
+    pander(auc(mscurves))
+    cat('\n')
+}}
+```

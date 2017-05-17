@@ -102,10 +102,65 @@ rule report_training_rmd:
         'report/{trdata_name}.training_report.Rmd'
     params:
         labels = '$$'.join(config['label']),
-        repeats = '$$'.join([ str(i) for i in range(config['repeat']) ])
+        repeats = '$$'.join([ str(i+1) for i in range(config['repeat']) ])
     run:
-        rmd = '''something here
-'''.format()
+        rmd = '''---
+title: "Deep brain - Training gkm-SVM"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+    theme: cosmo
+    toc_float: true
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Import results
+
+```{{r}}
+library(feather)
+library(ggplot2)
+library(precrec)
+labels <- '{labels}'
+repeats <- '{repeats}'
+trdata_name <- 'deepsea_train_small'
+vldata_name <- 'deepsea_valid'
+all_scores <- list()
+all_labels <- list()
+for(label in strsplit(labels, '$$', fixed = T)[[1]]){{
+  scores <- list()
+  for(i in strsplit(repeats, '$$', fixed = T)[[1]]){{
+    filename <- paste0('result/', trdata_name, '_', label, '.', i, '.', vldata_name, '.feather')
+    data <- read_feather(filename)
+    scores[[i]] <- data$y.predict
+  }}
+  all_labels[[label]] <- data$y
+  all_scores[[label]] <- scores
+}}
+```
+
+# ROC/PR curves by label
+
+```{{r, results='asis'}}
+library(pander)
+panderOptions('knitr.auto.asis', FALSE)
+for (label in strsplit(labels, '$$', fixed = T)[[1]]){{
+    cat('\n')
+    cat('##', label, '\n')
+    msmdat <- mmdata(all_scores[[label]], all_labels[[label]], modnames = names(all_scores[[label]]))
+    mscurves <- evalmod(msmdat)
+    plot(mscurves)
+    cat('\n')
+    pander(auc(mscurves))
+    cat('\n')
+}}
+```
+'''.format(labels=params.labels, repeats=params.repeats)
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
