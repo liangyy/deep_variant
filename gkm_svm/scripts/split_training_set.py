@@ -1,5 +1,5 @@
 import argparse
-parser = argparse.ArgumentParser(prog='hdf5_to_fasta.py', description='''
+parser = argparse.ArgumentParser(prog='split_training_set.py', description='''
     Randomly generate subset of input sequences (positive, negative sets
     are balanced)
 ''')
@@ -16,19 +16,13 @@ args = parser.parse_args()
 import h5py
 import numpy as np
 import sys
+if 'scripts/' not in sys.path:
+    sys.path.insert(0, 'scripts/')
+import my_python
 
-def read_standard(filename, name):
-    f = h5py.File(filename, 'r')
-    x = f[name][()]
-    f.close()
-    return x
-def save_standard(data, filename):
-    f = h5py.File(filename, 'w')
-    f.create_dataset('trainxdata', data=data)
-    f.close()
-
-x = read_standard(args.x, 'trainxdata')
-y = read_standard(args.y, 'traindata')
+x = my_python.read_standard(args.x, 'trainxdata')
+y = my_python.read_standard(args.y, 'traindata')
+x, y = my_python.check_and_shrink(x, y)
 pos_idx = np.where(y[:, args.label-1] == 1)[0]
 print(pos_idx[:10])
 neg_idx = np.where(y[:, args.label-1] == 0)[0]
@@ -51,5 +45,5 @@ for i in range(1, args.nsubset + 1):
     print(neg_idx[rneg])
     subpos = x[pos_idx[rpos]]
     subneg = x[neg_idx[rneg]]
-    save_standard(subpos, '{prefix}.{id}.pos.hdf5'.format(prefix=args.prefix, id=i))
-    save_standard(subneg, '{prefix}.{id}.neg.hdf5'.format(prefix=args.prefix, id=i))
+    my_python.save_standard(subpos, '{prefix}.{id}.pos.hdf5'.format(prefix=args.prefix, id=i))
+    my_python.save_standard(subneg, '{prefix}.{id}.neg.hdf5'.format(prefix=args.prefix, id=i))

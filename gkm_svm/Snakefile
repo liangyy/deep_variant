@@ -21,16 +21,23 @@ rule sampling_from_training_set:
         pos = temp([ 'data/{{trdata_name}}_{{label}}.{id}.pos.hdf5'.format(id=i+1) for i in range(config['repeat']) ]),
         neg = temp([ 'data/{{trdata_name}}_{{label}}.{id}.neg.hdf5'.format(id=i+1) for i in range(config['repeat']) ])
     shell:
-        '''python scripts/run_hdf5_to_fasta.py --x {input.x} \
+        '''python scripts/split_training_set.py --x {input.x} \
         --y {input.y} --nsubset {params.n} \
         --prefix {params.prefix} --size {params.size} \
         --seed {params.seed} --label {params.label} '''
 
-rule split_validation:
-    
-rule hdf5_to_fasta:
+rule hdf5_to_fasta_valid:
+
+rule hdf5_to_fasta_train:
     input:
-        ''
+        'data/{trdata_name}_{label}.{id}.{state}.hdf5'
+    output:
+        'data/{trdata_name}_{label}.{id}.{state}.fa'
+    params:
+        config['window_size']
+    shell:
+        'python scripts/hdf5_to_fasta.py --split 1 --window {params[0]} \
+        --data {input[0]} --out {output[0]}'
 
 #
 # rule training:
