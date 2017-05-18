@@ -55,7 +55,8 @@ rule training:
         pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
         neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
     output:
-        'sbatch/{trdata_name}_{label}.{id}_train.sbatch'
+        'model/{trdata_name}_{label}.{id}.model.txt'
+        # 'sbatch/{trdata_name}_{label}.{id}_train.sbatch'
     # threads:
     #     config['thread']
     log:
@@ -63,29 +64,29 @@ rule training:
     params:
         prefix = lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
         cache = config['cache'],
-        name = lambda wildcards: '{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
+        # name = lambda wildcards: '{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
         # out = lambda wildcards: 'model/{trdata_name}_{label}.{id}.model.txt'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
-    # shell:
-    #     '''gkmtrain -m {params.cache} -T {threads} {input.pos} {input.neg} {params.prefix} > {log}'''
-    run:
-        sbatch = '''#!/bin/bash
-#SBATCH --job-name={name}_train
-#SBATCH --output={name}_train.out
-#SBATCH --error={name}_train.err
-#SBATCH --time=24:00:00
-#SBATCH --partition=broadwl
-#SBATCH --mem-per-cpu=50G
-#SBATCH --nodes=1
-
-cd /project2/xinhe/yanyul
-source setup.sh
-source activate deepvarpred_test
-cd repo/deep_variant/allelic_imbalance
-gkmtrain -m {cache} {pos} {neg} {prefix} > {log}
-'''.format(cache=params.cache, pos=input.pos, neg=input.neg, prefix=params.prefix, log=log, name=params.name)
-        o = open(output[0], 'w')
-        o.write(sbatch)
-        o.close()
+    shell:
+        '''gkmtrain -m {params.cache} {input.pos} {input.neg} {params.prefix} > {log}'''
+#     run:
+#         sbatch = '''#!/bin/bash
+# #SBATCH --job-name={name}_train
+# #SBATCH --output={name}_train.out
+# #SBATCH --error={name}_train.err
+# #SBATCH --time=24:00:00
+# #SBATCH --partition=broadwl
+# #SBATCH --mem-per-cpu=50G
+# #SBATCH --nodes=1
+#
+# cd /project2/xinhe/yanyul
+# source setup.sh
+# source activate deepvarpred_test
+# cd repo/deep_variant/allelic_imbalance
+# gkmtrain -m {cache} {pos} {neg} {prefix} > {log}
+# '''.format(cache=params.cache, pos=input.pos, neg=input.neg, prefix=params.prefix, log=log, name=params.name)
+#         o = open(output[0], 'w')
+#         o.write(sbatch)
+#         o.close()
 
 rule validation_raw_output:
     input:
