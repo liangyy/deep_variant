@@ -64,7 +64,7 @@ rule training:
         prefix = lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
         cache = config['cache']
     shell:
-        '''gkmtrain -m {params.prefix} -T {threads} {input.pos} {input.neg} {params.prefix} > {log}'''
+        '''gkmtrain -m {params.cache} -T {threads} {input.pos} {input.neg} {params.prefix} > {log}'''
 
 rule validation_raw_output:
     input:
