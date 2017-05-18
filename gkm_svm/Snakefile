@@ -55,13 +55,16 @@ rule training:
         pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
         neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
     output:
-        'model/{trdata_name}_{label}.{id}.model.txt'
+        'model/{trdata_name}_{label}.{id}.model.txt',
+    threads:
+        config['thread']
     log:
         'logs/train_{trdata_name}_{label}.{id}.log' # .format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
     params:
-        lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
+        prefix = lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
+        cache = config['cache']
     shell:
-        '''gkmtrain {input.pos} {input.neg} {params[0]} > {log}'''
+        '''gkmtrain -m {params.prefix} -T {threads} {input.pos} {input.neg} {params.prefix} > {log}'''
 
 rule validation_raw_output:
     input:
@@ -69,10 +72,12 @@ rule validation_raw_output:
         data = 'data/{vldata_name}_{label}.all.fa'
     output:
         temp('result/{trdata_name}_{label}.{id}.{vldata_name}.txt')
+    threads:
+        config['thread']
     log:
         'logs/valid_{trdata_name}_{label}.{id}.{vldata_name}.log'
     shell:
-        '''gkmpredict {input.data} {input.model} {output[0]} > {log}; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
+        '''gkmpredict -T {threads} {input.data} {input.model} {output[0]} > {log}; cat {output[0]} | cut -f2 > temp ; mv temp {output[0]}'''
 
 rule logit_raw_and_to_feather:
     input:
