@@ -50,23 +50,38 @@ variant$Alt[score$Varient.ID] <- score$Allele2
 ## Call Imbalance
 
 ```{r}
-imbalance.threshold <- 0.01 # Fisher's exact test p-value
-variant$Imbalance <- 'Balanced'
-variant$Imbalance[variant$P.Value < imbalance.threshold] <- 'Imbalanced'
+hist(log(variant$Odds.Ratio))
+imbalance <- abs(log(variant$Odds.Ratio)) > 1.8
+balance <- abs(log(variant$Odds.Ratio)) < 1.1
+# imbalance.threshold <- 0.01 # Fisher's exact test p-value
+variant$Imbalance <- 'None'
+variant$Imbalance[imbalance] <- 'Imbalanced'
+variant$Imbalance[balance] <- 'Balanced'
+# variant$Imbalance[variant$P.Value < imbalance.threshold] <- 'Imbalanced'
+# variant$Imbalance[variant$P.Value < imbalance.threshold] <- 'Imbalanced'
 ```
 
 ## Quality Control
 
 ### Remove strand imbalanced instances
 
-$\frac{|read_+ - read_-|}{read_+ + read_-} < 0.3$
+Do nothing here.
+
+<!-- Binomial test is use for each site. `binom.test(c(strand1, strand2), p = 0.5)`. -->
+
+<!-- $\frac{|read_+ - read_-|}{read_+ + read_-} < 0.3$ -->
 
 ```{r}
-strand.threshold <- 0.3
-strand.read1 <- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
-strand.read2 <- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
-ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle('Score of Strand Imbalance')
-strand.pass <- (strand.read1 < strand.threshold) & (strand.read2 < strand.threshold)
+# strand.threshold <- 0.3
+# strand.read1 <- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
+# strand.read2 <- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
+# strand.read1 <- apply(variant, 1, function(x){
+#     re <- binom.test(c(x['Reads1Plus'], x['Reads1Minus']), 0.5)
+#     re$p.value
+# })
+# ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle('Score of Strand Imbalance')
+# strand.pass <- (strand.read1 < strand.threshold) & (strand.read2 < strand.threshold)
+strand.pass <- rep(TRUE, nrow(variant))
 ```
 
 The asymmetric result of read1 and read2 may come from alignment bias.
@@ -97,7 +112,7 @@ ggplot(variant) + geom_bar(aes(x = both.pass, fill = Imbalance), position = 'dod
 
 ```{r}
 variant.pass <- variant[variant$pass,]
-ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + scale_colour_gradient2() + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of \n Heterozygous sites in DNase-seq of E081')
+ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of \n Heterozygous sites in DNase-seq of E081') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
 ```
 
 ### Observed Log Odds Ratio vs. Predicted Log Odds Ratio
@@ -115,8 +130,10 @@ Model: imbalance ~ f(ref, alt), link = binomial. $f_1 = |x - y|$.
 $f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|$
 
 ```{r}
-model.logistic.abs <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Ref - Alt), family=binomial(link='logit'), data=variant.pass)
-model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link='logit'), data=variant.pass)
+variant.pass.interest <- variant.pass[variant.pass$Imbalance != 'None',]
+model.logistic.abs <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Ref - Alt), family=binomial(link='logit'), data=variant.pass.interest)
+model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link='logit'), data=variant.pass.interest)
+# ggplot(variant.pass.interest) + geom_boxplot(aes(x = Imbalance, y = abs(Log10.Odds.Ratio.Predicted)))
 ```
 
 ```{r, results='asis'}
@@ -129,7 +146,7 @@ pander(model.logistic.lor)
 ```{r, results='asis'}
 library(precrec)
 joined <- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
-msmdat <- mmdata(joined, as.numeric(variant.pass$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2'))
+msmdat <- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2'))
 mscurves <- evalmod(msmdat)
 plot(mscurves)
 pander(auc(mscurves))
