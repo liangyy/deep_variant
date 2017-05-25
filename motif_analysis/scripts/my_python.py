@@ -72,3 +72,13 @@ def getGradient_eval(get_gradients, sample):
           0 # learning phase in TEST mode
     ]
     return get_gradients(inputs)[0]
+
+def numSeqPerSeq(xlength, mask_size):
+    if xlength % mask_size == 0:
+        return int(xlength / mask_size) + 1 # add one more for original sequence
+    else:
+        return int(xlength / mask_size) + 1 + 1 # add one more for original sequence
+def newIdxByGroup(group_idx, ingroup_idx, group_size): # zero-base
+    return group_idx * group_size + ingroup_idx
+def log2Odds(matrix):
+    return np.log2(matrix + 1e-10) - np.log2(1 - matrix + 1e-10)
