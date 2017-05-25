@@ -6,4 +6,4 @@ data:
   E129: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
   Noonan: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/Noonan_union.bed_bin200.bed.sorted.merged.final.expended.hdf5'
 partition: 'gpu2'
-prefix: 'deepsea'
+prefix: 'type1'
