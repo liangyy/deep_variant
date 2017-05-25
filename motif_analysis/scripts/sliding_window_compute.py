@@ -20,11 +20,12 @@ import pandas as pd
 import h5py
 
 x_new = h5py.File(args.input, 'r')
-name = list(x_new.keys())[0].decode()
+name = list(x_new.keys())[0]
+x_new = x_new[name][()]
 xlength = int(name.split('-')[1])
 
 model = load_model(args.model)
-y_pred = model.predict(x, verbose=1)
+y_pred = model.predict(x_new, verbose=1)
 
 num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
 y_pred = y_pred.reshape((num_of_seq_per_seq, -1)).T
