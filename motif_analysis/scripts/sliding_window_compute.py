@@ -17,6 +17,7 @@ if 'scripts/' not in sys.path:
 import my_python
 import feather
 import pandas as pd
+import h5py
 
 x_new = h5py.File(args.input, 'r')
 name = x_new.keys()[0].decode()

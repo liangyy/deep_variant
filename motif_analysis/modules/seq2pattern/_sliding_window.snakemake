@@ -28,7 +28,7 @@ rule prepare_input_neg:
 
 rule get_sliding_pattern_pos:
     input:
-        p = 'pattern/{model}/{data}/sliding_window/slided_sequences_positive.hdf5',
+        p = 'pattern/{model}/{data}/sliding_window/slided_sequences_positive.hdf5'.format(data='{data}', model=config['model']['name']),
         model = config['model']['path']
     output:
         op = 'pattern/{model}/{data}/sliding_window/pattern_positive.feather'.format(data='{data}', model=config['model']['name'])
@@ -42,7 +42,7 @@ rule get_sliding_pattern_pos:
 
 rule get_sliding_pattern_neg:
     input:
-        p = 'pattern/{model}/{data}/sliding_window/slided_sequences_negative.hdf5',
+        p = 'pattern/{model}/{data}/sliding_window/slided_sequences_negative.hdf5'.format(data='{data}', model=config['model']['name']),
         model = config['model']['path']
     output:
         op = 'pattern/{model}/{data}/sliding_window/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])

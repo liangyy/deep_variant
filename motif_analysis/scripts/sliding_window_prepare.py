@@ -17,7 +17,7 @@ import numpy as np
 
 x = my_python.getData(args.input, 'x')
 num_of_seq_per_seq = my_python.numSeqPerSeq(x.shape[1], args.mask_size)
-new_x = np.zeros((num_of_seq_per_seq, x.shape[1], x.shape[2]))
+new_x = np.zeros((x.shape[0] * num_of_seq_per_seq, x.shape[1], x.shape[2]))
 for i in range(x.shape[0]):
     for j in range(num_of_seq_per_seq):
         index = my_python.newIdxByGroup(i, j, num_of_seq_per_seq)
@@ -27,4 +27,4 @@ for i in range(x.shape[0]):
         new_x[index] = x[i]
         if start < x.shape[1]:
             new_x[index, start : end, :] = 0
-my_python.saveData(args.output, '-'.join(['x', str(x.shape[1])], new_x)
+my_python.saveData(args.output, '-'.join(['x', str(x.shape[1])]), new_x)
