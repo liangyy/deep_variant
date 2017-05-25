@@ -33,7 +33,7 @@ rule get_sliding_pattern_pos:
     output:
         op = 'pattern/{model}/{data}/sliding_window/pattern_positive.feather'.format(data='{data}', model=config['model']['name'])
     params:
-        mask_size = config['method']['sliding_window']['mask_size']
+        mask_size = config['method']['sliding_window']['mask_size'],
         label_idx = lambda wildcards: config['data'][wildcards.data]['label_num']
     shell:
         'python scripts/sliding_window_compute.py --model {input.model} \
