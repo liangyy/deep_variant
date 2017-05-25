@@ -9,6 +9,10 @@ parser.add_argument('--output')
 parser.add_argument('--mask_size', type=int)
 args = parser.parse_args()
 
+import os
+os.environ['THEANO_FLAGS'] = "device=gpu"
+os.environ['floatX'] = 'float32'
+import keras
 from keras.models import load_model
 import numpy as np
 import sys

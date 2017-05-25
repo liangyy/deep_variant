@@ -6,6 +6,8 @@ def eprint(*args, **kwargs):
 
 from ntpath import basename
 import os
+os.environ['THEANO_FLAGS'] = "device=gpu"
+os.environ['floatX'] = 'float32'
 import subprocess
 import h5py
 def getFilename(string):
