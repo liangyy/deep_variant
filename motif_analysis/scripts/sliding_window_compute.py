@@ -7,6 +7,9 @@ parser.add_argument('--model')
 parser.add_argument('--input')
 parser.add_argument('--output')
 parser.add_argument('--mask_size', type=int)
+parser.add_argument('--label_idx', type=int, help='''
+	1-based
+''')
 args = parser.parse_args()
 
 import os
@@ -30,7 +33,7 @@ xlength = int(name.split('-')[1])
 
 model = load_model(args.model)
 y_pred = model.predict(x_new, verbose=1)
-
+y_pred = y_pred[:, args.label_idx - 1]
 num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
 y_pred = y_pred.reshape((num_of_seq_per_seq, -1)).T
 y_slide = y_pred[:num_of_seq_per_seq - 1]
