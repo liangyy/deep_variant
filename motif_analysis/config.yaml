@@ -51,3 +51,17 @@ data:
     data_x:
       path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
       name: 'trainxdata'
+  Noonan:
+    data_name: 'Noonan'
+    label_num: 4 # 1-based
+    extract_num: 1000
+    # seed: 2017
+    data_ypred:
+      path: '../../../deep_variant/yanyu/deep_brain/my_train/040417_overnight/2/42-0.1703-0.1520_DeepSEA_test_12__with_label.hdf5'
+      name: 'y_pred'
+    data_y:
+      path: '../../../deep_variant/yanyu/deep_brain/my_train/DeepSEA_test_12__with_label.hdf5'
+      name: 'traindata'
+    data_x:
+      path: '../../../deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+      name: 'trainxdata'
