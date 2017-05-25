@@ -19,12 +19,13 @@ x = my_python.getData(args.input, 'x')
 num_of_seq_per_seq = my_python.numSeqPerSeq(x.shape[1], args.mask_size)
 new_x = np.zeros((x.shape[0] * num_of_seq_per_seq, x.shape[1], x.shape[2]))
 for i in range(x.shape[0]):
-    for j in range(num_of_seq_per_seq):
+    for j in range(num_of_seq_per_seq - 1):
         index = my_python.newIdxByGroup(i, j, num_of_seq_per_seq)
-        start = j * args.mask_size
-        end = (j + 1) * args.mask_size
+        start = j
+        end = j + args.mask_size
         end = min(end, x.shape[1])
         new_x[index] = x[i]
-        if start < x.shape[1]:
-            new_x[index, start : end, :] = 0
+        new_x[index, start : end, :] = 0
+    index = my_python.newIdxByGroup(i, num_of_seq_per_seq - 1, num_of_seq_per_seq)
+    new_x[index] = x[i]
 my_python.saveData(args.output, '-'.join(['x', str(x.shape[1])]), new_x)

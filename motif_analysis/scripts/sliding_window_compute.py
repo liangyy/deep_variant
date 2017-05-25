@@ -20,13 +20,13 @@ import pandas as pd
 import h5py
 
 x_new = h5py.File(args.input, 'r')
-name = x_new.keys()[0].decode()
+name = list(x_new.keys())[0].decode()
 xlength = int(name.split('-')[1])
 
 model = load_model(args.model)
 y_pred = model.predict(x, verbose=1)
 
-num_of_seq_per_seq = my_python.numSeqPerSeq(x.shape[1], args.mask_size)
+num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
 y_pred = y_pred.reshape((num_of_seq_per_seq, -1)).T
 y_slide = y_pred[:num_of_seq_per_seq - 1]
 y_origin = y_pred[num_of_seq_per_seq - 1]
