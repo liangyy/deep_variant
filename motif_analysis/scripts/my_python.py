@@ -10,6 +10,7 @@ os.environ['THEANO_FLAGS'] = "device=gpu"
 os.environ['floatX'] = 'float32'
 import subprocess
 import h5py
+import numpy as np
 def getFilename(string):
 	return '.'.join(basename(string).split('.')[:-1])
 
