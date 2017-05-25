@@ -22,7 +22,7 @@ model:
   motif_of_interest:
     combined: '302,24,69,119,246,9,37,245,150,96,55,300,78,118,214,22,222,0'
     activation: '185,106,29,4,275,78,291,278,125,100'
-data:
+deepsea:
   E081:
     data_name: 'E081'
     label_num: 1 # 1-based

@@ -1,0 +1,77 @@
+method:
+  mutagensis:
+    snakemake: '_mutagensis.snakemake'
+  sliding_window:
+    snakemake: '_sliding_window.snakemake'
+    mask_size: 8
+  motif_gradient:
+    snakemake: '_motif_gradient.snakemake'
+  motif_activation:
+    snakemake: '_motif_activation.snakemake'
+model:
+  name: 'Type1'
+  path: '../../../deep_variant/yanyu/deep_brain/my_train/keras_deepsea_with_040417_2_42_head.hdf5'
+  first_layer_idx: 1 # 0-based
+  motif_layer_idx: 0 # 0-based
+  nmotifs: 320
+  lmotif: 8 # length of the motif
+  test_data: # only for PWM visualization
+    path: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
+    name: 'trainxdata'
+  motif_of_interest:
+    to_fill_in: ''
+newseq:
+  E081:
+    data_name: 'E081'
+    extract_num: 1000
+    y:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/label.hdf5'
+      name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
+      label_idx: 1 # 1-based
+      double: 'No'
+      remove: '1073109-1073114'
+    ypred:
+      path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1_E081.ypred.hdf5'
+      name: 'y_pred'
+      label_idx: 1 # 1-based
+      double: 'Yes'
+      remove: 'None'
+    x:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+      name: 'trainxdata'
+  E082:
+    data_name: 'E082'
+    extract_num: 1000
+    y:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/label.hdf5'
+      name: 'data/E082-DNase.macs2.narrowPeak.sorted.intersect'
+      label_idx: 2 # 1-based
+      double: 'No'
+      remove: '1238543-1238548'
+    ypred:
+      path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1_E082.ypred.hdf5'
+      name: 'y_pred'
+      label_idx: 2 # 1-based
+      double: 'Yes'
+      remove: 'None'
+    x:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended.hdf5'
+      name: 'trainxdata'
+  Noonan:
+    data_name: 'Noonan'
+    extract_num: 1000
+    y:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/label.hdf5'
+      name: 'data/Noonan_union.bed.sorted.intersect'
+      label_idx: 4 # 1-based
+      double: 'No'
+      remove: 'None'
+    ypred:
+      path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1_Noonan.ypred.hdf5'
+      name: 'y_pred'
+      label_idx: 4 # 1-based
+      double: 'Yes'
+      remove: 'None'
+    x:
+      path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/Noonan_union.bed_bin200.bed.sorted.merged.final.expended.hdf5'
+      name: 'trainxdata'

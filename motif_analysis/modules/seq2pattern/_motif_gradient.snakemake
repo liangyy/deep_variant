@@ -4,13 +4,13 @@
 
 rule get_pattern_grad_pos:
     input:
-        p = 'data/{data}/selected_positive.hdf5',
+        p = 'data/{dataname}.{data}/selected_positive.hdf5',
         model = config['model']['path']
     output:
-        op = 'pattern/{model}/{data}/motif_gradient/pattern_positive.feather'.format(data='{data}', model=config['model']['name'])
+        op = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_positive.feather'.format(model=config['model']['name'])
     params:
         idx = config['model']['first_layer_idx'],
-        label_idx = lambda wildcards: config['data'][wildcards.data]['label_num'],
+        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
         true_label = 1
     shell:
         'python scripts/motif_gradient.py --model {input.model} \
@@ -22,13 +22,13 @@ rule get_pattern_grad_pos:
 
 rule get_pattern_grad_neg:
     input:
-        n = 'data/{data}/selected_negative.hdf5',
+        n = 'data/{{dataname}}.{{data}}/selected_negative.hdf5',
         model = config['model']['path']
     output:
-        on = 'pattern/{model}/{data}/motif_gradient/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        on = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_negative.feather'.format(model=config['model']['name'])
     params:
         idx = config['model']['first_layer_idx'],
-        label_idx = lambda wildcards: config['data'][wildcards.data]['label_num'],
+        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
         true_label = 0
     shell:
         'python scripts/motif_gradient.py --model {input.model} \
@@ -40,15 +40,14 @@ rule get_pattern_grad_neg:
 
 rule report_grad_gen_rmd:
     input:
-        p = 'pattern/{model}/{data}/motif_gradient/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
-        n = 'pattern/{model}/{data}/motif_gradient/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        p = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_positive.feather'.format(model=config['model']['name']),
+        n = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_negative.feather'.format(model=config['model']['name'])
     output:
-        o = temp('report/{model}/{data}_motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']))
+        o = temp('report/{model}/{{dataname}}.{{data}}_motif_gradient.Rmd'.format(model=config['model']['name']))
     params:
         model = config['model']['name'],
-        data = '{data}',
+        data = '{dataname}.{data}',
         envir = '../../',
-        folder = config['http']
     run:
         rmd = '''---
 title: "Deep brain - Motif Analysis - motif gradient"
@@ -171,10 +170,10 @@ bsselect(plots.neg, type = "img", selected = names(plots.neg)[1],
 
 rule report_grad_gen_html:
     input:
-        rmd = 'report/{model}/{data}_motif_gradient.Rmd'.format(data='{data}', model=config['model']['name']),
-        p = 'pattern/{model}/{data}/motif_gradient/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
-        n = 'pattern/{model}/{data}/motif_gradient/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        rmd = 'report/{model}/{{dataname}}.{{data}}_motif_gradient.Rmd'.format(model=config['model']['name']),
+        p = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_positive.feather'.format(model=config['model']['name']),
+        n = 'pattern/{model}/{{dataname}}.{{data}}/motif_gradient/pattern_negative.feather'.format(model=config['model']['name'])
     output:
-        'report/{model}/{data}_motif_gradient.html'.format(data='{data}', model=config['model']['name'])
+        'report/{model}/{{dataname}}.{{data}}_motif_gradient.html'.format(model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''

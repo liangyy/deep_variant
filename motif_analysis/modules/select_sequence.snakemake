@@ -3,20 +3,25 @@
 
 rule select_sequence:
     input:
-        ypred = lambda wildcards: config['data'][wildcards.data]['data_ypred']['path'],
-        y = lambda wildcards: config['data'][wildcards.data]['data_y']['path'],
-        x = lambda wildcards: config['data'][wildcards.data]['data_x']['path']
+        ypred = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['path'],
+        y = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['path'],
+        x = lambda wildcards: config[wildcards.dataname][wildcards.data]['x']['path']
     output:
-        p = 'data/{data}/selected_positive.hdf5',
-        n = 'data/{data}/selected_negative.hdf5'
+        p = 'data/{dataname}.{data}/selected_positive.hdf5',
+        n = 'data/{dataname}.{data}/selected_negative.hdf5'
     params:
-        ypred = lambda wildcards: config['data'][wildcards.data]['data_ypred']['name'],
-        y = lambda wildcards: config['data'][wildcards.data]['data_y']['name'],
-        x = lambda wildcards: config['data'][wildcards.data]['data_x']['name'],
-        label_idx = lambda wildcards: config['data'][wildcards.data]['label_num'],
-        num = lambda wildcards: config['data'][wildcards.data]['extract_num']
+        ypred = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['name'],
+        y = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['name'],
+        x = lambda wildcards: config[wildcards.dataname][wildcards.data]['x']['name'],
+        y_label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['label_idx'],
+        yp_label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['label_idx'],
+        num = lambda wildcards: config[wildcards.dataname][wildcards.data]['extract_num'],
+        ypdouble = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['double'],
+        ydouble = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['double'],
+        ypremove = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['remove'],
+        yremove = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['remove']
     log:
-        'logs/{data}/select_sequence.log'
+        'logs/{dataname}.{data}/select_sequence.log'
     shell:
         'python scripts/select_sequence.py --ypred {input.ypred} \
         --y {input.y} \
@@ -24,8 +29,13 @@ rule select_sequence:
         --ypred_name {params.ypred} \
         --y_name {params.y} \
         --x_name {params.x} \
-        --label_idx {params.label_idx} \
+        --y_label_idx {params.y_label_idx} \
+        --yp_label_idx {params.yp_label_idx} \
         --num {params.num} \
         --out_pos {output.p} \
         --out_neg {output.n} \
+        --ydouble {params.ydouble} \
+        --ypdouble {params.ypdouble} \
+        --yremove {params.yremove} \
+        --ypremove {params.ypremove}
         2> {log}'

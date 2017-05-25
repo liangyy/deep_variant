@@ -3,10 +3,10 @@
 
 rule get_pattern_pos:
     input:
-        p = 'data/{data}/selected_positive.hdf5',
+        p = 'data/{dataname}.{data}/selected_positive.hdf5',
         model = config['model']['path']
     output:
-        op = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name'])
+        op = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_positive.feather'.format(model=config['model']['name'])
     params:
         idx = config['model']['first_layer_idx']
     shell:
@@ -20,7 +20,7 @@ rule get_pattern_neg:
         n = 'data/{data}/selected_negative.hdf5',
         model = config['model']['path']
     output:
-        on = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        on = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_negative.feather'.format(model=config['model']['name'])
     params:
         idx = config['model']['first_layer_idx']
     shell:
@@ -31,13 +31,13 @@ rule get_pattern_neg:
 
 rule report_gen_rmd:
     input:
-        p = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
-        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        p = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_positive.feather'.format(model=config['model']['name']),
+        n = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_negative.feather'.format(model=config['model']['name'])
     output:
-        o = temp('report/{model}/{data}_motif_activation.Rmd'.format(data='{data}', model=config['model']['name']))
+        o = temp('report/{model}/{{dataname}}.{{data}}_motif_activation.Rmd'.format(model=config['model']['name']))
     params:
         model = config['model']['name'],
-        data = '{data}',
+        data = '{dataname}.{data}',
         envir = '../../',
     run:
         rmd = '''---
@@ -112,10 +112,10 @@ bsselect(plots, type = "img", selected = names(plots)[2],
 
 rule report_gen_html:
     input:
-        rmd = 'report/{model}/{data}_motif_activation.Rmd'.format(data='{data}', model=config['model']['name']),
-        p = 'pattern/{model}/{data}/motif_activation/pattern_positive.feather'.format(data='{data}', model=config['model']['name']),
-        n = 'pattern/{model}/{data}/motif_activation/pattern_negative.feather'.format(data='{data}', model=config['model']['name'])
+        rmd = 'report/{model}/{{dataname}}.{{data}}_motif_activation.Rmd'.format(model=config['model']['name']),
+        p = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_positive.feather'.format(model=config['model']['name']),
+        n = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_negative.feather'.format(model=config['model']['name'])
     output:
-        'report/{model}/{data}_motif_activation.html'.format(data='{data}', model=config['model']['name'])
+        'report/{model}/{{dataname}}.{{data}}_motif_activation.html'.format(model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''

@@ -24,15 +24,20 @@ parser.add_argument('--x_name', help='''
 parser.add_argument('--num', type=int, help='''
 	number of sequences you want to extract
 	''')
-parser.add_argument('--label_idx', type=int, help='''
-	the label you would like to focus on
+parser.add_argument('--y_label_idx', type=int, help='''
+	the label you would like to focus on (1-based)
 	''')
+parser.add_argument('--yp_label_idx', type=int)
 parser.add_argument('--out_pos', help='''
 	positive sequences output filename
 	''')
 parser.add_argument('--out_neg', help='''
 	negative sequences output filename
 	''')
+parser.add_argument('--ydouble')
+parser.add_argument('--ypdouble')
+parser.add_argument('--yremove', help='1-based: remove [start]-[end]')
+parser.add_argument('--ypremove')
 args = parser.parse_args()
 
 import h5py
@@ -42,10 +47,9 @@ if 'scripts/' not in sys.path:
     sys.path.insert(0, 'scripts/')
 import my_python, helper
 
-y_pred = my_python.getData(args.ypred, args.ypred_name)
-y_pred = y_pred[:, args.label_idx - 1]
-y = my_python.getData(args.y, args.y_name)
-y = y[:, args.label_idx - 1]
+y = my_python.selectReadY(args.y, args.y_name, args.y_label_idx, args.ydouble, args.yremove)
+y_pred = my_python.selectReadY(args.ypred, args.ypred_name, args.yp_label_idx, args.ypdouble, args.ypremove)
+
 threhold_pos = helper.get_rough_threshold(y_pred[y == 1], args.num, 'max')
 threhold_neg = helper.get_rough_threshold(y_pred[y == 0], args.num, 'min')
 x = my_python.getData(args.x, args.x_name)

@@ -81,6 +81,23 @@ def numSeqPerSeq(xlength, mask_size):
 
 def newIdxByGroup(group_idx, ingroup_idx, group_size): # zero-base
     return group_idx * group_size + ingroup_idx
-    
+
 def log2Odds(matrix):
     return np.log2(matrix + 1e-10) - np.log2(1 - matrix + 1e-10)
+
+def selectReadY(filename, name, label_idx, double, remove):
+    y = getData(filename, name)
+    if y.ndim == 2:
+        y = y[:, label_idx - 1]
+    if double == 'No':
+    	y = np.hstack((y, y))
+    if remove != 'None':
+        temp = args.yremove.split('-')
+        start = int(temp[0]) - 1
+        end = int(temp[1])
+    	if y.shape[0] % 2 == 1:
+            my_python.eprint('y dim is not mod 2 zero. Cannot use double mode. Exit')
+            sys.exit()
+    	ny = int(y.shape[0] / 2)
+        y = np.hstack((y[0:start], y[end:ny], y[ny:ny+start], y[ny+end:ny*2]))
+    return y
