@@ -19,8 +19,8 @@ model:
     path: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
     name: 'trainxdata'
   motif_of_interest:
-    E081: '0,154,143,278,125'
-    Noonan: '22,143,278,154,6,168,9,125,133,99,214,222'
+    newseq.E081: '0,154,143,278,125'
+    newseq.Noonan: '22,143,278,154,6,168,9,125,133,99,214,222'
 newseq:
   E081:
     data_name: 'E081'
