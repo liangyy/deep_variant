@@ -14,49 +14,107 @@ rule prepare_input_pos:
         --mask_size {params.mask_size} \
         --output {output[0]}'
 
-rule prepare_input_neg:
-    input:
-        p = 'data/{dataname}.{data}/selected_negative.hdf5'
-    output:
-        temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5')
-    params:
-        mask_size = config['method']['sliding_window']['mask_size']
-    shell:
-        'python scripts/sliding_window_prepare.py --input {input.p} \
-        --mask_size {params.mask_size} \
-        --output {output[0]}'
+# rule prepare_input_neg:
+#     input:
+#         p = 'data/{dataname}.{data}/selected_negative.hdf5'
+#     output:
+#         temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5')
+#     params:
+#         mask_size = config['method']['sliding_window']['mask_size']
+#     shell:
+#         'python scripts/sliding_window_prepare.py --input {input.p} \
+#         --mask_size {params.mask_size} \
+#         --output {output[0]}'
 
-rule get_sliding_pattern_pos:
+rule get_sliding_pattern_pos_sbatch:
     input:
         p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_positive.hdf5'.format(model=config['model']['name']),
         model = config['model']['path']
     output:
-        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name'])
+        'sbatch/{model}.{{dataname}}.{{data}}.sliding_positive.sbatch'.format(model=config['model']['name'])
     params:
         mask_size = config['method']['sliding_window']['mask_size'],
-        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num']
-    shell:
-        'python scripts/sliding_window_compute.py --model {input.model} \
-        --input {input.p} \
-        --output {output.op} \
-        --mask_size {params.mask_size} \
-        --label_idx {params.label_idx}'
+        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
+        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
+        name = '{model}.{{dataname}}.{{data}}.sliding_positive'.format(model=config['model']['name'])
+    run:
+        sbatch = '''#!/bin/bash
+#SBATCH --job-name={name}
+#SBATCH --output={name}.out
+#SBATCH --error={name}.err
+#SBATCH --time=24:00:00
+#SBATCH --partition=gpu2
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+module load cuda/7.5
+cd repo/deep_variant/motif_analysis
+python scripts/sliding_window_compute.py --model {model} \
+--input {input} \
+--output {output} \
+--mask_size {mask_size} \
+--label_idx {label_idx}'''.foramt(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+        o = open(output[0], 'w')
+        o.write(sbatch)
+        o.close()
 
-rule get_sliding_pattern_neg:
+rule get_sliding_pattern_neg_sbatch:
     input:
         p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_negative.hdf5'.format(model=config['model']['name']),
         model = config['model']['path']
     output:
-        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
+        'sbatch/{model}.{{dataname}}.{{data}}.sliding_negative.sbatch'.format(model=config['model']['name'])
     params:
         mask_size = config['method']['sliding_window']['mask_size'],
-        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num']
-    shell:
-        'python scripts/sliding_window_compute.py --model {input.model} \
-        --input {input.p} \
-        --output {output.op} \
-        --mask_size {params.mask_size} \
-        --label_idx {params.label_idx}'
+        label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
+        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name']),
+        name = '{model}.{{dataname}}.{{data}}.sliding_negative'.format(model=config['model']['name'])
+    run:
+        sbatch = '''#!/bin/bash
+#SBATCH --job-name={name}
+#SBATCH --output={name}.out
+#SBATCH --error={name}.err
+#SBATCH --time=24:00:00
+#SBATCH --partition=gpu2
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+module load cuda/7.5
+cd repo/deep_variant/motif_analysis
+python scripts/sliding_window_compute.py --model {model} \
+--input {input} \
+--output {output} \
+--mask_size {mask_size} \
+--label_idx {label_idx}'''.foramt(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+        o = open(output[0], 'w')
+        o.write(sbatch)
+        o.close()
+
+# rule get_sliding_pattern_neg:
+#     input:
+#         p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_negative.hdf5'.format(model=config['model']['name']),
+#         model = config['model']['path']
+#     output:
+#         op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
+#     params:
+#         mask_size = config['method']['sliding_window']['mask_size'],
+#         label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num']
+#     shell:
+#         'python scripts/sliding_window_compute.py --model {input.model} \
+#         --input {input.p} \
+#         --output {output.op} \
+#         --mask_size {params.mask_size} \
+#         --label_idx {params.label_idx}'
 
 rule report_slide_gen_rmd:
     input:
