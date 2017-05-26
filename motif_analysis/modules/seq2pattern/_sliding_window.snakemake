@@ -14,17 +14,17 @@ rule prepare_input_pos:
         --mask_size {params.mask_size} \
         --output {output[0]}'
 
-# rule prepare_input_neg:
-#     input:
-#         p = 'data/{dataname}.{data}/selected_negative.hdf5'
-#     output:
-#         temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5')
-#     params:
-#         mask_size = config['method']['sliding_window']['mask_size']
-#     shell:
-#         'python scripts/sliding_window_prepare.py --input {input.p} \
-#         --mask_size {params.mask_size} \
-#         --output {output[0]}'
+rule prepare_input_neg:
+    input:
+        p = 'data/{dataname}.{data}/selected_negative.hdf5'
+    output:
+        temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5')
+    params:
+        mask_size = config['method']['sliding_window']['mask_size']
+    shell:
+        'python scripts/sliding_window_prepare.py --input {input.p} \
+        --mask_size {params.mask_size} \
+        --output {output[0]}'
 
 rule get_sliding_pattern_pos_sbatch:
     input:
