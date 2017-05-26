@@ -25,7 +25,7 @@ for i in range(x.shape[0]):
         end = j + args.mask_size
         end = min(end, x.shape[1])
         new_x[index] = x[i]
-        new_x[index, start : end, :] = 0
+        new_x[index, start : end, :] = 0.25
     index = my_python.newIdxByGroup(i, num_of_seq_per_seq - 1, num_of_seq_per_seq)
     new_x[index] = x[i]
 my_python.saveData(args.output, '-'.join(['x', str(x.shape[1])]), new_x)
