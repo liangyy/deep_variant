@@ -6,7 +6,7 @@ rule prepare_input_pos:
     input:
         p = 'data/{dataname}.{data}/selected_positive.hdf5'
     output:
-        temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_positive.hdf5')
+        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_positive.hdf5'
     params:
         mask_size = config['method']['sliding_window']['mask_size']
     shell:
@@ -18,7 +18,7 @@ rule prepare_input_neg:
     input:
         p = 'data/{dataname}.{data}/selected_negative.hdf5'
     output:
-        temp('pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5')
+        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5'
     params:
         mask_size = config['method']['sliding_window']['mask_size']
     shell:
@@ -58,7 +58,7 @@ python scripts/sliding_window_compute.py --model {model} \
 --input {input} \
 --output {output} \
 --mask_size {mask_size} \
---label_idx {label_idx}'''.foramt(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+--label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
@@ -95,7 +95,7 @@ python scripts/sliding_window_compute.py --model {model} \
 --input {input} \
 --output {output} \
 --mask_size {mask_size} \
---label_idx {label_idx}'''.foramt(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+--label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()

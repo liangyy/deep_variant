@@ -25,6 +25,7 @@ newseq:
   E081:
     data_name: 'E081'
     extract_num: 1000
+    label_num: 1 # label index in model
     y:
       path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/label.hdf5'
       name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
@@ -43,6 +44,7 @@ newseq:
   E082:
     data_name: 'E082'
     extract_num: 1000
+    label_num: 2
     y:
       path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/label.hdf5'
       name: 'data/E082-DNase.macs2.narrowPeak.sorted.intersect'
@@ -61,6 +63,7 @@ newseq:
   Noonan:
     data_name: 'Noonan'
     extract_num: 1000
+    label_num: 4
     y:
       path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/label.hdf5'
       name: 'data/Noonan_union.bed.sorted.intersect'
