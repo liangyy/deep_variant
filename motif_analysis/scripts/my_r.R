@@ -166,3 +166,19 @@ save_plot_pwm <- function(info, p, motif, path, plots, folder){
     plots[[as.character(motif)]] <- paste(folder, filename, sep = '/')
     plots
 }
+
+draw_heatmap <- function(neg, title){
+    neg$seq <- 1 : nrow(neg)
+    neg.melt <- melt(neg, id.vars = 'seq')
+    ggplot(neg.melt) + geom_raster(aes(x = variable, y = seq, fill = value)) + 
+        ggtitle(paste('Spatial Mask Effect in', title, 'Sequences')) + labs(x = 'spatial positive', y = 'sequence')
+}
+
+summarize_stat <- function(neg, label){
+    data.neg <- cbind(apply(neg, 1, mean), apply(neg, 1, min), apply(neg, 1, max))
+    colnames(data.neg) <- c('mean', 'min', 'max')
+    data.neg <- as.data.frame(data.neg)
+    data.neg$label <- label
+    data.neg <- melt(data.neg, id.vars = 'label')
+    return(data.neg)
+}

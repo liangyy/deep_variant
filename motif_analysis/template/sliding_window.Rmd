@@ -1,0 +1,60 @@
+---
+title: "Motif Analysis - sliding window"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+        toc_float: true
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+    
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Spatial Mask Effect - Definition
+
+Mask Effect is defined as $\log_2 \frac{p_1}{1-p_1} - \log_2 \frac{p_0}{1-p_0}$. Intuitively, as $p$ increases, $\log_2 \frac{p}{1-p}$ increases. 
+
+```{r logodds}
+p <- seq(0, 1, by = 0.01)
+log2odds <- log2(p / (1-p))
+plot(p, log2odds)
+```
+
+# Load Results
+
+```{r}
+source('scripts/my_r.R')
+library(feather)
+library(ggplot2)
+library(reshape2)
+library(bsselectR)
+info <- c('Type1', 'E081', 'sliding_window')
+neg <- read_feather('pattern/Type1/newseq.E081/sliding_window/pattern_negative.feather')
+pos <- read_feather('pattern/Type1/newseq.E081/sliding_window/pattern_positive.feather')
+```
+
+# Spatial Mask Effect in Sequences
+
+## Negative sequences
+
+```{r}
+draw_heatmap(neg, 'Negative')
+```
+
+## Positive sequences
+
+```{r}
+draw_heatmap(pos, 'Positive')
+```
+
+# Spatial Max/Min/Mean of Mask Effect (Collapsing spatial information)
+
+```{r}
+data.neg <- summarize_stat(neg, 'negative')
+data.pos <- summarize_stat(pos, 'positive')
+data <- rbind(data.neg, data.pos)
+ggplot(data) + geom_boxplot(aes(x = variable, y = value, fill = label)) + ggtitle('Mean/Max/Min of Mask Effect') + labs(x = 'stat', y = 'value')
+```
