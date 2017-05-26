@@ -35,7 +35,7 @@ model = load_model(args.model)
 y_pred = model.predict(x_new, verbose=1)
 y_pred = y_pred[:, args.label_idx - 1]
 num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
-y_pred = y_pred.reshape((num_of_seq_per_seq, -1)).T
+y_pred = y_pred.reshape((-1, num_of_seq_per_seq)).T
 y_slide = y_pred[:num_of_seq_per_seq - 1]
 y_origin = y_pred[num_of_seq_per_seq - 1]
 y_slide = my_python.log2Odds(y_slide)

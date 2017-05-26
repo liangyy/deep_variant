@@ -118,12 +118,12 @@ python scripts/sliding_window_compute.py --model {model} \
 
 rule report_slide_gen_rmd:
     input:
-        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
-        n = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
     output:
         o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.Rmd'.format(model=config['model']['name']))
     params:
-        envir = '../../../'
+        envir = '../../'
     run:
         rmd = '''---
 title: "Motif Analysis - sliding window"
@@ -142,7 +142,7 @@ knitr::opts_knit$set(root.dir = '{envir}')
 
 # Spatial Mask Effect - Definition
 
-Mask Effect is defined as $\log_2 \frac{{p_1}}{{1-p_1}} - \log_2 \frac{{p_0}}{{1-p_0}}$. Intuitively, as $p$ increases, $\log_2 \frac{p}{1-p}$ increases.
+Mask Effect is defined as $\log_2 \\frac{{p_1}}{{1-p_1}} - \log_2 \\frac{{p_0}}{{1-p_0}}$. Intuitively, as $p$ increases, $\log_2 \\frac{{p}}{{1-p}}$ increases.
 
 ```{{r logodds}}
 p <- seq(0, 1, by = 0.01)
@@ -183,8 +183,7 @@ data.pos <- summarize_stat(pos, 'positive')
 data <- rbind(data.neg, data.pos)
 ggplot(data) + geom_boxplot(aes(x = variable, y = value, fill = label)) + ggtitle('Mean/Max/Min of Mask Effect') + labs(x = 'stat', y = 'value')
 ```
-
-'''.format(data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
+'''.format(input_p=input[0], input_n=input[1], envir=params.envir)
         o = open(output.o, 'w')
         o.write(rmd)
         o.close()
