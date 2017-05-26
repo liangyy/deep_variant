@@ -1,39 +1,39 @@
 import argparse
 parser = argparse.ArgumentParser(prog='select_sequence.py', description='''
-	Given the raw sequence x, true label y, and predicted label y_pred (all
+    Given the raw sequence x, true label y, and predicted label y_pred (all
     in HDF5 format), output the selected sequence for downstream motif analysis
-	''')
+    ''')
 parser.add_argument('--ypred', help='''
-	y prediction in HDF5
-	''')
+    y prediction in HDF5
+    ''')
 parser.add_argument('--y', help='''
-	y true label in HDF5
-	''')
+    y true label in HDF5
+    ''')
 parser.add_argument('--x', help='''
-	x raw sequence (binarized) in HDF5
-	''')
+    x raw sequence (binarized) in HDF5
+    ''')
 parser.add_argument('--ypred_name', help='''
-	dataset name in y predicted label HDF5
-	''')
+    dataset name in y predicted label HDF5
+    ''')
 parser.add_argument('--y_name', help='''
-	dataset name in y true label HDF5
-	''')
+    dataset name in y true label HDF5
+    ''')
 parser.add_argument('--x_name', help='''
-	dataset name in x HDF5
-	''')
+    dataset name in x HDF5
+    ''')
 parser.add_argument('--num', type=int, help='''
-	number of sequences you want to extract
-	''')
+    number of sequences you want to extract
+    ''')
 parser.add_argument('--y_label_idx', type=int, help='''
-	the label you would like to focus on (1-based)
-	''')
+    the label you would like to focus on (1-based)
+    ''')
 parser.add_argument('--yp_label_idx', type=int)
 parser.add_argument('--out_pos', help='''
-	positive sequences output filename
-	''')
+    positive sequences output filename
+    ''')
 parser.add_argument('--out_neg', help='''
-	negative sequences output filename
-	''')
+    negative sequences output filename
+    ''')
 parser.add_argument('--ydouble')
 parser.add_argument('--ypdouble')
 parser.add_argument('--yremove', help='1-based: remove [start]-[end]')

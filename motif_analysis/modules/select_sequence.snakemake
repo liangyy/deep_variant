@@ -34,7 +34,7 @@ rule select_sequence:
     log:
         'logs/{dataname}.{data}/select_sequence.log'
     shell:
-        'python scripts/select_sequence.py --ypred {input.ypred} \
+        '''python scripts/select_sequence.py --ypred {input.ypred} \
         --y {input.y} \
         --x {input.x} \
         --ypred_name {params.ypred} \
@@ -49,4 +49,4 @@ rule select_sequence:
         --ypdouble {params.ypdouble} \
         --yremove {params.yremove} \
         --ypremove {params.ypremove}
-        2> {log}'
+        2> {log}'''
