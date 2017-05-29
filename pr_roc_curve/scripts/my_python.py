@@ -46,7 +46,7 @@ def computeGcWeights(gc, psuedocount=1):
     pos_gc_count = np.histogram(pos_gc, bins=bins)[0] + psuedocount
     neg_gc_count = np.histogram(neg_gc, bins=bins)[0] + psuedocount
     idx = np.digitize(gc['GC.Content'], bins)
-    bin_weights = pos_gc_count / neg_gc_count
+    bin_weights = pos_gc_count / neg_gc_count * (y == 0).sum() / (y == 1).sum()
     weights = np.zeros(gc.shape[0])
     for i in range(0, 20):
         weights[np.where(idx == i + 1)[0]] = bin_weights[i]
