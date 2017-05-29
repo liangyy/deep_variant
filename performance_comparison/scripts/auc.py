@@ -10,6 +10,7 @@ args = parser.parse_args()
 from sklearn import metrics
 import pandas as pd
 import feather
+import numpy as np
 
 data = feather.read_dataframe(args.curve)
 labels = pd.unique(data['data'])
@@ -30,7 +31,9 @@ for label in labels:
         for curve in curves:
             print('{label} - {sequence} - {curve}'.format(label=label, sequence=sequence, curve=curve))
             data_curve = data_sequence[data_sequence['type'] == curve]
-            score = metrics.auc(data_curve[xy[curve]['x']], data_curve[xy[curve]['y']])
+            x = np.round(data_curve[xy[curve]['x']], decimals=10)
+            y = np.round(data_curve[xy[curve]['y']], decimals=10)
+            score = metrics.auc(x, y)
             labels_out.append(label)
             sequence_out.append(sequence)
             curve_out.append(curve)

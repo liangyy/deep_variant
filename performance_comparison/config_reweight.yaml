@@ -1,0 +1,7 @@
+deep_brain_reweight:
+  deepsea_logistic: '../pr_roc_curve/result/deepsea_vs_newseq_curves.feather'
+  jaspar_logistic: '../pr_roc_curve/result/JASPAR_curves.feather'
+  jaspar_svm: '../pr_roc_curve/result/JASPAR_svm_curves.feather'
+  deepsea_logistic_reweight: '../pr_roc_curve/result/type1.reweight_curves.feather'
+  jaspar_logistic_reweight: '../pr_roc_curve/result/JASPAR.reweight_curves.feather'
+  jaspar_svm_reweight: '../pr_roc_curve/result/JASPAR_svm.reweight_curves.feather'
