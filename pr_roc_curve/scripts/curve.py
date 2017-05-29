@@ -17,6 +17,9 @@ parser.add_argument('--ypdouble')
 parser.add_argument('--yremove', help='1-based: remove [start]-[end]')
 parser.add_argument('--ypremove')
 parser.add_argument('--gc_content_feather')
+parser.add_argument('--reweight', help='''
+    If reweight sample by gc content, set it to 1
+''')
 args = parser.parse_args()
 
 
@@ -66,15 +69,22 @@ if yp.shape[0] != y.shape[0]:
     my_python.eprint('The number of sampels in y and y_pred does not match. Exit')
     sys.exit()
 
-gc_content = feather.read_dataframe(args.gc_content_feather)
-gc_content = gc_content['GC.Content']
-gc_weight, y_new, yp_new = my_python.computeGcWeights(y, yp, gc_content)
+if args.reweight == '1':
+    gc_content = feather.read_dataframe(args.gc_content_feather)
+    gc_content = gc_content['GC.Content']
+    gc_weight, y_new, yp_new = my_python.computeGcWeights(y, yp, gc_content)
 
 if args.mode == 'pr':
-    precision, recall, thresholds = precision_recall_curve(y_new, yp_new, sample_weight=gc_weight)
+    if args.reweight == '1':
+        precision, recall, thresholds = precision_recall_curve(y_new, yp_new, sample_weight=gc_weight)
+    else:
+        precision, recall, thresholds = precision_recall_curve(y, yp)
     thresholds = np.hstack((thresholds, 1))
     table = pd.DataFrame({ 'precision' : precision, 'recall' : recall, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 elif args.mode == 'roc':
-    fpr, tpr, thresholds = metrics.roc_curve(y_new, yp_new, sample_weight=gc_weight)
+    if args.reweight == '1':
+        fpr, tpr, thresholds = metrics.roc_curve(y_new, yp_new, sample_weight=gc_weight)
+    else:
+        fpr, tpr, thresholds = metrics.roc_curve(y, yp)
     table = pd.DataFrame({ 'fpr' : fpr, 'tpr' : tpr, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 feather.write_dataframe(table, args.output)
