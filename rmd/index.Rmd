@@ -61,7 +61,7 @@ There are some other directions and issues we need to explore and tackle. The an
     7. GC content bias in training and testing data
         - To overcome this, we can either use unbiased sequence set or reweight the performance evaluation function based on the GC content.
         - At first, do reweighting (testing - training - motif analysis) **ONGOING**
-        - Construct a sequence set with matched GC content in positive and negative instances **TODO**
+        - Construct a sequence set with matched GC content in positive and negative instances (use Homer?) **TODO**
 
 
 
