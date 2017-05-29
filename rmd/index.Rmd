@@ -56,8 +56,12 @@ There are some other directions and issues we need to explore and tackle. The an
 * 4/14/17:
     5. ~~Build up pipeline using snakemake.~~ See issue1 at [link](https://github.com/CreRecombinase/DeepVariantPrediction)
 * 4/26/17:
-    6. Build baseline classifier [link](baseline.html) **TODO**
-
+    6. ~~Build baseline classifier~~ [link](baseline.html)
+* 5/29/17:
+    7. GC content bias in training and testing data
+        - To overcome this, we can either use unbiased sequence set or reweight the performance evaluation function based on the GC content.
+        - At first, do reweighting (testing - training - motif analysis) **ONGOING**
+        - Construct a sequence set with matched GC content in positive and negative instances **TODO**
 
 
 
