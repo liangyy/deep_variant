@@ -12,7 +12,7 @@ JASPAR.reweight:
           double: 'Yes'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/deepsea.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_deepsea.ypred.hdf5'
           name: 'y_pred'
           label_idx: 1 # 1-based
           double: 'Yes'
@@ -26,7 +26,7 @@ JASPAR.reweight:
           double: 'Yes'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/deepsea.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_deepsea.ypred.hdf5'
           name: 'y_pred'
           label_idx: 2 # 1-based
           double: 'Yes'
@@ -40,7 +40,7 @@ JASPAR.reweight:
           double: 'Yes'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/deepsea.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_deepsea.ypred.hdf5'
           name: 'y_pred'
           label_idx: 3 # 1-based
           double: 'Yes'
@@ -54,7 +54,7 @@ JASPAR.reweight:
           double: 'Yes'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/deepsea.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_deepsea.ypred.hdf5'
           name: 'y_pred'
           label_idx: 4 # 1-based
           double: 'Yes'
@@ -71,7 +71,7 @@ JASPAR.reweight:
           double: 'No'
           remove: '1073109-1073114'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/E081.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E081.ypred.hdf5'
           name: 'y_pred'
           label_idx: 1 # 1-based
           double: 'Yes'
@@ -85,7 +85,7 @@ JASPAR.reweight:
           double: 'No'
           remove: '1238543-1238548'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/E082.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E082.ypred.hdf5'
           name: 'y_pred'
           label_idx: 2 # 1-based
           double: 'Yes'
@@ -99,7 +99,7 @@ JASPAR.reweight:
           double: 'No'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/E129.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E129.ypred.hdf5'
           name: 'y_pred'
           label_idx: 3 # 1-based
           double: 'Yes'
@@ -113,7 +113,7 @@ JASPAR.reweight:
           double: 'No'
           remove: 'None'
         ypred:
-          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/Noonan.ypred.hdf5'
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_Noonan.ypred.hdf5'
           name: 'y_pred'
           label_idx: 4 # 1-based
           double: 'Yes'

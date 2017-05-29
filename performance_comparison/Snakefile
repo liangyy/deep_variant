@@ -45,11 +45,11 @@ aucs$grp <- paste(aucs$model, aucs$info)
 temp <- unique(aucs$info)
 cols <- c('red', 'black')
 names(cols) <- temp
-ggplot(aucs) + geom_bar(aes(x = data, y = score, group = grp,
-color = info, fill = model), stat = 'identity', position = 'dodge') +
-facet_wrap(~curve) + scale_colour_manual(values = cols) +
-scale_fill_brewer(palette="OrRd") +
-labs(color = 'sequence source') + ggtitle('AUCs')
+ggplot(aucs) + geom_bar(aes(x = data, y = score, group = grp, fill = model), stat = 'identity', position = 'dodge') +
+facet_wrap(~curve) + # scale_colour_manual(values = cols) +
+# scale_fill_brewer(palette="OrRd") +
+# labs(color = 'sequence source') + 
+ggtitle('AUCs')
 ```
 '''.format(models=params[0], task=params[1])
         o = open(output[0], 'w')
