@@ -71,19 +71,18 @@ if yp.shape[0] != y.shape[0]:
 
 if args.reweight == '1':
     gc_content = feather.read_dataframe(args.gc_content_feather)
-    gc_content = gc_content['GC.Content']
-    gc_weight, y_new, yp_new = my_python.computeGcWeights(y, yp, gc_content)
+    gc_weight = my_python.computeGcWeights(gc_content)
 
 if args.mode == 'pr':
     if args.reweight == '1':
-        precision, recall, thresholds = precision_recall_curve(y_new, yp_new, sample_weight=gc_weight)
+        precision, recall, thresholds = precision_recall_curve(y, yp, sample_weight=gc_weight)
     else:
         precision, recall, thresholds = precision_recall_curve(y, yp)
     thresholds = np.hstack((thresholds, 1))
     table = pd.DataFrame({ 'precision' : precision, 'recall' : recall, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 elif args.mode == 'roc':
     if args.reweight == '1':
-        fpr, tpr, thresholds = metrics.roc_curve(y_new, yp_new, sample_weight=gc_weight)
+        fpr, tpr, thresholds = metrics.roc_curve(y, yp, sample_weight=gc_weight)
     else:
         fpr, tpr, thresholds = metrics.roc_curve(y, yp)
     table = pd.DataFrame({ 'fpr' : fpr, 'tpr' : tpr, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
