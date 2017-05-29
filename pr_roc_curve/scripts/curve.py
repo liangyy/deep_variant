@@ -68,13 +68,13 @@ if yp.shape[0] != y.shape[0]:
 
 gc_content = feather.read_dataframe(args.gc_content_feather)
 gc_content = gc_content['GC.Content']
-gc_weight = my_python.computeGcWeights(y, gc_content)
+gc_weight, y_new, yp_new = my_python.computeGcWeights(y, yp, gc_content)
 
 if args.mode == 'pr':
-    precision, recall, thresholds = precision_recall_curve(y, yp)
+    precision, recall, thresholds = precision_recall_curve(y_new, yp_new, sample_weight=gc_weight)
     thresholds = np.hstack((thresholds, 1))
     table = pd.DataFrame({ 'precision' : precision, 'recall' : recall, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 elif args.mode == 'roc':
-    fpr, tpr, thresholds = metrics.roc_curve(y, yp)
+    fpr, tpr, thresholds = metrics.roc_curve(y_new, yp_new, sample_weight=gc_weight)
     table = pd.DataFrame({ 'fpr' : fpr, 'tpr' : tpr, 'thresholds' : thresholds, 'data': args.name, 'type': args.mode, 'info' : args.info})
 feather.write_dataframe(table, args.output)
