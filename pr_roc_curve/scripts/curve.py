@@ -16,6 +16,7 @@ parser.add_argument('--ydouble')
 parser.add_argument('--ypdouble')
 parser.add_argument('--yremove', help='1-based: remove [start]-[end]')
 parser.add_argument('--ypremove')
+parser.add_argument('--gc_content_feather')
 args = parser.parse_args()
 
 
@@ -64,6 +65,10 @@ if args.ypremove != 'None':
 if yp.shape[0] != y.shape[0]:
     my_python.eprint('The number of sampels in y and y_pred does not match. Exit')
     sys.exit()
+
+gc_content = feather.read_dataframe(args.gc_content_feather)
+gc_content = gc_content['GC.Content']
+gc_weight = my_python.computeGcWeights(y, gc_content)
 
 if args.mode == 'pr':
     precision, recall, thresholds = precision_recall_curve(y, yp)
