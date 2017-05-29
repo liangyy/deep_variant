@@ -36,7 +36,8 @@ rule pr:
         yp_remove = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['ypred']['remove'],
         data_name = lambda wildcards: wildcards.data,
         info = lambda wildcards: config[wildcards.run_name][wildcards.group]['info'],
-        reweight = config['reweight']
+        reweight = config['reweight'],
+        gc = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['gc']
     output:
         temp('curve/{run_name}.{group}/pr_{data}.feather')
     shell:
@@ -49,7 +50,7 @@ rule pr:
                         --info {params.info} \
                         --ydouble {params.y_double} --ypdouble {params.yp_double} \
                         --yremove {params.y_remove} --ypremove {params.yp_remove} \
-                        --reweight {params.reweight}'
+                        --reweight {params.reweight} --gc_content_feather {params.gc}'
 rule roc:
     input:
         y = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['y']['path'],
@@ -65,7 +66,8 @@ rule roc:
         yp_remove = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['ypred']['remove'],
         data_name = lambda wildcards: wildcards.data,
         info = lambda wildcards: config[wildcards.run_name][wildcards.group]['info'],
-        reweight = config['reweight']
+        reweight = config['reweight'],
+        gc = lambda wildcards: config[wildcards.run_name][wildcards.group]['data'][wildcards.data]['gc']
     output:
         temp('curve/{run_name}.{group}/roc_{data}.feather')
     shell:
