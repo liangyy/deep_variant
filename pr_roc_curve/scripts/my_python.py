@@ -39,7 +39,7 @@ def saveData(hdf5file, name, data):
     f.create_dataset(name, data=data)
     f.close()
 
-def computeGcWeights(y, yp, gc, psuedocount=1):
+def computeGcWeights(gc, psuedocount=1):
     bins = [ float(i) / 20 for i in range(0, 21) ]
     pos_gc = gc[gc['y'] == 1]['GC.Content'].as_matrix()
     neg_gc = gc[gc['y'] == 0]['GC.Content'].as_matrix()
