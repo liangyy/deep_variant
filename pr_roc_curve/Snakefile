@@ -80,7 +80,7 @@ rule roc:
                         --info {params.info} \
                         --ydouble {params.y_double} --ypdouble {params.yp_double} \
                         --yremove {params.y_remove} --ypremove {params.yp_remove} \
-                        --reweight {params.reweight}'
+                        --reweight {params.reweight}  --gc_content_feather {params.gc}'
 
 rule report_rmd:
     input:

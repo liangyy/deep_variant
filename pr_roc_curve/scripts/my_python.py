@@ -9,6 +9,7 @@ import os
 import subprocess
 import h5py
 import numpy as np
+import pandas as pd
 
 def getFilename(string):
 	return '.'.join(basename(string).split('.')[:-1])
