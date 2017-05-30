@@ -77,7 +77,7 @@ rule report_gc_bias_rmd:
     output:
         temp('report/select_sequence/{dataname}.gc.Rmd')
     params:
-        filelist = lambda wildcards: config['summary'][wildcards.prefix],
+        filelist = lambda wildcards: ','.join(get_labels(wildcards)),
         envir = '../../'
     run:
         rmd = '''---
