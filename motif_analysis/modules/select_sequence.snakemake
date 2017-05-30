@@ -64,7 +64,7 @@ rule report_gc_bias_compute:
         pos = 'data/{dataname}.{data}/selected_positive.hdf5',
         neg = 'data/{dataname}.{data}/selected_negative.hdf5'
     output:
-        temp('data/{dataname}.{data}/gc.feather'
+        temp('data/{dataname}.{data}/gc.feather')
     params:
         envir = '../'
     shell:
