@@ -47,6 +47,7 @@ output:
         number_sections: true
         toc: true
         toc_depth: 3
+        toc_float: true
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
@@ -111,6 +112,7 @@ for(i in 1 : 20){{
     motif <- motif.all[i]
     cat(paste0('##', i, ' : ', as.character(motif)))
     cat(paste0('\\n![', paste0(i, ' : ', as.character(motif)), '](', paste0('{envir}', 'plots/Type1_motif_visualization_pwm_', as.character(motif), '.png'), ')\\n'))
+    cat('\\n')
 }}
 ```
 '''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
