@@ -31,3 +31,28 @@ def _close_enough(now, target, diff):
         return True
     else:
         return False
+
+def draw_from_gc_score_dist(pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, num):
+    index = [ i for i in range(1, 21) ]
+    x_pos_idx = []
+    x_neg_idx = []
+    i = 0
+    while i < num:
+        gc_rand = np.random.multinomial(1, gc_dist)
+        gc_idx = (gc_rand * index).sum()
+        if neg_hist[gc_idx -1, :].sum() == 0 or pos_hist[gc_idx -1, :].sum() == 0:
+            continue
+        selected_pos_idx = _draw_from_score(gc_idx, pos_idx, pos)
+        selected_neg_idx = _draw_from_score(gc_idx, neg_idx, neg)
+        x_pos_idx.append(selected_pos_idx)
+        x_neg_idx.append(selected_neg_idx)
+        i += 1
+    return x_pos_idx, x_neg_idx
+
+def _draw_from_score(gc_idx, pos_idx, pos, mode):
+    selected_set = np.where(pos_idx[0] == gc_idx)[0]
+    selected = pos.loc[selected_set].reset_index()
+    probs = selected['y.predict'] * selected['y'] + (1 - selected['y.predict']) * (1 - selected['y'])
+    sample_rand = np.random.multinomial(1, probs / probs.sum())
+    selected_sample = selected.loc[np.where(sample_rand == 1)[0]]
+    return selected_sample['index'].as_matrix()[0]

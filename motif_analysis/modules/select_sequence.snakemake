@@ -30,7 +30,9 @@ rule select_sequence:
         ypdouble = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['double'],
         ydouble = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['double'],
         ypremove = lambda wildcards: config[wildcards.dataname][wildcards.data]['ypred']['remove'],
-        yremove = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['remove']
+        yremove = lambda wildcards: config[wildcards.dataname][wildcards.data]['y']['remove'],
+        reweight = lambda wildcards: config['reweight'],
+        gc = lambda wildcards: config[wildcards.dataname][wildcards.data]['gc']
     log:
         'logs/{dataname}.{data}/select_sequence.log'
     shell:
@@ -48,5 +50,7 @@ rule select_sequence:
         --ydouble {params.ydouble} \
         --ypdouble {params.ypdouble} \
         --yremove {params.yremove} \
-        --ypremove {params.ypremove}
+        --ypremove {params.ypremove} \
+        --reweight {params.reweight} \
+        --gc {params.gc}
         2> {log}'''
