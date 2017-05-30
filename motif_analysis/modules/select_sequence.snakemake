@@ -4,8 +4,7 @@
 def get_all_seq(wildcards):
     out = []
     for data in config[wildcards.dataname]:
-        out.append('data/{dataname}.{data}/selected_positive.hdf5'.format(dataname=wildcards.dataname, data=data))
-        out.append('data/{dataname}.{data}/selected_negative.hdf5'.format(dataname=wildcards.dataname, data=data))
+        out.append('data/{dataname}.{data}/gc.feather'.format(dataname=wildcards.dataname, data=data))
     return out
 
 def get_labels(wildcards):
@@ -60,26 +59,73 @@ rule select_sequence:
         --gc {params.gc}
         2> {log}'''
 
-rule report_gc_bias_yaml:
+rule report_gc_bias_compute:
     input:
+        pos = 'data/{dataname}.{data}/selected_positive.hdf5',
+        neg = 'data/{dataname}.{data}/selected_negative.hdf5'
+    output:
+        temp('data/{dataname}.{data}/gc.feather'
+    params:
+        envir = '../'
+    shell:
+        'python compute_gc.py --pos {input.pos} --neg {input.neg} --out {output[0]}'
+
+
+rule report_gc_bias_rmd:
+    # input:
+    #     all_files = lambda wildcards: get_all_seq(wildcards)
+    output:
+        temp('report/select_sequence/{dataname}.gc.Rmd')
+    params:
+        filelist = lambda wildcards: config['summary'][wildcards.prefix],
+        envir = '../../'
+    run:
+        rmd = '''---
+title: "Motif Analysis - GC content of selected sequences"
+output:
+    html_document:
+        number_sections: true
+        toc: true
+        toc_depth: 3
+        toc_float: true
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+# Distribution of GC content
+
+```{{r, echo=TRUE, warning=FALSE}}
+library(feather)
+library(ggplot2)
+library(bsselectR)
+envir <- '{envir}'
+prefix <- '{dataname}'
+filelist <- '{filelist}'
+file_prefixs <- strsplit(filelist, ',')[[1]]
+for(i in file_prefixs){{
+    e <- read_feather(paste0('./data/', prefix, '.', i, '/gc.feather'))
+    p <- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = GC.Content, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = GC.Content,  fill = 'positive'), alpha = .5) + ggtitle(paste0('GC content of data in ', i)) + theme(legend.position="bottom") + theme(title = element_text(size=5), text = element_text(size=5))
+    ggsave(filename = paste0(prefix, '_', i, '_hist.png'), path = 'plots/', width = 3, height = 3, plot = p)
+}}
+plots <- list()
+for(i in file_prefixs){{
+    plots[[i]] <- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.png'))
+}}
+bsselect(plots, type = "img", selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+'''.format(dataname=params.dataname, envir=params.envir, filelist=params.filelist)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+rule report_gc_bias_html:
+    input:
+        rmd = 'report/select_sequence/{dataname}.gc.Rmd',
         all_files = lambda wildcards: get_all_seq(wildcards)
     output:
-        'report/select_sequence/{dataname}.gc.yaml'
-    params:
-        name = lambda wildcards: wildcards.dataname,
-        labels = lambda wildcards: get_labels(wildcards)
-    run:
-        header = '''
-summary:
-  {name}: '{labels}'
-  mode: 'split'
-'''.format(name=params.name, labels=','.join(params.labels))
-        for i in params.labels:
-            body = '''{data}:
-  pos: '../motif_analysis/data/{dataname}.{data}/selected_positive.hdf5'
-  neg: '../motif_analysis/data/{dataname}.{data}/selected_negative.hdf5'
-'''.format(dataname=params.name, data=i)
-            header = header + body
-        o = open(output[0], 'w')
-        o.write(header)
-        o.close()
+        'report/select_sequence/{dataname}.gc.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
