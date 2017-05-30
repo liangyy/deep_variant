@@ -109,7 +109,8 @@ bsselect(plots, type = "img", selected = names(plots)[2],
 ```{{r showmotifs, echo = F, results = 'asis'}}
 for(i in 1 : 20){{
     motif <- motif.all[i]
-    cat(paste0('\\n![', paste0(i, ' : ', as.character(motif)), '](', paste0(envir, 'plots/Type1_motif_visualization_pwm_', as.character(motif), '.png'), ')\\n'))
+    cat(paste0('##', i, ' : ', as.character(motif)))
+    cat(paste0('\\n![', paste0(i, ' : ', as.character(motif)), '](', paste0('{envir}', 'plots/Type1_motif_visualization_pwm_', as.character(motif), '.png'), ')\\n'))
 }}
 ```
 '''.format(model=params.model, data=params.data, input_p=input.p, input_n=input.n, envir=params.envir)
