@@ -68,7 +68,7 @@ rule report_gc_bias_compute:
     params:
         envir = '../'
     shell:
-        'python compute_gc.py --pos {input.pos} --neg {input.neg} --out {output[0]}'
+        'python scripts/compute_gc.py --pos {input.pos} --neg {input.neg} --out {output[0]}'
 
 
 rule report_gc_bias_rmd:
@@ -117,7 +117,7 @@ for(i in file_prefixs){{
 bsselect(plots, type = "img", selected = names(plots)[2],
          live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
 ```
-'''.format(dataname=params.dataname, envir=params.envir, filelist=params.filelist)
+'''.format(dataname=wildcards.dataname, envir=params.envir, filelist=params.filelist)
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()

@@ -19,7 +19,7 @@ y_pos = np.ones(x_pos.shape[0])
 
 x_neg = my_python.getData(args.neg, 'x')
 gc_neg = np.sum(x_neg[:,:,1:3], axis = (1,2)) / x_neg.shape[1]
-y_neg = np.ones(x_neg.shape[0])
+y_neg = np.zeros(x_neg.shape[0])
 
 gc = np.hstack((gc_pos, gc_neg))
 y = np.hstack((y_pos, y_neg))
