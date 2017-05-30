@@ -1,13 +1,18 @@
 # This script takes sequence data and prediction in HDF5
 # and output selected sequence set for downstream analysis
 
-# def get_all_seq(wildcards):
-#     out = []
-#     for data in config[wildcards.dataname]:
-#         out.append('data/{dataname}.{data}/selected_positive.hdf5'.format(dataname=wildcards.dataname, data=data))
-#         out.append('data/{dataname}.{data}/selected_negative.hdf5'.format(dataname=wildcards.dataname, data=data))
-#     return out
-#
+def get_all_seq(wildcards):
+    out = []
+    for data in config[wildcards.dataname]:
+        out.append('data/{dataname}.{data}/selected_positive.hdf5'.format(dataname=wildcards.dataname, data=data))
+        out.append('data/{dataname}.{data}/selected_negative.hdf5'.format(dataname=wildcards.dataname, data=data))
+    return out
+
+def get_labels(wildcards):
+    out = []
+    for data in config[wildcards.dataname]:
+        out.append(data)
+    return out
 # rule all:
 #     input:
 #         lambda wildcards: get_all_seq(wildcards)
@@ -54,3 +59,26 @@ rule select_sequence:
         --reweight {params.reweight} \
         --gc {params.gc}
         2> {log}'''
+
+rule report_gc_bias_yaml:
+    input:
+        all_files = lambda wildcards: get_all_seq(wildcards)
+    output:
+        'report/select_sequence/{dataname}.gc.yaml'
+    params:
+        name = lambda wildcards: wildcards.dataname
+        labels = lambda wildcards: get_labels(wildcards)
+    run:
+        header = '''summary:
+  {name}: '{labels}'
+  mode: 'split'
+'''.format(name=params.name, labels=','.join(params.labels))
+        for i in params.labels:
+            body = '''{data}:
+  pos: '../motif_analysis/data/{dataname}.{data}/selected_positive.hdf5'
+  neg: '../motif_analysis/data/{dataname}.{data}/selected_positive.hdf5'
+'''.format(dataname=params.name, data=i)
+            header = header + body
+        o = open(output[0], 'w')
+        o.write(header)
+        o.close()
