@@ -51,12 +51,12 @@ import my_python, helper
 import feather
 from scipy.stats import binned_statistic_2d
 
+x = my_python.getData(args.x, args.x_name)
 if args.reweight != '1':
     y = my_python.selectReadY(args.y, args.y_name, args.y_label_idx, args.ydouble, args.yremove)
     y_pred = my_python.selectReadY(args.ypred, args.ypred_name, args.yp_label_idx, args.ypdouble, args.ypremove)
     threhold_pos = helper.get_rough_threshold(y_pred[y == 1], args.num, 'max')
     threhold_neg = helper.get_rough_threshold(y_pred[y == 0], args.num, 'min')
-    x = my_python.getData(args.x, args.x_name)
     x_pos = x[y == 1][y_pred[y == 1] >= threhold_pos]
     x_neg = x[y == 0][y_pred[y == 0] <= threhold_neg]
     my_python.eprint('The threshold for positive instance is {tpos}'.format(tpos=threhold_pos))
@@ -74,9 +74,9 @@ else:
     neg_hist = temp_neg[0]
     neg_idx = temp_neg[-1]
 
-    gc_dist = pos_hist[0].sum(axis=1) / pos_hist[0].sum()
+    gc_dist = pos_hist.sum(axis=1) / pos_hist.sum()
 
-    x_pos_idx, x_neg_idx = helper.draw_from_gc_score_dist(pos_hist, neg_hist, pos_idx, neg_idx, gc, args.num)
+    x_pos_idx, x_neg_idx = helper.draw_from_gc_score_dist(gc_dist, pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, args.num)
     my_python.eprint('Selected index for positive instance is', x_pos_idx)
     my_python.eprint('Selected index for negative instance is', x_neg_idx)
     x_pos = x[x_pos_idx]

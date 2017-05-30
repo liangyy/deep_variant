@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_rough_threshold(y, num, mode):
     '''
     This function is specialized for finding top/lowest [num] values inside y
@@ -32,7 +34,7 @@ def _close_enough(now, target, diff):
     else:
         return False
 
-def draw_from_gc_score_dist(pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, num):
+def draw_from_gc_score_dist(gc_dist, pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, num):
     index = [ i for i in range(1, 21) ]
     x_pos_idx = []
     x_neg_idx = []
@@ -49,7 +51,7 @@ def draw_from_gc_score_dist(pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, num)
         i += 1
     return x_pos_idx, x_neg_idx
 
-def _draw_from_score(gc_idx, pos_idx, pos, mode):
+def _draw_from_score(gc_idx, pos_idx, pos):
     selected_set = np.where(pos_idx[0] == gc_idx)[0]
     selected = pos.loc[selected_set].reset_index()
     probs = selected['y.predict'] * selected['y'] + (1 - selected['y.predict']) * (1 - selected['y'])
