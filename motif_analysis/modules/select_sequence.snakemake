@@ -66,17 +66,18 @@ rule report_gc_bias_yaml:
     output:
         'report/select_sequence/{dataname}.gc.yaml'
     params:
-        name = lambda wildcards: wildcards.dataname
+        name = lambda wildcards: wildcards.dataname,
         labels = lambda wildcards: get_labels(wildcards)
     run:
-        header = '''summary:
+        header = '''
+summary:
   {name}: '{labels}'
   mode: 'split'
 '''.format(name=params.name, labels=','.join(params.labels))
         for i in params.labels:
             body = '''{data}:
   pos: '../motif_analysis/data/{dataname}.{data}/selected_positive.hdf5'
-  neg: '../motif_analysis/data/{dataname}.{data}/selected_positive.hdf5'
+  neg: '../motif_analysis/data/{dataname}.{data}/selected_negative.hdf5'
 '''.format(dataname=params.name, data=i)
             header = header + body
         o = open(output[0], 'w')
