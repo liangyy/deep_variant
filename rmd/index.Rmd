@@ -60,8 +60,10 @@ There are some other directions and issues we need to explore and tackle. The an
 * 5/29/17:
     7. GC content bias in training and testing data
         - To overcome this, we can either use unbiased sequence set or reweight the performance evaluation function based on the GC content.
-        - At first, do reweighting (testing - training - motif analysis) **ONGOING**
+        - At first, do reweighting (~~testing~~ - training - ~~motif analysis~~) **ONGOING** see [testing with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html) and [motif analysis with gc matched sequences](motif_analysis.html)
         - Construct a sequence set with matched GC content in positive and negative instances (use Homer?) **TODO**
+* 5/31/17:
+    8. Search for motif hits using top 20 motifs in motif activation analysis by GC matched sequences **TODO**
 
 
 

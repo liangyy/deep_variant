@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>29 May, 2017</em></h4>
+<h4 class="date"><em>30 May, 2017</em></h4>
 
 </div>
 
@@ -395,9 +395,13 @@ div.tocify {
 <li>GC content bias in training and testing data
 <ul>
 <li>To overcome this, we can either use unbiased sequence set or reweight the performance evaluation function based on the GC content.</li>
-<li>At first, do reweighting (testing - training - motif analysis) <strong>ONGOING</strong></li>
+<li>At first, do reweighting (<del>testing</del> - training - <del>motif analysis</del>) <strong>ONGOING</strong> see <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html">testing with reweight</a> and <a href="motif_analysis.html">motif analysis with gc matched sequences</a></li>
 <li>Construct a sequence set with matched GC content in positive and negative instances (use Homer?) <strong>TODO</strong></li>
 </ul></li>
+</ol></li>
+<li>5/31/17:
+<ol start="8" style="list-style-type: decimal">
+<li>Search for motif hits using top 20 motifs in motif activation analysis by GC matched sequences <strong>TODO</strong></li>
 </ol></li>
 </ul>
 </div>
