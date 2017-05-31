@@ -88,5 +88,5 @@ else:
     x_neg = x[x_neg_idx]
     y_pred_neg = y_pred[x_neg_idx]
 
-my_python.saveDataDict(args.out_pos, {'x', x_pos, 'y_pred': y_pred_pos})
-my_python.saveDataDict(args.out_neg, {'x', x_neg, 'y_pred': y_pred_neg})
+my_python.saveDataDict(args.out_pos, {'x': x_pos, 'y_pred': y_pred_pos})
+my_python.saveDataDict(args.out_neg, {'x': x_neg, 'y_pred': y_pred_neg})

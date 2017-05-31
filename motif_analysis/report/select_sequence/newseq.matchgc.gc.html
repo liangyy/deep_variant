@@ -237,30 +237,60 @@ file_prefixs &lt;- strsplit(filelist, ',')[[1]]
 for(i in file_prefixs){
     e &lt;- read_feather(paste0('./data/', prefix, '.', i, '/gc.feather'))
     p &lt;- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = GC.Content, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = GC.Content,  fill = 'positive'), alpha = .5) + ggtitle(paste0('GC content of data in ', i)) + theme(legend.position=&quot;bottom&quot;) + theme(title = element_text(size=5), text = element_text(size=5))
-    ggsave(filename = paste0(prefix, '_', i, '_hist.png'), path = 'plots/', width = 3, height = 3, plot = p)
+    ggsave(filename = paste0(prefix, '_', i, '_hist.gc.png'), path = 'plots/', width = 3, height = 3, plot = p)
 }
 plots &lt;- list()
 for(i in file_prefixs){
-    plots[[i]] &lt;- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.png'))
+    plots[[i]] &lt;- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.gc.png'))
 }
 bsselect(plots, type = &quot;img&quot;, selected = names(plots)[2],
          live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)</code></pre>
 
 <html>
-<select id="rIsIrspPEW" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../..//plots/newseq.matchgc_E081_hist.png">E081</option>
-<option value="../..//plots/newseq.matchgc_E082_hist.png" selected>E082</option>
-<option value="../..//plots/newseq.matchgc_Noonan_hist.png">Noonan</option></select>
-<img src="../..//plots/newseq.matchgc_E082_hist.png" name="OZpUzIzoTG" height="500" width="500"/>
+<select id="bVb65vGjof" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../..//plots/newseq.matchgc_E081_hist.gc.png">E081</option>
+<option value="../..//plots/newseq.matchgc_E082_hist.gc.png" selected>E082</option>
+<option value="../..//plots/newseq.matchgc_Noonan_hist.gc.png">Noonan</option></select>
+<img src="../..//plots/newseq.matchgc_E082_hist.gc.png" name="huEoHERZYY" height="500" width="500"/>
 <script>$(document).ready(function(){
-                 $("#rIsIrspPEW").change(function(){
-                 $("img[name=OZpUzIzoTG]").attr("src",$(this).val());
+                 $("#bVb65vGjof").change(function(){
+                 $("img[name=huEoHERZYY]").attr("src",$(this).val());
 
                  });
 
   });</script>
 </html>
-<div id="htmlwidget-9dcb02afdbae5eb678a6" style="width:5px;height:5px;" class="bsselect html-widget" width="5" height="5"></div>
-<script type="application/json" data-for="htmlwidget-9dcb02afdbae5eb678a6">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9d29412a8267de0e67aa" style="width:5px;height:5px;" class="bsselect html-widget" width="5" height="5"></div>
+<script type="application/json" data-for="htmlwidget-9d29412a8267de0e67aa">{"x":[],"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="distribution-of-score" class="section level1">
+<h1><span class="header-section-number">2</span> Distribution of Score</h1>
+<pre class="r"><code>for(i in file_prefixs){
+    e &lt;- read_feather(paste0('./data/', prefix, '.', i, '/gc.feather'))
+    p &lt;- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = y.predict, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = y.predict,  fill = 'positive'), alpha = .5) + ggtitle(paste0('Score of data in ', i)) + theme(legend.position=&quot;bottom&quot;) + theme(title = element_text(size=5), text = element_text(size=5))
+    ggsave(filename = paste0(prefix, '_', i, '_hist.score.png'), path = 'plots/', width = 3, height = 3, plot = p)
+}
+plots &lt;- list()
+for(i in file_prefixs){
+    plots[[i]] &lt;- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.score.png'))
+}
+bsselect(plots, type = &quot;img&quot;, selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)</code></pre>
+
+<html>
+<select id="cAFAVPr3Pf" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="../..//plots/newseq.matchgc_E081_hist.score.png">E081</option>
+<option value="../..//plots/newseq.matchgc_E082_hist.score.png" selected>E082</option>
+<option value="../..//plots/newseq.matchgc_Noonan_hist.score.png">Noonan</option></select>
+<img src="../..//plots/newseq.matchgc_E082_hist.score.png" name="p7mJXEG1ur" height="500" width="500"/>
+<script>$(document).ready(function(){
+                 $("#cAFAVPr3Pf").change(function(){
+                 $("img[name=p7mJXEG1ur]").attr("src",$(this).val());
+
+                 });
+
+  });</script>
+</html>
+<div id="htmlwidget-d31dc852883c4504e9dd" style="width:5px;height:5px;" class="bsselect html-widget" width="5" height="5"></div>
+<script type="application/json" data-for="htmlwidget-d31dc852883c4504e9dd">{"x":[],"evals":[],"jsHooks":[]}</script>
 </div>
 
 

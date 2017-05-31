@@ -43,6 +43,11 @@ def saveData(hdf5file, name, data):
     f = h5py.File(hdf5file, 'w')
     f.create_dataset(name, data=data)
     f.close()
+def saveDataDict(hdf5file, dicts):
+    f = h5py.File(hdf5file, 'w')
+    for i in dicts.keys():
+        f.create_dataset(i, data=dicts[i])
+    f.close()
 def getGradient_model(model, layer_idx, label_idx):
     # ATTENTION
     # layer_idx and label_idx should be 0-based
