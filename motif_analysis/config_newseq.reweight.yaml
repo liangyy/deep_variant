@@ -20,8 +20,8 @@ model:
     path: '../../../deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
     name: 'trainxdata'
   motif_of_interest:
-    newseq.matchgc.E081: '0,154,143,278,125'
-    newseq.matchgc.Noonan: '22,143,278,154,6,168,9,125,133,99,214,222'
+    newseq.matchgc.Noonan: '185,100,59,275,291,241,78,168,193,29,46,73,106,0,143,133,222,22,154,14'
+    newseq.matchgc.E081: '156,85,4,92,15,66,106,274,99,259,125,73,280,154,143,209,0,33,67,112'
 newseq.matchgc:
   E081:
     data_name: 'E081'
