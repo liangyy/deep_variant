@@ -16,12 +16,15 @@ import pandas as pd
 x_pos = my_python.getData(args.pos, 'x')
 gc_pos = np.sum(x_pos[:,:,1:3], axis = (1,2)) / x_pos.shape[1]
 y_pos = np.ones(x_pos.shape[0])
+yp_pos = my_python.getData(args.pos, 'y_pred')
 
 x_neg = my_python.getData(args.neg, 'x')
 gc_neg = np.sum(x_neg[:,:,1:3], axis = (1,2)) / x_neg.shape[1]
 y_neg = np.zeros(x_neg.shape[0])
+yp_neg = my_python.getData(args.neg, 'y_pred')
 
 gc = np.hstack((gc_pos, gc_neg))
 y = np.hstack((y_pos, y_neg))
-table = pd.DataFrame({ 'GC.Content' : gc, 'y' : y})
+yp = np.hstack((yp_pos, yp_neg))
+table = pd.DataFrame({ 'GC.Content' : gc, 'y' : y, 'y.predict': yp})
 feather.write_dataframe(table, args.out)

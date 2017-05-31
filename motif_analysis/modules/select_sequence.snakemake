@@ -108,11 +108,27 @@ file_prefixs <- strsplit(filelist, ',')[[1]]
 for(i in file_prefixs){{
     e <- read_feather(paste0('./data/', prefix, '.', i, '/gc.feather'))
     p <- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = GC.Content, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = GC.Content,  fill = 'positive'), alpha = .5) + ggtitle(paste0('GC content of data in ', i)) + theme(legend.position="bottom") + theme(title = element_text(size=5), text = element_text(size=5))
-    ggsave(filename = paste0(prefix, '_', i, '_hist.png'), path = 'plots/', width = 3, height = 3, plot = p)
+    ggsave(filename = paste0(prefix, '_', i, '_hist.gc.png'), path = 'plots/', width = 3, height = 3, plot = p)
 }}
 plots <- list()
 for(i in file_prefixs){{
-    plots[[i]] <- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.png'))
+    plots[[i]] <- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.gc.png'))
+}}
+bsselect(plots, type = "img", selected = names(plots)[2],
+         live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
+```
+
+# Distribution of Score
+
+```{{r, echo=TRUE, warning=FALSE}}
+for(i in file_prefixs){{
+    e <- read_feather(paste0('./data/', prefix, '.', i, '/gc.feather'))
+    p <- ggplot() + geom_density(data = e[e$y == 0, ], aes(x = y.predict, fill = 'negative'), alpha = .5) + geom_density(data = e[e$y == 1, ], aes(x = y.predict,  fill = 'positive'), alpha = .5) + ggtitle(paste0('Score of data in ', i)) + theme(legend.position="bottom") + theme(title = element_text(size=5), text = element_text(size=5))
+    ggsave(filename = paste0(prefix, '_', i, '_hist.score.png'), path = 'plots/', width = 3, height = 3, plot = p)
+}}
+plots <- list()
+for(i in file_prefixs){{
+    plots[[i]] <- paste0(envir, '/plots/', paste0(prefix, '_', i, '_hist.score.png'))
 }}
 bsselect(plots, type = "img", selected = names(plots)[2],
          live_search = TRUE, show_tick = TRUE, height = 5, width = 5, frame_height = 500, frame_width = 500)
