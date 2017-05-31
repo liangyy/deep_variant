@@ -11,9 +11,9 @@ validation_data:
   deepsea_valid:
     x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
     y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/my_train/DeepSEA_valid_12__with_label.hdf5'
-size: 50000 # per label
+size: 5000 # per label
 repeat: 3
 seed: 2017
 window_size: 300
 thread: 4
-cache: 30000
+cache: 6000
