@@ -74,7 +74,7 @@ rule get_train_sbatch:
         pos = [ 'data/{{trdata_name}}_{{label}}.{id}.pos.fa'.format(id=i+1) for i in range(config['repeat']) ],
         neg = [ 'data/{{trdata_name}}_{{label}}.{id}.neg.fa'.format(id=i+1) for i in range(config['repeat']) ]
     output:
-        [ 'data/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
+        [ 'sbatch/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
     params:
         prefix = '{trdata_name}_{label}',
         cache = config['cache'],
