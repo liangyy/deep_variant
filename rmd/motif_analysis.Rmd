@@ -49,3 +49,4 @@ Database `db/CIS-BP/Homo_sapiens.meme` (see [here](http://cisbp.ccbr.utoronto.ca
 3. 5/26/17: motifs manually selected from result of motif acitvation pattern in new sequences,
 [newseq.E081](https://liangyy.github.io/deep_variant/TOMTOM_newseq.E081.pdf) and 
 [newseq.Noonan](https://liangyy.github.io/deep_variant/TOMTOM_newseq.Noonan.pdf)
+4. 5/31/17: top20 motifs in motif activation analysis using GC matched sequences, [newseq.matchgc.E081](TOMTOM_E081.newseq.matchgc.htm), [newseq.matchgc.Noonan](TOMTOM_Noonan.newseq.matchgc.htm)
