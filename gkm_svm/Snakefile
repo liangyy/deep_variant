@@ -78,11 +78,11 @@ rule get_train_sbatch:
     params:
         prefix = '{trdata_name}_{label}',
         cache = config['cache'],
-        name = 'model/{trdata_name}_{label}.{id}'
     run:
         for i in range(config['repeat']):
             pos = 'data/{{trdata_name}}_{{label}}.{id}.pos.fa'.format(id=i+1)
             neg = 'data/{{trdata_name}}_{{label}}.{id}.neg.fa'.format(id=i+1)
+            name = '{prefix}.{id}'.format(prefix=params.prefix, id=i+1)
             o = open('data/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1), 'w')
             sbatch = '''#!/bin/bash
 #SBATCH --job-name=gkmtrain_{prefix}_{i}
