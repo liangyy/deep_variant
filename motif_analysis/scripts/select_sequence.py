@@ -58,7 +58,9 @@ if args.reweight != '1':
     threhold_pos = helper.get_rough_threshold(y_pred[y == 1], args.num, 'max')
     threhold_neg = helper.get_rough_threshold(y_pred[y == 0], args.num, 'min')
     x_pos = x[y == 1][y_pred[y == 1] >= threhold_pos]
+    y_pred_pos = y_pred[y == 1][y_pred[y == 1] >= threhold_pos]
     x_neg = x[y == 0][y_pred[y == 0] <= threhold_neg]
+    y_pred_neg = y_pred[y == 1][y_pred[y == 1] >= threhold_neg]
     my_python.eprint('The threshold for positive instance is {tpos}'.format(tpos=threhold_pos))
     my_python.eprint('The threshold for negative instance is {tneg}'.format(tneg=threhold_neg))
 else:
@@ -79,8 +81,12 @@ else:
     x_pos_idx, x_neg_idx = helper.draw_from_gc_score_dist(gc_dist, pos_hist, neg_hist, pos_idx, neg_idx, pos, neg, args.num)
     my_python.eprint('Selected index for positive instance is', x_pos_idx)
     my_python.eprint('Selected index for negative instance is', x_neg_idx)
-    x_pos = x[x_pos_idx]
-    x_neg = x[x_neg_idx]
 
-my_python.saveData(args.out_pos, 'x', x_pos)
-my_python.saveData(args.out_neg, 'x', x_neg)
+    y_pred = gc['y.predict'].as_matrix()
+    x_pos = x[x_pos_idx]
+    y_pred_pos = y_pred[x_pos_idx]
+    x_neg = x[x_neg_idx]
+    y_pred_neg = y_pred[x_neg_idx]
+
+my_python.saveDataDict(args.out_pos, {'x', x_pos, 'y_pred': y_pred_pos})
+my_python.saveDataDict(args.out_neg, {'x', x_neg, 'y_pred': y_pred_neg})
