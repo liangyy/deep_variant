@@ -50,24 +50,56 @@ rule hdf5_to_fasta_train:
         '''python scripts/hdf5_to_fasta.py --split 1 --window {params[0]} \
         --data {input[0]} --out {output[0]}'''
 
-rule training:
+# rule training:
+#     input:
+#         pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
+#         neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
+#     output:
+#         'model/{trdata_name}_{label}.{id}.model.txt'
+#         # 'sbatch/{trdata_name}_{label}.{id}_train.sbatch'
+#     # threads:
+#     #     config['thread']
+#     log:
+#        'logs/train_{trdata_name}_{label}.{id}.log' # .format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
+#     params:
+#         prefix = lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
+#         cache = config['cache'],
+#         # name = lambda wildcards: '{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
+#         # out = lambda wildcards: 'model/{trdata_name}_{label}.{id}.model.txt'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
+#     shell:
+#         '''gkmtrain -m {params.cache} {input.pos} {input.neg} {params.prefix} > {log}'''
+
+rule get_train_sbatch:
     input:
-        pos = 'data/{trdata_name}_{label}.{id}.pos.fa',
-        neg = 'data/{trdata_name}_{label}.{id}.neg.fa'
+        pos = [ 'data/{{trdata_name}}_{{label}}.{id}.pos.fa'.format(id=i+1) for i in range(config['repeat']) ],
+        neg = [ 'data/{{trdata_name}}_{{label}}.{id}.neg.fa'.format(id=i+1) for i in range(config['repeat']) ]
     output:
-        'model/{trdata_name}_{label}.{id}.model.txt'
-        # 'sbatch/{trdata_name}_{label}.{id}_train.sbatch'
-    # threads:
-    #     config['thread']
-    log:
-       'logs/train_{trdata_name}_{label}.{id}.log' # .format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
+        [ 'data/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
     params:
-        prefix = lambda wildcards: 'model/{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
+        prefix = '{trdata_name}_{label}',
         cache = config['cache'],
-        # name = lambda wildcards: '{trdata_name}_{label}.{id}'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id),
-        # out = lambda wildcards: 'model/{trdata_name}_{label}.{id}.model.txt'.format(trdata_name=wildcards.trdata_name, label=wildcards.label, id=wildcards.id)
-    shell:
-        '''gkmtrain -m {params.cache} {input.pos} {input.neg} {params.prefix} > {log}'''
+        name = 'model/{trdata_name}_{label}.{id}'
+    run:
+        for i in range(config['repeat']):
+            pos = 'data/{{trdata_name}}_{{label}}.{id}.pos.fa'.format(id=i+1)
+            neg = 'data/{{trdata_name}}_{{label}}.{id}.neg.fa'.format(id=i+1)
+            o = open('data/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1), 'w')
+            sbatch = '''#!/bin/bash
+#SBATCH --job-name=gkmtrain_{prefix}_{i}
+#SBATCH --output=gkmtrain_{prefix}_{i}.out
+#SBATCH --error=gkmtrain_{prefix}_{i}.err
+#SBATCH --time=24:00:00
+#SBATCH --partition=broadwl
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+cd repo/deep_variant/allelic_imbalance
+gkmtrain -m {cache} {pos} {neg} {name}
+'''.format(i=i, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=params.name)
+
 #     run:
 #         sbatch = '''#!/bin/bash
 # #SBATCH --job-name={name}_train
