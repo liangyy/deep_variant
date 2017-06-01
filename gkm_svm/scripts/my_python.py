@@ -7,8 +7,10 @@ def read_standard(filename, name):
     f.close()
     return x
 def save_standard(data, filename):
+    save_with_name(data, filename, 'trainxdata')
+def save_with_name(data, filename, name):
     f = h5py.File(filename, 'w')
-    f.create_dataset('trainxdata', data=data)
+    f.create_dataset(name, data=data)
     f.close()
 def check_and_shrink(x, y):
     xn = x.shape[0]

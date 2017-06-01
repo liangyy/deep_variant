@@ -145,6 +145,15 @@ rule logit_raw_and_to_feather:
     shell:
         'python scripts/raw_to_feather.py --predict {input.pred} --truth {input.y} --label {params.label} --out {output[0]}'
 
+rule logit_raw_and_to_hdf5:
+    input:
+        pred = 'result/{trdata_name}_{label}.{id}.{vldata_name}.txt'
+    output:
+        'result/{trdata_name}_{label}.{id}.{vldata_name}.hdf5'
+    shell:
+        'python scripts/raw_to_hdf5.py --predict {input.pred} --out {output[0]}'
+
+
 def get_all_results(config):
     files = []
     trdata_name = next (iter (config['training_data'].keys()))
