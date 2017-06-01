@@ -76,7 +76,7 @@ rule get_train_sbatch:
     output:
         [ 'sbatch/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
     params:
-        prefix = 'model/{trdata_name}_{label}',
+        prefix = '{trdata_name}_{label}',
         cache = config['cache']
     run:
         for i in range(config['repeat']):
@@ -97,7 +97,7 @@ cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
 cd repo/deep_variant/gkm_svm
-gkmtrain -m {cache} {pos} {neg} {name}
+gkmtrain -m {cache} {pos} {neg} model/{name}
 '''.format(i=i + 1, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=name[0])
             o.write(sbatch)
             o.close()
@@ -115,7 +115,7 @@ gkmtrain -m {cache} {pos} {neg} {name}
 # source setup.sh
 # source activate deepvarpred_test
 # cd repo/deep_variant/gkm_svm
-# gkmtrain -m {cache} {pos} {neg} {prefix} > {log}
+# gkmtrain -m {cache} {pos} {neg} model/{prefix} > {log}
 # '''.format(cache=params.cache, pos=input.pos, neg=input.neg, prefix=params.prefix, log=log, name=params.name)
 #         o = open(output[0], 'w')
 #         o.write(sbatch)
