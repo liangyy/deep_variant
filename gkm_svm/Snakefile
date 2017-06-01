@@ -163,6 +163,8 @@ rule report_training_rmd:
     params:
         labels = '$$'.join(config['label']),
         repeats = '$$'.join([ str(i+1) for i in range(config['repeat']) ])
+        train = '{trdata_name}',
+        valid = '{vldata_name}'
     run:
         rmd = '''---
 title: "Deep brain - Training gkm-SVM"
@@ -188,8 +190,8 @@ library(ggplot2)
 library(precrec)
 labels <- '{labels}'
 repeats <- '{repeats}'
-trdata_name <- 'deepsea_train_small'
-vldata_name <- 'deepsea_valid'
+trdata_name <- '{train}'
+vldata_name <- '{valid}'
 all_scores <- list()
 all_labels <- list()
 for(label in strsplit(labels, '$$', fixed = T)[[1]]){{
@@ -220,7 +222,7 @@ for (label in strsplit(labels, '$$', fixed = T)[[1]]){{
     cat('\n')
 }}
 ```
-'''.format(labels=params.labels, repeats=params.repeats)
+'''.format(labels=params.labels, repeats=params.repeats, train=params.train, valid=params.valid)
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
