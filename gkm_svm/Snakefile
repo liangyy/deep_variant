@@ -76,7 +76,7 @@ rule get_train_sbatch:
     output:
         [ 'sbatch/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
     params:
-        prefix = '{trdata_name}_{label}',
+        prefix = 'model/{trdata_name}_{label}',
         cache = config['cache']
     run:
         for i in range(config['repeat']):
