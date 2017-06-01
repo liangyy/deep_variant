@@ -159,10 +159,10 @@ rule report_training_rmd:
     input:
         files = get_all_results(config)
     output:
-        'report/{trdata_name}.training_report.Rmd'
+        'report/{trdata_name}.{vldata_name}.training_report.Rmd'
     params:
         labels = '$$'.join(config['label']),
-        repeats = '$$'.join([ str(i+1) for i in range(config['repeat']) ])
+        repeats = '$$'.join([ str(i+1) for i in range(config['repeat']) ]),
         train = '{trdata_name}',
         valid = '{vldata_name}'
     run:
