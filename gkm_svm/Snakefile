@@ -224,3 +224,11 @@ for (label in strsplit(labels, '$$', fixed = T)[[1]]){{
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
+
+rule report_training_html:
+    input:
+        rmd = 'report/{trdata_name}.training_report.Rmd'
+    output:
+        'report/{trdata_name}.training_report.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
