@@ -77,13 +77,13 @@ rule get_train_sbatch:
         [ 'sbatch/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1) for i in range(config['repeat']) ]
     params:
         prefix = '{trdata_name}_{label}',
-        cache = config['cache'],
+        cache = config['cache']
     run:
         for i in range(config['repeat']):
-            pos = 'data/{{trdata_name}}_{{label}}.{id}.pos.fa'.format(id=i+1)
-            neg = 'data/{{trdata_name}}_{{label}}.{id}.neg.fa'.format(id=i+1)
-            name = '{prefix}.{id}'.format(prefix=params.prefix, id=i+1)
-            o = open('data/{{trdata_name}}_{{label}}.{id}.sbatch'.format(id=i+1), 'w')
+            pos = 'data/{trdata_name}_{label}.{id}.pos.fa'.format(id=i+1, trdata_name=wildcards.trdata_name, label=wildcards.label)
+            neg = 'data/{trdata_name}_{label}.{id}.neg.fa'.format(id=i+1, trdata_name=wildcards.trdata_name, label=wildcards.label)
+            name = '{prefix}.{id}'.format(prefix=params.prefix, id=i+1),
+            o = open('sbatch/{trdata_name}_{label}.{id}.sbatch'.format(id=i+1, trdata_name=wildcards.trdata_name, label=wildcards.label), 'w')
             sbatch = '''#!/bin/bash
 #SBATCH --job-name=gkmtrain_{prefix}_{i}
 #SBATCH --output=gkmtrain_{prefix}_{i}.out
@@ -96,10 +96,11 @@ rule get_train_sbatch:
 cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
-cd repo/deep_variant/allelic_imbalance
+cd repo/deep_variant/gkm_svm
 gkmtrain -m {cache} {pos} {neg} {name}
-'''.format(i=i, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=params.name)
-
+'''.format(i=i + 1, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=name[0])
+            o.write(sbatch)
+            o.close()
 #     run:
 #         sbatch = '''#!/bin/bash
 # #SBATCH --job-name={name}_train
@@ -113,7 +114,7 @@ gkmtrain -m {cache} {pos} {neg} {name}
 # cd /project2/xinhe/yanyul
 # source setup.sh
 # source activate deepvarpred_test
-# cd repo/deep_variant/allelic_imbalance
+# cd repo/deep_variant/gkm_svm
 # gkmtrain -m {cache} {pos} {neg} {prefix} > {log}
 # '''.format(cache=params.cache, pos=input.pos, neg=input.neg, prefix=params.prefix, log=log, name=params.name)
 #         o = open(output[0], 'w')
