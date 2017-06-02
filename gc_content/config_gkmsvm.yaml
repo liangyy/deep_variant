@@ -22,7 +22,7 @@ deepsea_E082_gkm:
     label_num: 2
     path: '/project2/xinhe/yanyul/repo/deep_variant/gkm_svm/result/deepsea_train_E082.1.deepsea_test.hdf5'
     name: 'y_pred'
-    double: 's'
+    double: 'Yes'
     remove: 'None'
   data_y:
     label_num: 2

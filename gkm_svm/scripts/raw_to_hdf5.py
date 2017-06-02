@@ -15,7 +15,4 @@ if 'scripts/' not in sys.path:
 import my_python
 
 ypred = np.loadtxt(args.predict, delimiter=',')
-if y.shape[-1] != ypred.shape[-1]:
-    print('The shape of y and y_pred do not match. Exiting', file=sys.stderr)
-    sys.exit()
 my_python.save_with_name(ypred, args.out, 'y_pred')
