@@ -18,9 +18,13 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
 There are three strategies:
 
 0. Baseline classifier. [here](baseline.html)
-    - ROC/PR curve [JASPAR logistic](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html), [JASPAR logistic, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
-    - Evalution using allelic imbalance site **TODO**
-    - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html), [with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
+    - Train an SVM or logistic classifier using JASPAR as annotation
+        - ROC/PR curve [JASPAR logistic](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html), [JASPAR logistic, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
+        - Evalution using allelic imbalance site **TODO**
+        - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html), [with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
+    - Gkm-SVM classifier is trained on 5000 positive and 5000 negative sequences one annotation at a time.
+        - ROC/PR curve [gkmsvm_on_deepsea_testing](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html), [gkmsvm_on_deepsea_testing.reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html)
+        - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
 1. Use DeepSEA sequences and DeepSEA feature representation. 
     - See results and analysis [here](type1.html). 
     - See performance on new sequences [here](type1_newseq.html)

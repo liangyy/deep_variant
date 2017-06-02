@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>30 May, 2017</em></h4>
+<h4 class="date"><em>02 June, 2017</em></h4>
 
 </div>
 
@@ -328,9 +328,17 @@ div.tocify {
 <ol start="0" style="list-style-type: decimal">
 <li>Baseline classifier. <a href="baseline.html">here</a>
 <ul>
+<li>Train an SVM or logistic classifier using JASPAR as annotation
+<ul>
 <li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html">JASPAR logistic</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html">JASPAR logistic, reweighted</a></li>
 <li>Evalution using allelic imbalance site <strong>TODO</strong></li>
 <li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html">here</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html">with reweight</a></li>
+</ul></li>
+<li>Gkm-SVM classifier is trained on 5000 positive and 5000 negative sequences one annotation at a time.
+<ul>
+<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html">gkmsvm_on_deepsea_testing</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html">gkmsvm_on_deepsea_testing.reweight</a></li>
+<li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html">here</a></li>
+</ul></li>
 </ul></li>
 <li>Use DeepSEA sequences and DeepSEA feature representation.
 <ul>
