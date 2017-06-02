@@ -1,5 +1,5 @@
 reweight: '1'
-type1.reweight:
+type1.gkm_deepsea.reweight:
   group1:
     info: 'deepsea'
     data:
