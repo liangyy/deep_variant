@@ -18,9 +18,10 @@ parser.add_argument('--config', help='''
 args = parser.parse_args()
 
 import re
+import os
 
 model_info = re.sub('model/', '', args.model)
-model_info = re.sub('.model.txt', model_info)
+model_info = re.sub('.model.txt', '', model_info)
 data_info = args.data_tag
 desired_out = 'result/{model}.{data}.hdf5'.format(model=model_info, data=data_info)
 
@@ -40,3 +41,10 @@ cd repo/deep_variant/gkm_svm
 snakemake --unlock {desired_out} --configfile {config}
 snakemake --rerun-incomplete {desired_out} --configfile {config}
 '''.format(data=data_info, model=model_info, desired_out=desired_out, config=args.config)
+
+outname = 'sbatch/{data}.{model}.sbatch'.format(data=data_info, model=model_info)
+o = open(outname, 'w')
+o.write(sbatch)
+o.close()
+
+os.system('snakemake -np {desired_out} --configfile {config}'.format(desired_out=desired_out, config=args.config))
