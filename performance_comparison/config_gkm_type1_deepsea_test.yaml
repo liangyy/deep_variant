@@ -1,0 +1,5 @@
+gkm_vs_type1_on_deepsea_test:
+  deepsea_logistic: '../pr_roc_curve/result/deepsea_vs_newseq_curves.feather'
+  gkm: '../pr_roc_curve/result/type1.gkm_deepsea_curves.feather'
+  gkm_reweight: '../pr_roc_curve/result/type1.gkm_deepsea.reweight_curves.feather'
+  deepsea_logistic_reweight: '../pr_roc_curve/result/type1.reweight_curves.feather'
