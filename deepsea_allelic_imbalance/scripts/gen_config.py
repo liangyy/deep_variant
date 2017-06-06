@@ -10,14 +10,14 @@ args = parser.parse_args()
 import ntpath
 import os
 
-o = open(out, 'w')
+o = open(args.out, 'w')
 with open(args.file_list, 'r') as f:
     for i in f:
         i = i.strip()
         filepath = args.url_prefix + os.sep + i
         i = ntpath.basename(i)
         i = '.'.join(i.split('.')[:-1])
-        '''{name}: '{fileurl}'
+        w = '''{name}: '{fileurl}'
 '''.format(name=i, fileurl=filepath)
-        o.write(i)
+        o.write(w)
 o.close()
