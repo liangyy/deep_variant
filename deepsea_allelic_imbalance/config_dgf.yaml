@@ -1,43 +1,117 @@
-wgEncodeUwDgfA549Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfA549Aln.bam'
-wgEncodeUwDgfAg10803Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfAg10803Aln.bam'
-wgEncodeUwDgfAoafAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfAoafAln.bam'
-wgEncodeUwDgfGm12865Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfGm12865Aln.bam'
-wgEncodeUwDgfH7esAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfH7esAln.bam'
-wgEncodeUwDgfHaeAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHaeAln.bam'
-wgEncodeUwDgfHahAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHahAln.bam'
-wgEncodeUwDgfHaspAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHaspAln.bam'
-wgEncodeUwDgfHcfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHcfAln.bam'
-wgEncodeUwDgfHcfaaAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHcfaaAln.bam'
-wgEncodeUwDgfHcmAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHcmAln.bam'
-wgEncodeUwDgfHcpeAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHcpeAln.bam'
-wgEncodeUwDgfHeeAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHeeAln.bam'
-wgEncodeUwDgfHffAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHffAln.bam'
-wgEncodeUwDgfHgfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHgfAln.bam'
-wgEncodeUwDgfHipeAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHipeAln.bam'
-wgEncodeUwDgfHmfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmfAln.bam'
-wgEncodeUwDgfHmvecbAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmvecbAln.bam'
-wgEncodeUwDgfHmvecdAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmvecdAln.bam'
-wgEncodeUwDgfHmvecdbladAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmvecdbladAln.bam'
-wgEncodeUwDgfHmvecfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmvecfAln.bam'
-wgEncodeUwDgfHmvechAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHmvechAln.bam'
-wgEncodeUwDgfHpafAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHpafAln.bam'
-wgEncodeUwDgfHpdlfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHpdlfAln.bam'
-wgEncodeUwDgfHpfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHpfAln.bam'
-wgEncodeUwDgfHrceAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHrceAln.bam'
-wgEncodeUwDgfHsmmAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHsmmAln.bam'
-wgEncodeUwDgfHuvecAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHuvecAln.bam'
-wgEncodeUwDgfHvmfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfHvmfAln.bam'
-wgEncodeUwDgfNb4Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfNb4Aln.bam'
-wgEncodeUwDgfNhaAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfNhaAln.bam'
-wgEncodeUwDgfNhdfadAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfNhdfadAln.bam'
-wgEncodeUwDgfNhdfneoAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfNhdfneoAln.bam'
-wgEncodeUwDgfNhlfAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfNhlfAln.bam'
-wgEncodeUwDgfSaecAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfSaecAln.bam'
-wgEncodeUwDgfSkmcAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfSkmcAln.bam'
-wgEncodeUwDgfT47dAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfT47dAln.bam'
-wgEncodeUwDgfTh1AlnRep2: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfTh1AlnRep2.bam'
-wgEncodeUwDgfTh2Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfTh2Aln.bam'
-genome_assembly:
-  fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
-  size: '/project2/xinhe/yanyul/databases/hg19/hg19.chrom.sizes'
-call_varscan: 'java -jar /project2/xinhe/yanyul/softwares/varscan/VarScan.v2.4.3.jar'
+wgEncodeUwDgfA549Aln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfA549Aln.bam'
+    label_idx: 53
+wgEncodeUwDgfAg10803Aln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfAg10803Aln.bam'
+    label_idx: 45
+wgEncodeUwDgfAoafAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfAoafAln.bam'
+    label_idx: 46
+wgEncodeUwDgfGm12865Aln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfGm12865Aln.bam'
+    label_idx: 69
+wgEncodeUwDgfH7esAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfH7esAln.bam'
+    label_idx: 70
+wgEncodeUwDgfHaeAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHaeAln.bam'
+    label_idx: 72
+wgEncodeUwDgfHahAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHahAln.bam'
+    label_idx: 73
+wgEncodeUwDgfHaspAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHaspAln.bam'
+    label_idx: 74
+wgEncodeUwDgfHcfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHcfAln.bam'
+    label_idx: 77
+wgEncodeUwDgfHcfaaAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHcfaaAln.bam'
+    label_idx: 76
+wgEncodeUwDgfHcmAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHcmAln.bam'
+    label_idx: 78
+wgEncodeUwDgfHcpeAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHcpeAln.bam'
+    label_idx: 80
+wgEncodeUwDgfHeeAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHeeAln.bam'
+    label_idx: 82
+wgEncodeUwDgfHffAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHffAln.bam'
+    label_idx: 84
+wgEncodeUwDgfHgfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHgfAln.bam'
+    label_idx: 85
+wgEncodeUwDgfHipeAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHipeAln.bam'
+    label_idx: 86
+wgEncodeUwDgfHmfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmfAln.bam'
+    label_idx: 88
+wgEncodeUwDgfHmvecbAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmvecbAln.bam'
+    label_idx: 96
+wgEncodeUwDgfHmvecdAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmvecdAln.bam'
+    label_idx: 91
+wgEncodeUwDgfHmvecdbladAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmvecdbladAln.bam'
+    label_idx: 90
+wgEncodeUwDgfHmvecfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmvecfAln.bam'
+    label_idx: 93
+wgEncodeUwDgfHmvechAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHmvechAln.bam'
+    label_idx: 95
+wgEncodeUwDgfHpafAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHpafAln.bam'
+    label_idx: 99
+wgEncodeUwDgfHpdlfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHpdlfAln.bam'
+    label_idx: 100
+wgEncodeUwDgfHpfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHpfAln.bam'
+    label_idx: 101
+wgEncodeUwDgfHrceAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHrceAln.bam'
+    label_idx: 102
+wgEncodeUwDgfHsmmAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHsmmAln.bam'
+    label_idx: 60
+wgEncodeUwDgfHuvecAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHuvecAln.bam'
+    label_idx: 61
+wgEncodeUwDgfHvmfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfHvmfAln.bam'
+    label_idx: 106
+wgEncodeUwDgfNb4Aln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfNb4Aln.bam'
+    label_idx: 109
+wgEncodeUwDgfNhaAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfNhaAln.bam'
+    label_idx: 110
+wgEncodeUwDgfNhdfadAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfNhdfadAln.bam'
+    label_idx: 111
+wgEncodeUwDgfNhdfneoAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfNhdfneoAln.bam'
+    label_idx: 112
+wgEncodeUwDgfNhlfAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfNhlfAln.bam'
+    label_idx: 113
+wgEncodeUwDgfSaecAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfSaecAln.bam'
+    label_idx: 118
+wgEncodeUwDgfSkmcAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfSkmcAln.bam'
+    label_idx: 119
+wgEncodeUwDgfT47dAln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfT47dAln.bam'
+    label_idx: 37
+wgEncodeUwDgfTh1AlnRep2:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfTh1AlnRep2.bam'
+    label_idx: 66
+wgEncodeUwDgfTh2Aln:
+    path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfTh2Aln.bam'
+    label_idx: 122

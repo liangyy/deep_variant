@@ -21,7 +21,7 @@ with open(args.file_list, 'r') as f:
         i = ntpath.basename(i)
         i = '.'.join(i.split('.')[:-1])
         w = '''{name}:
-    path: '{fileurl}
+    path: '{fileurl}'
     label_idx: {idx}
 '''.format(name=i, fileurl=filepath, idx=idx)
         o.write(w)
