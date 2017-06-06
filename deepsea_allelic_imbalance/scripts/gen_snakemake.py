@@ -34,6 +34,6 @@ cd repo/deep_variant/deepsea_allelic_imbalance
 {snmk} --unlock
 {snmk} --rerun-incomplete
 '''.format(name=i, snmk=snmk)
-    o = open('sbatch/{name}.yaml.sbatch', name=i)
+    o = open('sbatch/{name}.yaml.sbatch'.format(name=i), 'w')
     o.write(sbatch)
     o.close()
