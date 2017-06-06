@@ -43,7 +43,8 @@ There are some other directions and issues we need to explore and tackle. The an
 2. **Training Strategy**
     - How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) **TODO**
 3. **Performance Evaluation**
-    -How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion [here](auc.html)
+    - How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion [here](auc.html)
+    - Redo DeepSEA evaluation on DNase footprint data [here](deepsea_dgf.html)
 4. **Application**
     - IBD GWAS SNPs. See [here](SNP_enrichment.html) Rmarkdown script is at [here](https://uchicago.box.com/s/zdntptc8udymivtyoapxpu365rpo3b18)
 5. **Data Quality**: 
