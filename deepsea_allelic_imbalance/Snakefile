@@ -103,6 +103,9 @@ rule calculate_pvalue:
         'python ../allelic_imbalance/scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
 
 rule prepare_config:
+    input:
+        'data/{data}.imbalance_pvalue.gz',
+        'report/{data}.allele_freq.html'
     params:
         name = lambda wildcards: wildcards.data,
         inputfile = 'data/{data}.imbalance_pvalue.gz',
