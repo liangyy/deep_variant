@@ -20,7 +20,7 @@ rule call_variant_pre:
         'download/{data}.bam.bai',
         config['genome_assembly']['fasta']
     output:
-        temp('data/{data}.pre.varscan.gz')
+        temp('data/{data}.pre_varscan.gz')
     shell:
         '''samtools view -b -q 10 {input[0]} | \
         samtools mpileup -f {input[2]} - > {output[0]}'''
