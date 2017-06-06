@@ -14,10 +14,15 @@ o = open(args.out, 'w')
 with open(args.file_list, 'r') as f:
     for i in f:
         i = i.strip()
+        i = i.split(' ')
+        idx = i[1]
+        i = i[0]
         filepath = args.url_prefix + os.sep + i
         i = ntpath.basename(i)
         i = '.'.join(i.split('.')[:-1])
-        w = '''{name}: '{fileurl}'
-'''.format(name=i, fileurl=filepath)
+        w = '''{name}:
+    path: '{fileurl}
+    label_idx: {idx}
+'''.format(name=i, fileurl=filepath, idx=idx)
         o.write(w)
 o.close()
