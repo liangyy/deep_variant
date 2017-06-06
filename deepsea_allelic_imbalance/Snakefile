@@ -27,7 +27,7 @@ rule call_variant_pre:
 
 rule call_variant:
     input:
-        'data/{data}.pre.varscan.gz'
+        'data/{data}.pre_varscan.gz'
     output:
         temp('data/{data}.varscan.gz')
     params:
