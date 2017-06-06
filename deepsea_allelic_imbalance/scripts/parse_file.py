@@ -1,7 +1,7 @@
 import argparse
 parser = argparse.ArgumentParser(prog='parse_file.py', description='''
     This script parses the file downloaded from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/files.txt
-        ''')
+''')
 parser.add_argument('--file')
 parser.add_argument('--out')
 args = parser.parse_args()
@@ -39,4 +39,3 @@ with open(args.file, 'r') as f:
 
 table = pd.DataFrame(title_dic)
 table.to_csv(args.out, sep=',')
-
