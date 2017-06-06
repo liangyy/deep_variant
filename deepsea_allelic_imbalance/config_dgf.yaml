@@ -115,3 +115,11 @@ wgEncodeUwDgfTh1AlnRep2:
 wgEncodeUwDgfTh2Aln:
     path: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/wgEncodeUwDgfTh2Aln.bam'
     label_idx: 122
+genome_assembly:
+  fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
+  size: '/project2/xinhe/yanyul/databases/hg19/hg19.chrom.sizes'
+model:
+  name: 'keras_deepsea_copy'
+  snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
+  workdir: '../../../deep_variant/yanyu/deep_brain/debug/'
+call_varscan: 'java -jar /project2/xinhe/yanyul/softwares/varscan/VarScan.v2.4.3.jar'

@@ -1,0 +1,153 @@
+rule download_bam:
+    params:
+        lambda wildcards: config[wildcards.data]
+    output:
+        'download/{data}.bam'
+    shell:
+        'wget {params[0]} -O {output[0]}'
+
+rule download_bami:
+    params:
+        lambda wildcards: config[wildcards.data]
+    output:
+        'download/{data}.bam.bai'
+    shell:
+        'wget {params[0]}.bai -O {output[0]}'
+
+rule call_variant_pre:
+    input:
+        'download/{data}.bam',
+        'download/{data}.bam.bai',
+        config['genome_assembly']['fasta']
+    output:
+        temp('data/{data}.pre.varscan.gz')
+    shell:
+        '''samtools view -b -q 10 {input[0]} | \
+        samtools mpileup -f {input[2]} - > {output[0]}'''
+
+rule call_variant:
+    input:
+        'data/{data}.pre.varscan.gz'
+    output:
+        temp('data/{data}.varscan.gz')
+    params:
+        varscan = config['call_varscan']
+    shell:
+        '''{params.varscan} pileup2snp {input[0]} --min-coverage 100 \
+        --min-reads2 20 | \
+        gzip > {output[0]}'''
+
+rule filtering:
+    input:
+        'data/{data}.varscan.gz'
+    output:
+        'data/{data}.varscan.filtered.gz'
+    shell:
+        'python ../allelic_imbalance/scripts/filtering.py --infile {input[0]} --outfile {output[0]}'
+
+rule draw_hist_rmd:
+    input:
+        'data/{data}.varscan.filtered.gz'
+    output:
+        temp('report/{data}.allele_freq.Rmd')
+    params:
+        envir = '../'
+    run:
+        rmd = '''---
+title: "Evaluation on allelic imbalanced variant (DNase's DGF) - Allele frequency"
+output:
+    html_document:
+        number_sections: true
+        toc_float: true
+        toc: true
+        toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+```{{r}}
+library(ggplot2)
+mydata <- read.table('{input}', sep = '\\t', header = T)
+mydata$freq <- mydata$Reads2 / (mydata$Reads1 + mydata$Reads2)
+ggplot(mydata) + geom_histogram(aes(x = freq), binwidth = 0.1) + ggtitle('Allele frequency')
+```
+
+```{{r}}
+library(moments)
+kur <- kurtosis(mydata$freq[mydata$freq < 0.2])
+```
+
+The kurtosis of allele frequency is `r kur`.
+'''.format(input=input[0], envir=params.envir)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule draw_hist_html:
+    input:
+        'report/{data}.allele_freq.Rmd'
+    output:
+        'report/{data}.allele_freq.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
+
+rule calculate_pvalue:
+    input:
+        'data/{data}.varscan.filtered.gz'
+    output:
+        'data/{data}.imbalance_pvalue.gz'
+    shell:
+        'python ../allelic_imbalance/scripts/imbalance_pvalue.py --infile {input[0]} --outfile {output[0]}'
+
+rule prepare_config:
+    params:
+        name = lambda wildcards: wildcards.data,
+        inputfile = 'data/{data}.imbalance_pvalue.gz',
+        model = config['model']['name'],
+        model_dir = config['model']['workdir'],
+        label_idx = config['model']['label_idx'],
+        fasta = config['genome_assembly']['fasta'],
+        size = config['genome_assembly']['size']
+    output:
+        'data/config.{name}.allelic_imbalance.yaml'
+    run:
+        import os
+        inputfile = os.path.abspath(params.inputfile)
+        yaml = '''
+data:
+  {name}_allelic_imbalance:
+    name: '{inputfile}'
+    method: '_formatting_allelic_imbalance.snakemake'
+window_size: 1000 # Attention: this should match the window size of the model below
+model:
+  name: '{model}'
+  snakemake: 'modules/submodules/input2score/_train_model_do_nothing.snakemake'
+  workdir: '{model_dir}'
+label:
+  allelic_imbalance_{name}:
+    {name} : {label_idx}
+genome_assembly:
+  fasta: '{fasta_path}'
+  size: '{fasta_size}'
+performance:
+  mode1:
+    method: '_histogram.snakemake'
+    params: 'some other input here'
+'''.format(name=params.name, inputfile=inputfile, fasta_path=params.fasta, fasta_size=params.size,
+            model=params.model, model_dir=params.model_dir,
+            label_idx=params.label_idx)
+        o = open(output[0], 'w')
+        o.write(yaml)
+        o.close()
+
+#
+# rule call_imbalance；
+#
+# rule html:
+#
+# rule rmd:
+#
+# rule report:
