@@ -37,3 +37,7 @@ wgEncodeUwDgfSkmcAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/
 wgEncodeUwDgfT47dAln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfT47dAln.bam'
 wgEncodeUwDgfTh1AlnRep2: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfTh1AlnRep2.bam'
 wgEncodeUwDgfTh2Aln: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf//wgEncodeUwDgfTh2Aln.bam'
+genome_assembly:
+  fasta: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'
+  size: '/project2/xinhe/yanyul/databases/hg19/hg19.chrom.sizes'
+call_varscan: 'java -jar /project2/xinhe/yanyul/softwares/varscan/VarScan.v2.4.3.jar'
