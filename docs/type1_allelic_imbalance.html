@@ -369,7 +369,7 @@ ggplot(variant[variant$Imbalance == &#39;Imbalanced&#39;, ]) + geom_bar(aes(x = 
 variant$log10.oddsratio.predicted &lt;- logit(variant$Ref) - logit(variant$Alt)
 variant$logit.raf.predicted &lt;- logit(variant$Ref / (variant$Ref + variant$Alt))
 model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = variant)
-ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Log Odds Ratio vs \n Predicted Log Odds Ratio&#39;)</code></pre>
+ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Reference Allele Frequency vs \n Predicted RAF&#39;)</code></pre>
 <p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="predictive-power-of-predicted-pref-and-palt" class="section level3">
