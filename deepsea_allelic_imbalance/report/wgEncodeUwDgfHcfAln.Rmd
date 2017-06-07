@@ -1,0 +1,124 @@
+---
+title: "Evaluation on allelic imbalanced variant (DNase's DGF) - Allelic Imbalance"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../')
+options(width=2000)
+```
+
+# Load Data
+```{r}
+source('https://raw.githubusercontent.com/liangyy/deep_variant/master/rmd/my_r.R')
+library(feather)
+library(ggplot2)
+library(reshape2)
+variant_url <- 'data/wgEncodeUwDgfHcfAln.imbalance_pvalue.gz'
+variant <- read.table(variant_url, sep = '	', header = T)
+score_url <- '../../../deep_variant/nick/DeepVariantPrediction/score/keras_deepsea_copy/allelic_imbalance_wgEncodeUwDgfHcfAln.wgEncodeUwDgfHcfAln_allelic_imbalance_result.feather'
+score <- read_feather(score_url)
+variant$Ref <- NA
+variant$Ref[score$Varient.ID] <- score$Allele1
+variant$Alt <- NA
+variant$Alt[score$Varient.ID] <- score$Allele2
+```
+
+## Call Imbalance
+
+```{r}
+hist(log(variant$Odds.Ratio))
+imbalance <- abs(log(variant$Odds.Ratio)) > 1.8
+balance <- abs(log(variant$Odds.Ratio)) < 0.1
+variant$Imbalance <- 'None'
+variant$Imbalance[imbalance] <- 'Imbalanced'
+variant$Imbalance[balance] <- 'Balanced'
+```
+
+## Quality Control
+
+### Remove strand imbalanced instances
+
+```{r}
+strand.threshold <- 0.3
+strand.read1 <- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
+strand.read2 <- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
+strand.read1 <- apply(variant, 1, function(x){
+    re <- binom.test(c(x['Reads1Plus'], x['Reads1Minus']), 0.5)
+    re$p.value
+})
+ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle('Score of Strand Imbalance')
+strand.pass <- (strand.read1 < strand.threshold) & (strand.read2 < strand.threshold)
+strand.pass <- rep(TRUE, nrow(variant))
+```
+
+### Remove low coverage instances
+
+```{r}
+coverage.threshold <- 100
+coverage <- variant$Reads1 + variant$Reads2
+coverage.pass <- coverage > coverage.threshold
+```
+
+## QC Summary
+
+```{r}
+both.pass <- strand.pass & coverage.pass
+variant$pass <- both.pass
+temp <- as.data.frame(cbind(strand.pass, coverage.pass, both.pass))
+temp <- melt(temp, id.vars = c())
+temp <- temp[temp$value,]
+ggplot(temp) + geom_bar(aes(x = variable)) + ggtitle('Quality Control 
+ Count of bad instances')
+ggplot(variant) + geom_bar(aes(x = both.pass, fill = Imbalance), position = 'dodge') + ggtitle('Filtering Result')
+```
+
+## Predicted imbalance
+
+### Overview
+
+```{r}
+variant.pass <- variant[variant$pass,]
+ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of 
+ Heterozygous sites in DNase-seq of E081') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
+```
+
+### Observed Log Odds Ratio vs. Predicted Log Odds Ratio
+
+```{r}
+variant.pass$Log10.Odds.Ratio.Observed <- log10(variant.pass$Odds.Ratio)
+variant.pass$Log10.Odds.Ratio.Predicted <- log10(variant.pass$Ref / variant.pass$Alt)
+model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
+ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs 
+ Predicted Log Odds Ratio')
+```
+
+### Predictive power of predicted p(ref) and p(alt)
+
+Model: imbalance ~ f(ref, alt), link = binomial. $f_1 = |x - y|$.
+$f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|$
+
+```{r}
+variant.pass.interest <- variant.pass[variant.pass$Imbalance != 'None',]
+model.logistic.abs <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Ref - Alt), family=binomial(link='logit'), data=variant.pass.interest)
+model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link='logit'), data=variant.pass.interest)
+# ggplot(variant.pass.interest) + geom_boxplot(aes(x = Imbalance, y = abs(Log10.Odds.Ratio.Predicted)))
+```
+
+```{r, results='asis'}
+library(pander)
+panderOptions('knitr.auto.asis', FALSE)
+pander(model.logistic.abs)
+pander(model.logistic.lor)
+```
+
+```{r, results='asis'}
+library(precrec)
+joined <- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
+msmdat <- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2'))
+mscurves <- evalmod(msmdat)
+plot(mscurves)
+pander(auc(mscurves))
+```
