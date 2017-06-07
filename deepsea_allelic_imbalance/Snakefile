@@ -164,15 +164,6 @@ title: "Evaluation on allelic imbalanced variant (DNase's DGF) - Allelic Imbalan
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-<style>
-pre code, pre, code {
-        white-space: pre !important;
-        overflow-x: scroll !important;
-        word-break: keep-all !important;
-        word-wrap: initial !important;
-    }
-</style>
-
 ```{{r setup, include=FALSE}}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '{envir}')
@@ -187,7 +178,7 @@ library(ggplot2)
 library(reshape2)
 variant_url <- 'data/{name}.imbalance_pvalue.gz'
 variant <- read.table(variant_url, sep = '\t', header = T)
-score_url <- '../../../deep_variant/nick/DeepVariantPrediction/score/{model}/allelic_imbalance_{name}.{name}__allelic_imbalance_result.feather'
+score_url <- '../../../deep_variant/nick/DeepVariantPrediction/score/{model}/allelic_imbalance_{name}.{name}_allelic_imbalance_result.feather'
 score <- read_feather(score_url)
 variant$Ref <- NA
 variant$Ref[score$Varient.ID] <- score$Allele1
@@ -288,8 +279,10 @@ mscurves <- evalmod(msmdat)
 plot(mscurves)
 pander(auc(mscurves))
 ```
-
 '''.format(model=params.model, name=params.name, envir='../')
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
 
 rule report:
     input:
