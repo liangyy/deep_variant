@@ -240,7 +240,7 @@ ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(co
 ### Predictive power of predicted p(ref) and p(alt)
 
 Model: imbalance ~ f(ref, alt), link = binomial. $f_1 = |x - y|$.
-$f_2 = |\log_{{10}}(x/(1-x)) - \log_{{10}}(y/(1-y))|$. $f_3 = logit(\frac{{p_0}}{{p_0 + p_1}}) = \log_{{10}} \frac{{p_0}}{{p_1}}$
+$f_2 = |\log_{{10}}(x/(1-x)) - \log_{{10}}(y/(1-y))|$. $f_3 = logit(\\frac{{p_0}}{{p_0 + p_1}}) = \log_{{10}} \\frac{{p_0}}{{p_1}}$
 
 ```{{r}}
 variant.pass.interest <- variant[variant$Imbalance != 'Unsure',]
