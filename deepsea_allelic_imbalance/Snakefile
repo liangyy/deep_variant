@@ -161,6 +161,12 @@ rule rmd:
         rmd = '''---
 title: "Evaluation on allelic imbalanced variant (DNase's DGF) - Allelic Imbalance"
 # author: Yanyu Liang
+output:
+    html_document:
+        number_sections: true
+        toc_float: true
+        toc: true
+        toc_depth: 3
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
@@ -224,6 +230,9 @@ ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) +
 ## Observed Log Odds Ratio vs. Predicted Log Odds Ratio
 
 ```{{r}}
+logodds <- function(x){{
+    return(log(x) - log(1-x))
+}}
 variant$Log10.Odds.Ratio.Observed <- log10(variant$Odds.Ratio)
 variant$Log10.Odds.Ratio.Predicted <- logodds(variant$Ref) - logodds(variant$Alt)
 model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant)

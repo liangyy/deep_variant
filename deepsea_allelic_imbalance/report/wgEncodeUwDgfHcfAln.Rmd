@@ -1,6 +1,12 @@
 ---
 title: "Evaluation on allelic imbalanced variant (DNase's DGF) - Allelic Imbalance"
 # author: Yanyu Liang
+output:
+    html_document:
+        number_sections: true
+        toc_float: true
+        toc: true
+        toc_depth: 3
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
@@ -16,9 +22,9 @@ source('https://raw.githubusercontent.com/liangyy/deep_variant/master/rmd/my_r.R
 library(feather)
 library(ggplot2)
 library(reshape2)
-variant_url <- 'data/wgEncodeUwDgfHmvecdbladAln.imbalance_pvalue.gz'
-variant <- read.table(variant_url, sep = '	', header = T)
-score_url <- '../../DeepVariantPrediction/score/keras_deepsea_copy/allelic_imbalance_wgEncodeUwDgfHmvecdbladAln.wgEncodeUwDgfHmvecdbladAln_allelic_imbalance_result.feather'
+variant_url <- 'data/wgEncodeUwDgfHcfAln.imbalance_pvalue.gz'
+variant <- read.table(variant_url, sep = '\t', header = T)
+score_url <- '../../../deep_variant/nick/DeepVariantPrediction/score/keras_deepsea_copy/allelic_imbalance_wgEncodeUwDgfHcfAln.wgEncodeUwDgfHcfAln_allelic_imbalance_result.feather'
 score <- read_feather(score_url)
 variant$Ref <- NA
 variant$Ref[score$Varient.ID] <- score$Allele1
@@ -56,7 +62,7 @@ variant$Imbalance[imbalance] <- 'Imbalanced'
 variant$Imbalance[balance] <- 'Balanced'
 ggplot(variant) + geom_bar(aes(x = Imbalance, y = ..count..)) + ggtitle('Count of Balanced and Imbalanced Variants')
 variant.pass <- variant
-ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of Heterozygous sites in DNase-seq of {name}') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
+ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of Heterozygous sites in DNase-seq of wgEncodeUwDgfHcfAln') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
 ```
 
 
@@ -64,10 +70,13 @@ ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) +
 ## Observed Log Odds Ratio vs. Predicted Log Odds Ratio
 
 ```{r}
+logodds <- function(x){
+    return(log(x) - log(1-x))
+}
 variant$Log10.Odds.Ratio.Observed <- log10(variant$Odds.Ratio)
 variant$Log10.Odds.Ratio.Predicted <- logodds(variant$Ref) - logodds(variant$Alt)
 model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant)
-ggplot(variant, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs 
+ggplot(variant, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs
  Predicted Log Odds Ratio')
 ```
 
