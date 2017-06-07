@@ -29,6 +29,7 @@ for i in con.keys():
 
 cd /project2/xinhe/yanyul
 source setup.sh
+module load java
 source activate deepvarpred_test
 cd repo/deep_variant/deepsea_allelic_imbalance
 {snmk} --unlock
