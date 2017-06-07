@@ -222,7 +222,7 @@ variant$Imbalance[imbalance] <- 'Imbalanced'
 variant$Imbalance[balance] <- 'Balanced'
 ggplot(variant) + geom_bar(aes(x = Imbalance, y = ..count..)) + ggtitle('Count of Balanced and Imbalanced Variants')
 variant.pass <- variant
-ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of Heterozygous sites in DNase-seq of {name}') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
+ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle('The Predicted Effect of Heterozygous sites in DNase-seq of \\n {name}') + scale_color_gradient2(midpoint=0, low="blue", mid="white", high="red", space ="Lab" )
 ```
 
 
