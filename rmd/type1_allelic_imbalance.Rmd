@@ -72,22 +72,23 @@ ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) +
 ### Observed Log Odds Ratio vs. Predicted Log Odds Ratio
 
 ```{r}
-variant$Log10.Odds.Ratio.Observed <- log10(variant$Odds.Ratio)
-variant$Log10.Odds.Ratio.Predicted <- logit(variant$Ref) - logit(variant$Alt)
-model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
-ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs \n Predicted Log Odds Ratio')
+variant$logit.raf <- logit(variant$af)
+variant$log10.oddsratio.predicted <- logit(variant$Ref) - logit(variant$Alt)
+variant$logit.raf.predicted <- logit(variant$Ref / (variant$Ref + variant$Alt))
+model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = variant)
+ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs \n Predicted Log Odds Ratio')
 ```
 
 ### Predictive power of predicted p(ref) and p(alt)
 
 Model: imbalance ~ f(ref, alt), link = binomial. $f_1 = |x - y|$. 
-$f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|$
+$f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|$. $f_3 = logit(\frac{p_0}{p_0 + p_1}) = \log_{10} \frac{p_0}{p_1}$ 
 
 ```{r}
 variant.pass.interest <- variant[variant$Imbalance != 'Unsure',]
 model.logistic.abs <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Ref - Alt), family=binomial(link='logit'), data=variant.pass.interest)
-model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link='logit'), data=variant.pass.interest)
-# ggplot(variant.pass.interest) + geom_boxplot(aes(x = Imbalance, y = abs(Log10.Odds.Ratio.Predicted)))
+model.logistic.lor <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(log10.oddsratio.predicted), family=binomial(link='logit'), data=variant.pass.interest)
+model.logistic.logitraf <- glm(as.numeric(Imbalance == 'Imbalanced') ~ abs(logit.raf.predicted), family=binomial(link='logit'), data=variant.pass.interest)
 ```
 
 ```{r, results='asis'}
@@ -95,12 +96,13 @@ library(pander)
 panderOptions('knitr.auto.asis', FALSE)
 pander(model.logistic.abs)
 pander(model.logistic.lor)
+pander(model.logistic.logitraf)
 ```
 
 ```{r, results='asis'}
 library(precrec)
-joined <- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
-msmdat <- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2'))
+joined <- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values, model.logistic.logitraf$fitted.values)
+msmdat <- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == 'Imbalanced'), modnames = c('f1', 'f2', 'f3'))
 mscurves <- evalmod(msmdat)
 plot(mscurves)
 pander(auc(mscurves))

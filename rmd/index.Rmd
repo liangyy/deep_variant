@@ -49,6 +49,9 @@ There are some other directions and issues we need to explore and tackle. The an
     - IBD GWAS SNPs. See [here](SNP_enrichment.html) Rmarkdown script is at [here](https://uchicago.box.com/s/zdntptc8udymivtyoapxpu365rpo3b18)
 5. **Data Quality**: 
     - GC content. [DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html), [Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html)
+6. **Allelic Imbalance Analysis**:
+    - DeepSEA results (Table S3). Presented by data set at [here](allelic_imbalance_deepsea.html)
+    - Rerun analysis considering both imbalanced variants and balanced variants [here](allelic_imbalance_rerun.html)
 
 # TODO list
 

@@ -354,30 +354,31 @@ variant$Imbalance &lt;- &#39;Unsure&#39;
 variant$Imbalance[imbalance] &lt;- &#39;Imbalanced&#39;
 variant$Imbalance[balance] &lt;- &#39;Balanced&#39;
 ggplot(variant[variant$Imbalance == &#39;Imbalanced&#39;, ]) + geom_bar(aes(x = af &gt; 0.5)) + ggtitle(&#39;Reference Biased vs Alternative Biased&#39;) + xlab(&#39;Reference Biased&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 <div id="predicted-imbalance" class="section level2">
 <h2><span class="header-section-number">2.3</span> Predicted imbalance</h2>
 <div id="overview" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Overview</h3>
 <pre class="r"><code>ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; )</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="observed-log-odds-ratio-vs.predicted-log-odds-ratio" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Observed Log Odds Ratio vs. Predicted Log Odds Ratio</h3>
-<pre class="r"><code>variant$Log10.Odds.Ratio.Observed &lt;- log10(variant$Odds.Ratio)
-variant$Log10.Odds.Ratio.Predicted &lt;- logit(variant$Ref) - logit(variant$Alt)
-model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
-ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Log Odds Ratio vs \n Predicted Log Odds Ratio&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>variant$logit.raf &lt;- logit(variant$af)
+variant$log10.oddsratio.predicted &lt;- logit(variant$Ref) - logit(variant$Alt)
+variant$logit.raf.predicted &lt;- logit(variant$Ref / (variant$Ref + variant$Alt))
+model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = variant)
+ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Log Odds Ratio vs \n Predicted Log Odds Ratio&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="predictive-power-of-predicted-pref-and-palt" class="section level3">
 <h3><span class="header-section-number">2.3.3</span> Predictive power of predicted p(ref) and p(alt)</h3>
-<p>Model: imbalance ~ f(ref, alt), link = binomial. <span class="math inline">\(f_1 = |x - y|\)</span>. <span class="math inline">\(f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|\)</span></p>
+<p>Model: imbalance ~ f(ref, alt), link = binomial. <span class="math inline">\(f_1 = |x - y|\)</span>. <span class="math inline">\(f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|\)</span>. <span class="math inline">\(f_3 = logit(\frac{p_0}{p_0 + p_1}) = \log_{10} \frac{p_0}{p_1}\)</span></p>
 <pre class="r"><code>variant.pass.interest &lt;- variant[variant$Imbalance != &#39;Unsure&#39;,]
 model.logistic.abs &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Ref - Alt), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)
-model.logistic.lor &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)
-# ggplot(variant.pass.interest) + geom_boxplot(aes(x = Imbalance, y = abs(Log10.Odds.Ratio.Predicted)))</code></pre>
+model.logistic.lor &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(log10.oddsratio.predicted), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)
+model.logistic.logitraf &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(logit.raf.predicted), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)</code></pre>
 <pre class="r"><code>library(pander)
 panderOptions(&#39;knitr.auto.asis&#39;, FALSE)
 pander(model.logistic.abs)</code></pre>
@@ -418,11 +419,11 @@ pander(model.logistic.abs)</code></pre>
 </table>
 <pre class="r"><code>pander(model.logistic.lor)</code></pre>
 <table>
-<caption>Fitting generalized (binomial/logit) linear model: as.numeric(Imbalance == “Imbalanced”) ~ abs(Log10.Odds.Ratio.Predicted)</caption>
+<caption>Fitting generalized (binomial/logit) linear model: as.numeric(Imbalance == “Imbalanced”) ~ abs(log10.oddsratio.predicted)</caption>
 <colgroup>
-<col width="46%" />
+<col width="45%" />
 <col width="13%" />
-<col width="15%" />
+<col width="16%" />
 <col width="12%" />
 <col width="12%" />
 </colgroup>
@@ -437,7 +438,7 @@ pander(model.logistic.abs)</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center"><strong>abs(Log10.Odds.Ratio.Predicted)</strong></td>
+<td align="center"><strong>abs(log10.oddsratio.predicted)</strong></td>
 <td align="center">3.099</td>
 <td align="center">0.4461</td>
 <td align="center">6.947</td>
@@ -452,12 +453,48 @@ pander(model.logistic.abs)</code></pre>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>pander(model.logistic.logitraf)</code></pre>
+<table>
+<caption>Fitting generalized (binomial/logit) linear model: as.numeric(Imbalance == “Imbalanced”) ~ abs(logit.raf.predicted)</caption>
+<colgroup>
+<col width="41%" />
+<col width="14%" />
+<col width="17%" />
+<col width="13%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">z value</th>
+<th align="center">Pr(&gt;|z|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>abs(logit.raf.predicted)</strong></td>
+<td align="center">9.13</td>
+<td align="center">0.7761</td>
+<td align="center">11.76</td>
+<td align="center">5.975e-32</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">-1.265</td>
+<td align="center">0.04968</td>
+<td align="center">-25.46</td>
+<td align="center">6.049e-143</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code>library(precrec)
-joined &lt;- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values)
-msmdat &lt;- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == &#39;Imbalanced&#39;), modnames = c(&#39;f1&#39;, &#39;f2&#39;))
+joined &lt;- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fitted.values, model.logistic.logitraf$fitted.values)
+msmdat &lt;- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == &#39;Imbalanced&#39;), modnames = c(&#39;f1&#39;, &#39;f2&#39;, &#39;f3&#39;))
 mscurves &lt;- evalmod(msmdat)
 plot(mscurves)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>pander(auc(mscurves))</code></pre>
 <table style="width:53%;">
 <colgroup>
@@ -498,6 +535,18 @@ plot(mscurves)</code></pre>
 <td align="center">1</td>
 <td align="center">PRC</td>
 <td align="center">0.3586</td>
+</tr>
+<tr class="odd">
+<td align="center">f3</td>
+<td align="center">1</td>
+<td align="center">ROC</td>
+<td align="center">0.6673</td>
+</tr>
+<tr class="even">
+<td align="center">f3</td>
+<td align="center">1</td>
+<td align="center">PRC</td>
+<td align="center">0.435</td>
 </tr>
 </tbody>
 </table>
