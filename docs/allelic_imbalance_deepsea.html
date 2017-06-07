@@ -343,29 +343,29 @@ deepsea$ref.af &lt;- deepsea$Ref.reads / (deepsea$Ref.reads + deepsea$Alt.reads)
 <div id="plot" class="section level1">
 <h1><span class="header-section-number">2</span> Plot</h1>
 <pre class="r"><code>cell_list &lt;- as.character(unique(deepsea$Cell.type))
-# plots1 &lt;- list()
-# plots2 &lt;- list()
-# plots3 &lt;- list()
-# for(cell in cell_list){
-#     deepsea.cell &lt;- deepsea[deepsea$Cell.type == cell,]
-#     deepsea.cell$Log.Odds.Ratio &lt;- logit(deepsea.cell$Reference.Allele.DeepSEA.Probability) - logit(deepsea.cell$Alternative.Allele.DeepSEA.Probability)
-#     deepsea.cell$logit.raf.predicted &lt;- logit(deepsea.cell$Reference.Allele.DeepSEA.Probability / (deepsea.cell$Reference.Allele.DeepSEA.Probability + deepsea.cell$Alternative.Allele.DeepSEA.Probability))
-#     deepsea.cell$logit.raf &lt;- logit(deepsea.cell$ref.af)
-#     p1 &lt;- ggplot(deepsea.cell) + geom_point(aes(x = Alternative.Allele.DeepSEA.Probability, y = Reference.Allele.DeepSEA.Probability, color = logit(ref.af))) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; ) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
-#     p2 &lt;- ggplot(deepsea.cell) + geom_bar(aes(x = ref.af &gt; 0.5, y = ..count..)) + ggtitle(&#39;Reference Biased \n vs Alternative Biased&#39;) + xlab(&#39;Reference Biased&#39;) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
-#     model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = deepsea.cell)
-#     p3 &lt;- ggplot(deepsea.cell, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point() + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.6 * min(deepsea.cell$logit.raf.predicted), y = 1 * max(deepsea.cell$logit.raf), label = lm_eqn(model.linear), parse = TRUE, size=1.5) + ggtitle(&#39;Observed Reference Allele Frequency vs \n Predicted RAF&#39;) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
-#     plots1 &lt;- ai_deepsea_save_plot(&#39;scatter&#39;, p1, cell, &#39;../docs/plots&#39;, plots1, &#39;plots&#39;, 3, 2)
-#     plots2 &lt;- ai_deepsea_save_plot(&#39;bias_count&#39;, p2, cell, &#39;../docs/plots&#39;, plots2, &#39;plots&#39;, 1, 2)
-#     plots3 &lt;- ai_deepsea_save_plot(&#39;obs_pred&#39;, p3, cell, &#39;../docs/plots&#39;, plots3, &#39;plots&#39;, 2, 2)
-# }</code></pre>
+plots1 &lt;- list()
+plots2 &lt;- list()
+plots3 &lt;- list()
+for(cell in cell_list){
+    deepsea.cell &lt;- deepsea[deepsea$Cell.type == cell,]
+    deepsea.cell$Log.Odds.Ratio &lt;- logit(deepsea.cell$Reference.Allele.DeepSEA.Probability) - logit(deepsea.cell$Alternative.Allele.DeepSEA.Probability)
+    deepsea.cell$logit.raf.predicted &lt;- logit(deepsea.cell$Reference.Allele.DeepSEA.Probability / (deepsea.cell$Reference.Allele.DeepSEA.Probability + deepsea.cell$Alternative.Allele.DeepSEA.Probability))
+    deepsea.cell$logit.raf &lt;- logit(deepsea.cell$ref.af)
+    p1 &lt;- ggplot(deepsea.cell) + geom_point(aes(x = Alternative.Allele.DeepSEA.Probability, y = Reference.Allele.DeepSEA.Probability, color = logit(ref.af))) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; ) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
+    p2 &lt;- ggplot(deepsea.cell) + geom_bar(aes(x = ref.af &gt; 0.5, y = ..count..)) + ggtitle(&#39;Reference Biased \n vs Alternative Biased&#39;) + xlab(&#39;Reference Biased&#39;) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
+    model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = deepsea.cell)
+    p3 &lt;- ggplot(deepsea.cell, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point() + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.6 * min(deepsea.cell$logit.raf.predicted), y = 1 * max(deepsea.cell$logit.raf), label = lm_eqn(model.linear), parse = TRUE, size=1.5) + ggtitle(&#39;Observed Reference Allele Frequency vs \n Predicted RAF&#39;) + theme(title = element_text(size=3.5), text = element_text(size=3.5))
+    plots1 &lt;- ai_deepsea_save_plot(&#39;scatter&#39;, p1, cell, &#39;../docs/plots&#39;, plots1, &#39;plots&#39;, 3, 2)
+    plots2 &lt;- ai_deepsea_save_plot(&#39;bias_count&#39;, p2, cell, &#39;../docs/plots&#39;, plots2, &#39;plots&#39;, 1, 2)
+    plots3 &lt;- ai_deepsea_save_plot(&#39;obs_pred&#39;, p3, cell, &#39;../docs/plots&#39;, plots3, &#39;plots&#39;, 2, 2)
+}</code></pre>
 </div>
 <div id="result" class="section level1">
 <h1><span class="header-section-number">3</span> Result</h1>
 <div class="col2">
 <p>
 <html>
-<select id="yEXLLifZDz" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/scatter_Hmvecd.png" selected>Hmvecd</option>
+<select id="80jVjAldNO" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/scatter_Hmvecd.png" selected>Hmvecd</option>
 <option value="plots/scatter_Hmvecf.png">Hmvecf</option>
 <option value="plots/scatter_Hmvech.png">Hmvech</option>
 <option value="plots/scatter_Hee.png">Hee</option>
@@ -400,19 +400,19 @@ deepsea$ref.af &lt;- deepsea$Ref.reads / (deepsea$Ref.reads + deepsea$Alt.reads)
 <option value="plots/scatter_Hasp.png">Hasp</option>
 <option value="plots/scatter_Hgf.png">Hgf</option>
 <option value="plots/scatter_Th2.png">Th2</option></select>
-<img src="plots/scatter_Hmvecd.png" name="cAbe65p77e" height="300" width="500"/>
+<img src="plots/scatter_Hmvecd.png" name="e8hUG0y5Bk" height="300" width="500"/>
 <script>$(document).ready(function(){
-                 $("#yEXLLifZDz").change(function(){
-                 $("img[name=cAbe65p77e]").attr("src",$(this).val());
+                 $("#80jVjAldNO").change(function(){
+                 $("img[name=e8hUG0y5Bk]").attr("src",$(this).val());
 
                  });
 
   });</script>
 </html>
-<div id="htmlwidget-2e5a42c7e56d44ca471d" style="width:5px;height:3px;" class="bsselect html-widget" width="5" height="3"></div>
-<script type="application/json" data-for="htmlwidget-2e5a42c7e56d44ca471d">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-8669e68bb8a56dc33812" style="width:5px;height:3px;" class="bsselect html-widget" width="5" height="3"></div>
+<script type="application/json" data-for="htmlwidget-8669e68bb8a56dc33812">{"x":[],"evals":[],"jsHooks":[]}</script>
 <html>
-<select id="ANWY37tMiM" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/bias_count_Hmvecd.png" selected>Hmvecd</option>
+<select id="2DfN1hpkzs" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/bias_count_Hmvecd.png" selected>Hmvecd</option>
 <option value="plots/bias_count_Hmvecf.png">Hmvecf</option>
 <option value="plots/bias_count_Hmvech.png">Hmvech</option>
 <option value="plots/bias_count_Hee.png">Hee</option>
@@ -447,21 +447,21 @@ deepsea$ref.af &lt;- deepsea$Ref.reads / (deepsea$Ref.reads + deepsea$Alt.reads)
 <option value="plots/bias_count_Hasp.png">Hasp</option>
 <option value="plots/bias_count_Hgf.png">Hgf</option>
 <option value="plots/bias_count_Th2.png">Th2</option></select>
-<img src="plots/bias_count_Hmvecd.png" name="qLkgLS9X4x" height="300" width="200"/>
+<img src="plots/bias_count_Hmvecd.png" name="9s4XOfykyu" height="300" width="200"/>
 <script>$(document).ready(function(){
-                 $("#ANWY37tMiM").change(function(){
-                 $("img[name=qLkgLS9X4x]").attr("src",$(this).val());
+                 $("#2DfN1hpkzs").change(function(){
+                 $("img[name=9s4XOfykyu]").attr("src",$(this).val());
 
                  });
 
   });</script>
 </html>
-<div id="htmlwidget-577667b3d443cb8c06f4" style="width:3px;height:3px;" class="bsselect html-widget" width="3" height="3"></div>
-<script type="application/json" data-for="htmlwidget-577667b3d443cb8c06f4">{"x":[],"evals":[],"jsHooks":[]}</script></p>
+<div id="htmlwidget-a94231c6ac84b7798e9b" style="width:3px;height:3px;" class="bsselect html-widget" width="3" height="3"></div>
+<script type="application/json" data-for="htmlwidget-a94231c6ac84b7798e9b">{"x":[],"evals":[],"jsHooks":[]}</script></p>
 </div>
 
 <html>
-<select id="UAusrhprfX" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/obs_pred_Hmvecd.png" selected>Hmvecd</option>
+<select id="CzDVi3nZ17" class="selectpicker" data-dropdown-align-right="false" data-dropup-auto="true" data-header="false" data-live-search="true" data-live-search-style="contains" data-show-tick="true" data-width="false" data-size="auto"><option value="plots/obs_pred_Hmvecd.png" selected>Hmvecd</option>
 <option value="plots/obs_pred_Hmvecf.png">Hmvecf</option>
 <option value="plots/obs_pred_Hmvech.png">Hmvech</option>
 <option value="plots/obs_pred_Hee.png">Hee</option>
@@ -496,17 +496,22 @@ deepsea$ref.af &lt;- deepsea$Ref.reads / (deepsea$Ref.reads + deepsea$Alt.reads)
 <option value="plots/obs_pred_Hasp.png">Hasp</option>
 <option value="plots/obs_pred_Hgf.png">Hgf</option>
 <option value="plots/obs_pred_Th2.png">Th2</option></select>
-<img src="plots/obs_pred_Hmvecd.png" name="1q2XIQReHR" height="300" width="500"/>
+<img src="plots/obs_pred_Hmvecd.png" name="OVufahDHiB" height="300" width="500"/>
 <script>$(document).ready(function(){
-                 $("#UAusrhprfX").change(function(){
-                 $("img[name=1q2XIQReHR]").attr("src",$(this).val());
+                 $("#CzDVi3nZ17").change(function(){
+                 $("img[name=OVufahDHiB]").attr("src",$(this).val());
 
                  });
 
   });</script>
 </html>
-<div id="htmlwidget-3e09ce87c6d952aeb208" style="width:5px;height:3px;" class="bsselect html-widget" width="5" height="3"></div>
-<script type="application/json" data-for="htmlwidget-3e09ce87c6d952aeb208">{"x":[],"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-a940807ddb06e3d8b975" style="width:5px;height:3px;" class="bsselect html-widget" width="5" height="3"></div>
+<script type="application/json" data-for="htmlwidget-a940807ddb06e3d8b975">{"x":[],"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="over-all" class="section level1">
+<h1><span class="header-section-number">4</span> Over All</h1>
+<pre class="r"><code>ggplot(deepsea) + geom_point(aes(x = Alternative.Allele.DeepSEA.Probability, y = Reference.Allele.DeepSEA.Probability, color = logit(ref.af))) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; ) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1)</code></pre>
+<p><img src="allelic_imbalance_deepsea_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 
 

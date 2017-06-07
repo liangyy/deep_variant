@@ -76,7 +76,7 @@ variant$logit.raf <- logit(variant$af)
 variant$log10.oddsratio.predicted <- logit(variant$Ref) - logit(variant$Alt)
 variant$logit.raf.predicted <- logit(variant$Ref / (variant$Ref + variant$Alt))
 model.linear = lm(logit.raf ~ 0 + logit.raf.predicted, data = variant)
-ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs \n Predicted Log Odds Ratio')
+ggplot(variant, aes(x = logit.raf.predicted, y = logit.raf)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Reference Allele Frequency vs \n Predicted RAF')
 ```
 
 ### Predictive power of predicted p(ref) and p(alt)

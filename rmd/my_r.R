@@ -1,3 +1,10 @@
+ai_deepsea_save_plot <- function(info, p, name, path, plots, folder, w, h){
+    filename <- paste(paste(c(info, name), collapse = '_'), '.png', sep = '')
+    ggsave(filename = filename, plot = p, path = path, width = w, height = h)
+    plots[[as.character(name)]] <- paste(folder, filename, sep = '/')
+    plots
+}
+
 accuracy <- function(y, y_pred){
     temp <- rep(0, length(y_pred))
     temp[y_pred > 0.5] <- 1 
