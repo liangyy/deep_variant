@@ -1,0 +1,33 @@
+---
+title: "Allelic Imbalance Result of DeepSEA - Rerun analysis with balanced variants"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+<style>
+pre code, pre, code {
+        white-space: pre !important;
+        overflow-x: scroll !important;
+        word-break: keep-all !important;
+        word-wrap: initial !important;
+    }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Data
+
+See the aligned data avaiable at [here](https://github.com/liangyy/deep_variant/blob/code/deepsea_allelic_imbalance/data/files.csv) which can be downloaded at [encodeDCC](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeUwDgf/).
+
+# Results
+
+* [Hcf](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHcfAln.html), [Hcf_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHcfAln.allele_freq.html)
+* [Hmvecdblad](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHmvecdbladAln.html), [Hmvecdblad]_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHmvecdbladAln.allele_freq.html)
+
+# Ongoing
+
+* Hee
+* Skmc
