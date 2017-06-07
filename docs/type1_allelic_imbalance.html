@@ -301,7 +301,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Deep brain - Type 1 - evaluation on allelic imbalance instances</h1>
-<h4 class="date"><em>19 May, 2017</em></h4>
+<h4 class="date"><em>07 June, 2017</em></h4>
 
 </div>
 
@@ -345,75 +345,36 @@ variant$Alt[score$Varient.ID] &lt;- score$Allele2</code></pre>
 </div>
 <div id="call-imbalance" class="section level2">
 <h2><span class="header-section-number">2.2</span> Call Imbalance</h2>
-<pre class="r"><code>hist(log(variant$Odds.Ratio))</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-151-1.png" width="672" /></p>
-<pre class="r"><code>imbalance &lt;- abs(log(variant$Odds.Ratio)) &gt; 1.8
-balance &lt;- abs(log(variant$Odds.Ratio)) &lt; 1.1
+<pre class="r"><code>variant$af &lt;- variant$Reads1 / (variant$Reads1 + variant$Reads2)
+variant &lt;- variant[variant$af &lt; 0.8,]
+imbalance &lt;- ( variant$af &gt; 0.7 | variant$af &lt; 0.4 ) &amp; variant$P.Value &lt; 0.01
+balance &lt;- 0.45 &lt; variant$af &amp; variant$af &lt; 0.55 &amp; variant$P.Value &gt; 0.05
 # imbalance.threshold &lt;- 0.01 # Fisher&#39;s exact test p-value
-variant$Imbalance &lt;- &#39;None&#39;
+variant$Imbalance &lt;- &#39;Unsure&#39;
 variant$Imbalance[imbalance] &lt;- &#39;Imbalanced&#39;
 variant$Imbalance[balance] &lt;- &#39;Balanced&#39;
-# variant$Imbalance[variant$P.Value &lt; imbalance.threshold] &lt;- &#39;Imbalanced&#39;
-# variant$Imbalance[variant$P.Value &lt; imbalance.threshold] &lt;- &#39;Imbalanced&#39;</code></pre>
-</div>
-<div id="quality-control" class="section level2">
-<h2><span class="header-section-number">2.3</span> Quality Control</h2>
-<div id="remove-strand-imbalanced-instances" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Remove strand imbalanced instances</h3>
-<p>Do nothing here.</p>
-<!-- Binomial test is use for each site. `binom.test(c(strand1, strand2), p = 0.5)`. -->
-<!-- $\frac{|read_+ - read_-|}{read_+ + read_-} < 0.3$ -->
-<pre class="r"><code># strand.threshold &lt;- 0.3
-# strand.read1 &lt;- abs(variant$Reads1Plus - variant$Reads1Minus) / (variant$Reads1Plus + variant$Reads1Minus)
-# strand.read2 &lt;- abs(variant$Reads2Plus - variant$Reads2Minus) / (variant$Reads2Plus + variant$Reads2Minus)
-# strand.read1 &lt;- apply(variant, 1, function(x){
-#     re &lt;- binom.test(c(x[&#39;Reads1Plus&#39;], x[&#39;Reads1Minus&#39;]), 0.5)
-#     re$p.value
-# })
-# ggplot(as.data.frame(cbind(strand.read1, strand.read2))) + geom_bin2d(aes(x = strand.read1, y = strand.read2)) + ggtitle(&#39;Score of Strand Imbalance&#39;)
-# strand.pass &lt;- (strand.read1 &lt; strand.threshold) &amp; (strand.read2 &lt; strand.threshold)
-strand.pass &lt;- rep(TRUE, nrow(variant))</code></pre>
-<p>The asymmetric result of read1 and read2 may come from alignment bias.</p>
-</div>
-<div id="remove-low-coverage-instances" class="section level3">
-<h3><span class="header-section-number">2.3.2</span> Remove low coverage instances</h3>
-<pre class="r"><code>coverage.threshold &lt;- 100
-coverage &lt;- variant$Reads1 + variant$Reads2
-coverage.pass &lt;- coverage &gt; coverage.threshold</code></pre>
-</div>
-</div>
-<div id="qc-summary" class="section level2">
-<h2><span class="header-section-number">2.4</span> QC Summary</h2>
-<pre class="r"><code>both.pass &lt;- strand.pass &amp; coverage.pass
-variant$pass &lt;- both.pass
-temp &lt;- as.data.frame(cbind(strand.pass, coverage.pass, both.pass))
-temp &lt;- melt(temp, id.vars = c())
-temp &lt;- temp[temp$value,]
-ggplot(temp) + geom_bar(aes(x = variable)) + ggtitle(&#39;Quality Control \n Count of bad instances&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-154-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(variant) + geom_bar(aes(x = both.pass, fill = Imbalance), position = &#39;dodge&#39;) + ggtitle(&#39;Filtering Result&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-154-2.png" width="672" /></p>
+ggplot(variant[variant$Imbalance == &#39;Imbalanced&#39;, ]) + geom_bar(aes(x = af &gt; 0.5)) + ggtitle(&#39;Reference Biased vs Alternative Biased&#39;) + xlab(&#39;Reference Biased&#39;)</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="predicted-imbalance" class="section level2">
-<h2><span class="header-section-number">2.5</span> Predicted imbalance</h2>
+<h2><span class="header-section-number">2.3</span> Predicted imbalance</h2>
 <div id="overview" class="section level3">
-<h3><span class="header-section-number">2.5.1</span> Overview</h3>
-<pre class="r"><code>variant.pass &lt;- variant[variant$pass,]
-ggplot(variant.pass) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; )</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
+<h3><span class="header-section-number">2.3.1</span> Overview</h3>
+<pre class="r"><code>ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) + facet_grid(.~Imbalance) + geom_abline(intercept = 0.07, slope = 1) + geom_abline(intercept = -0.07, slope = 1) + ggtitle(&#39;The Predicted Effect of \n Heterozygous sites in DNase-seq of E081&#39;) + scale_color_gradient2(midpoint=0, low=&quot;blue&quot;, mid=&quot;white&quot;, high=&quot;red&quot;, space =&quot;Lab&quot; )</code></pre>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 <div id="observed-log-odds-ratio-vs.predicted-log-odds-ratio" class="section level3">
-<h3><span class="header-section-number">2.5.2</span> Observed Log Odds Ratio vs. Predicted Log Odds Ratio</h3>
-<pre class="r"><code>variant.pass$Log10.Odds.Ratio.Observed &lt;- log10(variant.pass$Odds.Ratio)
-variant.pass$Log10.Odds.Ratio.Predicted &lt;- log10(variant.pass$Ref / variant.pass$Alt)
+<h3><span class="header-section-number">2.3.2</span> Observed Log Odds Ratio vs. Predicted Log Odds Ratio</h3>
+<pre class="r"><code>variant$Log10.Odds.Ratio.Observed &lt;- log10(variant$Odds.Ratio)
+variant$Log10.Odds.Ratio.Predicted &lt;- logit(variant$Ref) - logit(variant$Alt)
 model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant.pass)
 ggplot(variant.pass, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method=&#39;lm&#39;,formula=y~0+x) + annotate(&quot;text&quot;, x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle(&#39;Observed Log Odds Ratio vs \n Predicted Log Odds Ratio&#39;)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-156-1.png" width="672" /></p>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="predictive-power-of-predicted-pref-and-palt" class="section level3">
-<h3><span class="header-section-number">2.5.3</span> Predictive power of predicted p(ref) and p(alt)</h3>
+<h3><span class="header-section-number">2.3.3</span> Predictive power of predicted p(ref) and p(alt)</h3>
 <p>Model: imbalance ~ f(ref, alt), link = binomial. <span class="math inline">\(f_1 = |x - y|\)</span>. <span class="math inline">\(f_2 = |\log_{10}(x/(1-x)) - \log_{10}(y/(1-y))|\)</span></p>
-<pre class="r"><code>variant.pass.interest &lt;- variant.pass[variant.pass$Imbalance != &#39;None&#39;,]
+<pre class="r"><code>variant.pass.interest &lt;- variant[variant$Imbalance != &#39;Unsure&#39;,]
 model.logistic.abs &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Ref - Alt), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)
 model.logistic.lor &lt;- glm(as.numeric(Imbalance == &#39;Imbalanced&#39;) ~ abs(Log10.Odds.Ratio.Predicted), family=binomial(link=&#39;logit&#39;), data=variant.pass.interest)
 # ggplot(variant.pass.interest) + geom_boxplot(aes(x = Imbalance, y = abs(Log10.Odds.Ratio.Predicted)))</code></pre>
@@ -441,17 +402,17 @@ pander(model.logistic.abs)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="center"><strong>abs(Ref - Alt)</strong></td>
-<td align="center">-8.606</td>
-<td align="center">1.331</td>
-<td align="center">-6.467</td>
-<td align="center">9.98e-11</td>
+<td align="center">6.96</td>
+<td align="center">1.179</td>
+<td align="center">5.902</td>
+<td align="center">3.599e-09</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>(Intercept)</strong></td>
-<td align="center">-1.377</td>
-<td align="center">0.03554</td>
-<td align="center">-38.75</td>
-<td align="center">0</td>
+<td align="center">-1.056</td>
+<td align="center">0.04628</td>
+<td align="center">-22.83</td>
+<td align="center">2.401e-115</td>
 </tr>
 </tbody>
 </table>
@@ -477,17 +438,17 @@ pander(model.logistic.abs)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="center"><strong>abs(Log10.Odds.Ratio.Predicted)</strong></td>
-<td align="center">-1.827</td>
-<td align="center">0.6289</td>
-<td align="center">-2.905</td>
-<td align="center">0.003675</td>
+<td align="center">3.099</td>
+<td align="center">0.4461</td>
+<td align="center">6.947</td>
+<td align="center">3.722e-12</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>(Intercept)</strong></td>
-<td align="center">-1.463</td>
-<td align="center">0.03512</td>
-<td align="center">-41.66</td>
-<td align="center">0</td>
+<td align="center">-1.166</td>
+<td align="center">0.05408</td>
+<td align="center">-21.56</td>
+<td align="center">4.026e-103</td>
 </tr>
 </tbody>
 </table>
@@ -496,7 +457,7 @@ joined &lt;- join_scores(model.logistic.abs$fitted.values, model.logistic.lor$fi
 msmdat &lt;- mmdata(joined, as.numeric(variant.pass.interest$Imbalance == &#39;Imbalanced&#39;), modnames = c(&#39;f1&#39;, &#39;f2&#39;))
 mscurves &lt;- evalmod(msmdat)
 plot(mscurves)</code></pre>
-<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-159-1.png" width="672" /></p>
+<p><img src="type1_allelic_imbalance_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <pre class="r"><code>pander(auc(mscurves))</code></pre>
 <table style="width:53%;">
 <colgroup>
@@ -518,25 +479,25 @@ plot(mscurves)</code></pre>
 <td align="center">f1</td>
 <td align="center">1</td>
 <td align="center">ROC</td>
-<td align="center">0.6291</td>
+<td align="center">0.58</td>
 </tr>
 <tr class="even">
 <td align="center">f1</td>
 <td align="center">1</td>
 <td align="center">PRC</td>
-<td align="center">0.302</td>
+<td align="center">0.3507</td>
 </tr>
 <tr class="odd">
 <td align="center">f2</td>
 <td align="center">1</td>
 <td align="center">ROC</td>
-<td align="center">0.5956</td>
+<td align="center">0.5636</td>
 </tr>
 <tr class="even">
 <td align="center">f2</td>
 <td align="center">1</td>
 <td align="center">PRC</td>
-<td align="center">0.2703</td>
+<td align="center">0.3586</td>
 </tr>
 </tbody>
 </table>
