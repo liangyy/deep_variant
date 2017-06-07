@@ -153,7 +153,7 @@ performance:
 #
 rule rmd:
     output:
-        'report/{data}.Rmd'
+        temp('report/{data}.Rmd')
     params:
         name = lambda wildcards: wildcards.data,
         model = config['model']['name'],
@@ -230,11 +230,8 @@ ggplot(variant) + geom_point(aes(x = Alt, y = Ref, color = log10(Odds.Ratio))) +
 ## Observed Log Odds Ratio vs. Predicted Log Odds Ratio
 
 ```{{r}}
-logodds <- function(x){{
-    return(log(x) - log(1-x))
-}}
 variant$Log10.Odds.Ratio.Observed <- log10(variant$Odds.Ratio)
-variant$Log10.Odds.Ratio.Predicted <- logodds(variant$Ref) - logodds(variant$Alt)
+variant$Log10.Odds.Ratio.Predicted <- logit(variant$Ref) - logit(variant$Alt)
 model.linear = lm(Log10.Odds.Ratio.Observed ~ 0 + Log10.Odds.Ratio.Predicted, data = variant)
 ggplot(variant, aes(x = Log10.Odds.Ratio.Predicted, y = Log10.Odds.Ratio.Observed)) + geom_point(aes(color = Imbalance)) + geom_smooth(method='lm',formula=y~0+x) + annotate("text", x = 0.4, y = -1, label = lm_eqn(model.linear), parse = TRUE) + ggtitle('Observed Log Odds Ratio vs
  Predicted Log Odds Ratio')
