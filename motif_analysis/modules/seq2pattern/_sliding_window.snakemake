@@ -197,4 +197,23 @@ rule report_slide_gen_html:
         'report/{model}/{{dataname}}.{{data}}_sliding_window.html'.format(model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
-# do something
+
+rule extract_signal:
+    input:
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_{mode}.feather'
+    output:
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{mode}.txt'
+    shell:
+        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --mode={mode} --quantile=0.0001'
+
+rule signal2seq:
+    input:
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{mode}.txt',
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{mode}.hdf5'
+    output:
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{mode}.gz'
+    params:
+        mask_size = config['sliding_window']['mask_size']
+    shell:
+        'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
+        --out {output[0]} --mask_size {params.mask_size}'
