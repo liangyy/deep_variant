@@ -153,7 +153,7 @@ performance:
 #
 rule rmd:
     output:
-        temp('report/{data}.Rmd')
+        temp('report/{data}.main.Rmd')
     params:
         name = lambda wildcards: wildcards.data,
         model = config['model']['name'],
@@ -272,8 +272,8 @@ pander(auc(mscurves))
 
 rule report:
     input:
-        'report/{data}.Rmd'
+        'report/{data}.main.Rmd'
     output:
-        'report/{data}.html'
+        'report/{data}.main.html'
     shell:
         '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
