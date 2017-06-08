@@ -27,7 +27,9 @@ See the aligned data avaiable at [here](https://github.com/liangyy/deep_variant/
 * [Hcf](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHcfAln.html), [Hcf_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHcfAln.allele_freq.html)
 * [Hmvecdblad](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHmvecdbladAln.html), [Hmvecdblad_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHmvecdbladAln.allele_freq.html)
 
+* [Hee](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHeeAln.main.html), [Hee_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfHeeAln.allele_freq.html)
+
+* [Skmc](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfSkmcAln.main.html), [Skmc_preprocess](https://rawgit.com/liangyy/deep_variant/code/deepsea_allelic_imbalance/report/wgEncodeUwDgfSkmcAln.allele_freq.html)
+
 # Ongoing
 
-* Hee
-* Skmc
