@@ -1,10 +1,10 @@
 import argparse
 parser = argparse.ArgumentParser(prog='signal2seq.py', description='''
-	Take the output of sliding_window_signal2region.R, extract sequence
+    Take the output of sliding_window_signal2region.R, extract sequence
     accordingly (merge or not merge the selected overlaping sequences)
     and save as FASTA format (name with seq_id-start_pos-end_pos)
 
-	The size of the extracted window should also be specified
+    The size of the extracted window should also be specified
 ''')
 parser.add_argument('--position')
 parser.add_argument('--sequence')
@@ -32,7 +32,7 @@ name = list(x_new.keys())[0]
 sequence = x_new[name][()]
 x_new.close()
 
-num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
+num_of_seq_per_seq = my_python.numSeqPerSeq(sequence.shape[1], args.mask_size)
 
 seq_out = []
 start_out = []
@@ -49,17 +49,17 @@ if args.merge == 1:
             if end - pos >= args.mask_size / 2 and seq == seq_memory:
                 end = pos + args.mask_size
             else:
-				if args.window_size:
-					if end - start + 1 > args.window_size:
-						pass
-					else:
-						delta = args.window_size - (end - start + 1) / 2
-						start = start - delta
-						end = end + delta
+                if args.window_size:
+                    if end - start + 1 > args.window_size:
+                        pass
+                    else:
+                        delta = (args.window_size - (end - start)) / 2
+                        start = start - delta
+                        end = end + delta
                 seq_out.append(seq_memory)
                 start_out.append(start)
                 end_out.append(end)
-                extracted = sequence[seq_memory * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+                extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
                 ex_seq = ''
                 for j in range(extracted.shape[0]):
                     num = extracted[j,:].argmax()
@@ -69,17 +69,17 @@ if args.merge == 1:
                 seq_memory = seq
                 char_out.append(ex_seq)
         else:
-			if args.window_size:
-				if end - start + 1 > args.window_size:
-					pass
-				else:
-					delta = args.window_size - (end - start + 1) / 2
-					start = start - delta
-					end = end + delta
+            if args.window_size:
+                if end - start + 1 > args.window_size:
+                    pass
+                else:
+                    delta = (args.window_size - (end - start)) / 2
+                    start = start - delta
+                    end = end + delta
             seq_out.append(seq_memory)
             start_out.append(start)
             end_out.append(end)
-            extracted = sequence[seq_memory * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+            extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
             ex_seq = ''
             for j in range(extracted.shape[0]):
                 num = extracted[j,:].argmax()
@@ -91,14 +91,14 @@ elif args.merge != 1:
         pos = position[i][col_dic['pos_id']]
         start = pos
         end = pos + args.mask_size
-		if args.window_size:
-			if end - start + 1 > args.window_size:
-				pass
-			else:
-				delta = args.window_size - (end - start + 1) / 2
-				start = start - delta
-				end = end + delta
-        extracted = sequence[seq * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+        if args.window_size:
+            if end - start + 1 > args.window_size:
+                pass
+            else:
+                delta = (args.window_size - (end - start)) / 2
+                start = start - delta
+                end = end + delta
+        extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
         ex_seq = ''
         for j in range(extracted.shape[0]):
             num = extracted[j,:].argmax()
@@ -107,11 +107,11 @@ elif args.merge != 1:
         start_out.append(start)
         end_out.append(end)
         char_out.append(ex_seq)
-names = [ '-'.join([ str(j) for j in i]) for i in zip(start_out, end_out, seq_out) ]
+names = [ '-'.join([ str(int(j)) for j in i]) for i in zip(seq_out, start_out, end_out) ]
 o = open(args.out, 'w')
 for i in range(len(names)):
-	o.write('> {name}\n'.format(name=names[i]))
-	o.write(char_out[i] + '\n')
+    o.write('> {name}\n'.format(name=names[i]))
+    o.write(char_out[i] + '\n')
 o.close()
 # total_table = pd.DataFrame({ 'seq_id': seq_out, 'start_pos': start_out, 'end_pos': end_out, 'sequence': char_out})
 # total_table.to_csv(args.out, compression='gzip', sep='\t', index=False)
