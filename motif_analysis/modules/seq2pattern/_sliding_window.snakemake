@@ -211,7 +211,7 @@ rule signal2seq:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.txt'.format(model=config['model']['name']),
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.hdf5'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.gz'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.fa'.format(model=config['model']['name'])
     params:
         mask_size = config['method']['sliding_window']['mask_size']
     shell:
