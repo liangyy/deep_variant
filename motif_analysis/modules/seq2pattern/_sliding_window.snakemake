@@ -217,4 +217,4 @@ rule signal2seq:
         window_size = config['method']['sliding_window']['window_size']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {params.mask_size} --window_size {params.window_size}'
+        --out {output[0]} --mask_size {params.mask_size} --window_size {params.window_size} --merge 1'
