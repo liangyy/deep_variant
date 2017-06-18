@@ -54,8 +54,8 @@ if args.merge == 1:
                         pass
                     else:
                         delta = (args.window_size - (end - start)) / 2
-                        start = start - delta
-                        end = end + delta
+                        start = max(1, start - delta)
+						end = min(end + delta, sequence.shape[1] + 1)
                 seq_out.append(seq_memory)
                 start_out.append(start)
                 end_out.append(end)
@@ -74,8 +74,8 @@ if args.merge == 1:
                     pass
                 else:
                     delta = (args.window_size - (end - start)) / 2
-                    start = start - delta
-                    end = end + delta
+                    start = max(1, start - delta)
+					end = min(end + delta, sequence.shape[1] + 1)
             seq_out.append(seq_memory)
             start_out.append(start)
             end_out.append(end)
@@ -96,8 +96,8 @@ elif args.merge != 1:
                 pass
             else:
                 delta = (args.window_size - (end - start)) / 2
-                start = start - delta
-                end = end + delta
+                start = max(1, start - delta)
+				end = min(end + delta, sequence.shape[1] + 1)
         extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
         ex_seq = ''
         for j in range(extracted.shape[0]):
@@ -110,7 +110,7 @@ elif args.merge != 1:
 names = [ '-'.join([ str(int(j)) for j in i]) for i in zip(seq_out, start_out, end_out) ]
 o = open(args.out, 'w')
 for i in range(len(names)):
-    o.write('> {name}\n'.format(name=names[i]))
+    o.write('>{name}\n'.format(name=names[i]))
     o.write(char_out[i] + '\n')
 o.close()
 # total_table = pd.DataFrame({ 'seq_id': seq_out, 'start_pos': start_out, 'end_pos': end_out, 'sequence': char_out})
