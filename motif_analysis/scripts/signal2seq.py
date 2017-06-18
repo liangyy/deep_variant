@@ -29,7 +29,7 @@ name = list(x_new.keys())[0]
 sequence = x_new[name][()]
 x_new.close()
 
-num_of_seq_per_seq = my_python.numSeqPerSeq(x_new.shape[1], args.mask_size)
+num_of_seq_per_seq = my_python.numSeqPerSeq(sequence.shape[1], args.mask_size)
 
 seq_out = []
 start_out = []
@@ -49,7 +49,7 @@ if args.merge == 1:
                 seq_out.append(seq_memory)
                 start_out.append(start)
                 end_out.append(end)
-                extracted = sequence[seq_memory * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+                extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
                 ex_seq = ''
                 for j in range(extracted.shape[0]):
                     num = extracted[j,:].argmax()
@@ -62,7 +62,7 @@ if args.merge == 1:
             seq_out.append(seq_memory)
             start_out.append(start)
             end_out.append(end)
-            extracted = sequence[seq_memory * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+            extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
             ex_seq = ''
             for j in range(extracted.shape[0]):
                 num = extracted[j,:].argmax()
@@ -74,7 +74,7 @@ elif args.merge != 1:
         pos = position[i][col_dic['pos_id']]
         start = pos
         end = pos + args.mask_size
-        extracted = sequence[seq * num_of_seq_per_seq - 1][start - 1 : end - 1, :]
+        extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
         ex_seq = ''
         for j in range(extracted.shape[0]):
             num = extracted[j,:].argmax()
