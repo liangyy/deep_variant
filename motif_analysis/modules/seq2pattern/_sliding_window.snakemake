@@ -213,7 +213,8 @@ rule signal2seq:
     output:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.fa'.format(model=config['model']['name'])
     params:
-        mask_size = config['method']['sliding_window']['mask_size']
+        mask_size = config['method']['sliding_window']['mask_size'],
+        window_size = config['method']['sliding_window']['window_size']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {params.mask_size}'
+        --out {output[0]} --mask_size {params.mask_size} --window_size {params.window_size}'
