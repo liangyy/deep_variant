@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yanyu Liang" />
+
+
+<title>Deep brain - Motif Analysis - Sliding Window (E081, Noonan)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Deep Variant</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Tasks</a>
+</li>
+<li>
+  <a href="analysis_list.html">Analysis</a>
+</li>
+<li>
+  <a href="memo_list.html">Technical Memo</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/deep_variant">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Deep brain - Motif Analysis - Sliding Window (E081, Noonan)</h1>
+<h4 class="author"><em>Yanyu Liang</em></h4>
+<h4 class="date"><em>19 June, 2017</em></h4>
+
+</div>
+
+
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+<div id="ame-results" class="section level1">
+<h1><span class="header-section-number">1</span> AME results</h1>
+<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: <a href="../data/AME%20results_E081.html">E081</a>, <a href="../data/AME%20results_Noonan.html">Noonan</a>.</p>
+</div>
+<div id="tf-that-involves-in-brain-function" class="section level1">
+<h1><span class="header-section-number">2</span> TF that involves in brain function</h1>
+<ul>
+<li>Noonan:
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/P19419" class="uri">http://www.uniprot.org/uniprot/P19419</a> - neuronal cell body</li>
+<li><a href="http://www.uniprot.org/uniprot/P32519" class="uri">http://www.uniprot.org/uniprot/P32519</a> - weakly expressed in fetal brain</li>
+<li><a href="http://www.uniprot.org/uniprot/Q9BQA5" class="uri">http://www.uniprot.org/uniprot/Q9BQA5</a> - Highly expressed in brain</li>
+<li><a href="http://www.uniprot.org/uniprot/P50549" class="uri">http://www.uniprot.org/uniprot/P50549</a> - Very highly expressed in brain</li>
+<li><a href="http://www.uniprot.org/uniprot/P11161" class="uri">http://www.uniprot.org/uniprot/P11161</a> - brain development (<a href="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&amp;lastVirtModeType=default&amp;lastVirtModeExtraState=&amp;virtModeType=default&amp;virtMode=0&amp;nonVirtPosition=&amp;position=chr7%3A27129663-27131955&amp;hgsid=596333013_CA2ApsQ4BfArlrAQSdBNbQTcZNZT">genome browser</a>)</li>
+<li><a href="http://www.uniprot.org/uniprot/Q02446" class="uri">http://www.uniprot.org/uniprot/Q02446</a> - Abundant in brain</li>
+</ul></li>
+<li>E081:
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/P48985" class="uri">http://www.uniprot.org/uniprot/P48985</a> - Developing nervous system, and in adult epithelial cells of the gastrointestinal tract. (in Mus musculus (Mouse))</li>
+<li><a href="http://www.uniprot.org/uniprot/Q9NVV9" class="uri">http://www.uniprot.org/uniprot/Q9NVV9</a> - Weaker expression in brain and placenta</li>
+<li><a href="http://www.uniprot.org/uniprot/P70660" class="uri">http://www.uniprot.org/uniprot/P70660</a> - Expression restricted to the embryonic nervous system. (in Mus musculus (Mouse))</li>
+<li><a href="http://www.uniprot.org/uniprot/Q7RTU3" class="uri">http://www.uniprot.org/uniprot/Q7RTU3</a> - May determine the distinct specification program of class A neurons in the dorsal part of the spinal cord and suppress specification of class B neurons.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q9H2A3" class="uri">http://www.uniprot.org/uniprot/Q9H2A3</a> - Transcriptional regulator. Involved in neuronal differentiation. Activates transcription by binding to the E box (5’-CANNTG-3’).</li>
+<li><a href="http://www.uniprot.org/uniprot/Q99592" class="uri">http://www.uniprot.org/uniprot/Q99592</a> - Transcriptional repressor that plays a role in various developmental processes such as myogenesis and brain development.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q8TAK6" class="uri">http://www.uniprot.org/uniprot/Q8TAK6</a> - Expressed in the brain, in oligodendrocytes. Strongly expressed in oligodendrogliomas, while expression is weak to moderate in astrocytomas. Expression in glioblastomas is highly variable.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q02575" class="uri">http://www.uniprot.org/uniprot/Q02575</a> - May serve as DNA-binding protein and may be involved in the control of cell-type determination, possibly within the developing nervous system.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q61286" class="uri">http://www.uniprot.org/uniprot/Q61286</a> - Abundantly expressed during development of the central nervous system, in particular in proliferating neuroblasts and in cells at the initial stages of differentiation. (in Mus musculus (Mouse))</li>
+<li><a href="http://www.uniprot.org/uniprot/P15923" class="uri">http://www.uniprot.org/uniprot/P15923</a> - Involved in the initiation of neuronal differentiation.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q15583" class="uri">http://www.uniprot.org/uniprot/Q15583</a> - Links the nodal signaling pathway to the bifurcation of the forebrain and the establishment of ventral midline structures.</li>
+<li><a href="http://www.uniprot.org/uniprot/P15806" class="uri">http://www.uniprot.org/uniprot/P15806</a> - Expressed during the development of the nervous system.</li>
+<li><a href="http://www.uniprot.org/uniprot/O14770" class="uri">http://www.uniprot.org/uniprot/O14770</a> - Isoform 3 and isoform 4 can bind to a EPHA8 promoter sequence containing the DNA motif 5’-CGGTCA-3’; in cooperation with a PBX protein (such as PBX2) is proposed to be involved in the transcriptional activation of EPHA8 in the developing midbrain.</li>
+<li><a href="http://www.uniprot.org/uniprot/O00470" class="uri">http://www.uniprot.org/uniprot/O00470</a> - Also expressed at high levels in the cerebellum.</li>
+<li><a href="http://www.uniprot.org/uniprot/O35885" class="uri">http://www.uniprot.org/uniprot/O35885</a> - AS-C proteins are involved in the determination of the neuronal precursors in the peripheral nervous system and the central nervous system.</li>
+<li><a href="http://www.uniprot.org/uniprot/P15884" class="uri">http://www.uniprot.org/uniprot/P15884</a> - Involved in the initiation of neuronal differentiation.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q96JB3" class="uri">http://www.uniprot.org/uniprot/Q96JB3</a> - Highest levels in cerebellum. Transcriptional repressor.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q15784" class="uri">http://www.uniprot.org/uniprot/Q15784</a> - Transcriptional regulator implicated in neuronal determination.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q8NDY6" class="uri">http://www.uniprot.org/uniprot/Q8NDY6</a> - May function as transcriptional repressor. May modulate the expression of genes required for the differentiation and/or maintenance of pancreatic and neuronal cell types.</li>
+<li><a href="http://www.uniprot.org/uniprot/P61244" class="uri">http://www.uniprot.org/uniprot/P61244</a> - High levels found in the brain</li>
+<li><a href="http://www.uniprot.org/uniprot/Q5TA89" class="uri">http://www.uniprot.org/uniprot/Q5TA89</a> - Plays an important role as neurogenesis negative regulator (By similarity).</li>
+<li><a href="http://www.uniprot.org/uniprot/O15178" class="uri">http://www.uniprot.org/uniprot/O15178</a> - neural plate morphogenesis, neural tube closure</li>
+<li><a href="http://www.uniprot.org/uniprot/Q13485" class="uri">http://www.uniprot.org/uniprot/Q13485</a> - neural crest cell differentiation, neuron fate commitment</li>
+<li><a href="http://www.uniprot.org/uniprot/Q8NFJ8" class="uri">http://www.uniprot.org/uniprot/Q8NFJ8</a> - Forms with PRDM8 a transcriptional repressor complex controlling genes involved in neural development and neuronal differentiation.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q15915" class="uri">http://www.uniprot.org/uniprot/Q15915</a> - Acts as a transcriptional activator. Involved in neurogenesis. Plays important roles in the early stage of organogenesis of the CNS, as well as during dorsal spinal cord development and maturation of the cerebellum.</li>
+<li><a href="http://www.uniprot.org/uniprot/Q13516" class="uri">http://www.uniprot.org/uniprot/Q13516</a> - Required for oligodendrocyte and motor neuron specification in the spinal cord, as well as for the development of somatic motor neurons in the hindbrain.</li>
+<li><a href="http://www.uniprot.org/uniprot/O43889" class="uri">http://www.uniprot.org/uniprot/O43889</a> - neuronal cell body</li>
+<li><a href="http://www.uniprot.org/uniprot/P03966" class="uri">http://www.uniprot.org/uniprot/P03966</a> - Expressed in the proliferating cells of the developing CNS and the epidermis.</li>
+<li><a href="http://www.uniprot.org/uniprot/P61244" class="uri">http://www.uniprot.org/uniprot/P61244</a> - neuron apoptotic process</li>
+</ul></li>
+<li>Both:
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/P41212" class="uri">http://www.uniprot.org/uniprot/P41212</a> - neurogenesis</li>
+<li><a href="http://www.uniprot.org/uniprot/Q99581" class="uri">http://www.uniprot.org/uniprot/Q99581</a> - In brain, exclusively expressed in the major serotonergic neurons of the dorsal and median raphe nuclei located in the midbrain and pons</li>
+<li><a href="http://www.uniprot.org/uniprot/P40763" class="uri">http://www.uniprot.org/uniprot/P40763</a> - brain, nervous system development</li>
+</ul></li>
+</ul>
+</div>
+<div id="go-term-analysis-of-hitted-tf" class="section level1">
+<h1><span class="header-section-number">3</span> GO term analysis of hitted TF</h1>
+<p>Here JASPAR TFs is selected as the background protein list.</p>
+<pre class="r"><code>clean_gene_name &lt;- function(x){
+    e &lt;- strsplit(x, &#39;::&#39;)
+    re &lt;- c()
+    for(i in e){
+        i &lt;- strsplit(i, &#39;(&#39;, fixed = T)[[1]]
+        re &lt;- c(re, i[1])
+    }
+    return(re)
+}
+go_term_bp &lt;- function(gene_cleaned, back_cleaned){
+    ensembl = useMart(biomart = &quot;ENSEMBL_MART_ENSEMBL&quot;,dataset=&quot;hsapiens_gene_ensembl&quot;, host = &quot;jul2015.archive.ensembl.org&quot;)
+    goids = getBM(attributes = c(&#39;hgnc_symbol&#39;, &#39;go_id&#39;), 
+                  filters = &#39;hgnc_symbol&#39;, 
+                  values = back_cleaned, 
+                  mart = ensembl)
+    gene2GO &lt;- lapply(split(goids, goids[&#39;hgnc_symbol&#39;]), function(x){x[, 2]})
+    gene_list_analysis &lt;- factor(as.integer(back_cleaned %in% gene_cleaned))
+    names(gene_list_analysis) &lt;- back_cleaned
+    myGOdata &lt;- new(&quot;topGOdata&quot;, description=&quot;Important Sequences in Sliding Window Analysis Mapped to TF Genes&quot;, ontology=&quot;BP&quot;, allGenes=gene_list_analysis,  annot = annFUN.gene2GO, gene2GO = gene2GO)
+    resultFisher &lt;- runTest(myGOdata, algorithm=&quot;classic&quot;, statistic=&quot;fisher&quot;) 
+    allRes &lt;- GenTable(myGOdata, classicFisher = resultFisher, orderBy = &quot;resultFisher&quot;, ranksOf = &quot;classicFisher&quot;, topNodes = 50)
+    return(allRes)
+    
+}
+e081 &lt;- read.table(&#39;../data/ame_E081.txt&#39;, sep = &#39; &#39;, skip = 13)
+e081.gene &lt;- e081$V7
+e081.gene_cleaned &lt;- apply(as.matrix(e081.gene, ncol=1), 1, clean_gene_name)
+noonan &lt;- read.table(&#39;../data/ame_Noonan.txt&#39;, sep = &#39; &#39;, skip = 13)
+noonan.gene &lt;- noonan$V7
+noonan.gene_cleaned &lt;- apply(as.matrix(noonan.gene, ncol=1), 1, clean_gene_name)
+background &lt;- read.table(&#39;../data/background_jaspar_gene.txt&#39;)
+background.cleaned &lt;- apply(background, 1, clean_gene_name)
+library(topGO)
+library(biomaRt)
+e081.allRes &lt;- go_term_bp(e081.gene_cleaned, background.cleaned)</code></pre>
+<pre><code>## 
+## Building most specific GOs .....</code></pre>
+<pre><code>##  ( 2185 GO terms found. )</code></pre>
+<pre><code>## 
+## Build GO DAG topology ..........</code></pre>
+<pre><code>##  ( 4797 GO terms and 11281 relations. )</code></pre>
+<pre><code>## 
+## Annotating nodes ...............</code></pre>
+<pre><code>##  ( 369 genes annotated to the GO terms. )</code></pre>
+<pre><code>## 
+##           -- Classic Algorithm -- 
+## 
+##       the algorithm is scoring 1811 nontrivial nodes
+##       parameters: 
+##           test statistic: fisher</code></pre>
+<pre class="r"><code>noonan.allRes &lt;- go_term_bp(noonan.gene_cleaned, background.cleaned)</code></pre>
+<pre><code>## 
+## Building most specific GOs .....</code></pre>
+<pre><code>##  ( 2185 GO terms found. )</code></pre>
+<pre><code>## 
+## Build GO DAG topology ..........</code></pre>
+<pre><code>##  ( 4797 GO terms and 11281 relations. )</code></pre>
+<pre><code>## 
+## Annotating nodes ...............</code></pre>
+<pre><code>##  ( 369 genes annotated to the GO terms. )</code></pre>
+<pre><code>## 
+##           -- Classic Algorithm -- 
+## 
+##       the algorithm is scoring 1212 nontrivial nodes
+##       parameters: 
+##           test statistic: fisher</code></pre>
+<div id="e081" class="section level2">
+<h2><span class="header-section-number">3.1</span> E081</h2>
+<pre class="r"><code>e081.allRes</code></pre>
+<pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
+## 1  GO:0019722                  calcium-mediated signaling         5           4     0.81        0.0028
+## 2  GO:0014904                    myotube cell development         3           3     0.49        0.0041
+## 3  GO:0048708                   astrocyte differentiation         9           5     1.46        0.0072
+## 4  GO:0006357 regulation of transcription from RNA pol...       303          56    49.20        0.0141
+## 5  GO:0033173          calcineurin-NFAT signaling cascade         4           3     0.65        0.0145
+## 6  GO:0048016       inositol phosphate-mediated signaling         4           3     0.65        0.0145
+## 7  GO:0097720              calcineurin-mediated signaling         4           3     0.65        0.0145
+## 8  GO:0019932         second-messenger-mediated signaling         7           4     1.14        0.0152
+## 9  GO:0009890 negative regulation of biosynthetic proc...       171          36    27.77        0.0162
+## 10 GO:0010558 negative regulation of macromolecule bio...       171          36    27.77        0.0162
+## 11 GO:0031327 negative regulation of cellular biosynth...       171          36    27.77        0.0162
+## 12 GO:0045934 negative regulation of nucleobase-contai...       171          36    27.77        0.0162
+## 13 GO:0051172 negative regulation of nitrogen compound...       171          36    27.77        0.0162
+## 14 GO:0051253 negative regulation of RNA metabolic pro...       171          36    27.77        0.0162
+## 15 GO:1902679 negative regulation of RNA biosynthetic ...       171          36    27.77        0.0162
+## 16 GO:1903507 negative regulation of nucleic acid-temp...       171          36    27.77        0.0162
+## 17 GO:0031324 negative regulation of cellular metaboli...       172          36    27.93        0.0182
+## 18 GO:0000082       G1/S transition of mitotic cell cycle        11           5     1.79        0.0203
+## 19 GO:0044843            cell cycle G1/S phase transition        11           5     1.79        0.0203
+## 20 GO:0009892    negative regulation of metabolic process       175          36    28.41        0.0252
+## 21 GO:0010605 negative regulation of macromolecule met...       175          36    28.41        0.0252
+## 22 GO:0048519 negative regulation of biological proces...       219          43    35.56        0.0260
+## 23 GO:0000429 carbon catabolite regulation of transcri...         2           2     0.32        0.0260
+## 24 GO:0000430 regulation of transcription from RNA pol...         2           2     0.32        0.0260
+## 25 GO:0000432 positive regulation of transcription fro...         2           2     0.32        0.0260
+## 26 GO:0000436 carbon catabolite activation of transcri...         2           2     0.32        0.0260
+## 27 GO:0006816                       calcium ion transport         2           2     0.32        0.0260
+## 28 GO:0007520                             myoblast fusion         2           2     0.32        0.0260
+## 29 GO:0019086                    late viral transcription         2           2     0.32        0.0260
+## 30 GO:0048710     regulation of astrocyte differentiation         2           2     0.32        0.0260
+## 31 GO:0048712 negative regulation of astrocyte differe...         2           2     0.32        0.0260
+## 32 GO:0048715 negative regulation of oligodendrocyte d...         2           2     0.32        0.0260
+## 33 GO:0048741           skeletal muscle fiber development         2           2     0.32        0.0260
+## 34 GO:0051924         regulation of calcium ion transport         2           2     0.32        0.0260
+## 35 GO:0060074                          synapse maturation         2           2     0.32        0.0260
+## 36 GO:0070838                divalent metal ion transport         2           2     0.32        0.0260
+## 37 GO:0071157    negative regulation of cell cycle arrest         2           2     0.32        0.0260
+## 38 GO:0072511         divalent inorganic cation transport         2           2     0.32        0.0260
+## 39 GO:1901739               regulation of myoblast fusion         2           2     0.32        0.0260
+## 40 GO:1901741      positive regulation of myoblast fusion         2           2     0.32        0.0260
+## 41 GO:0006260                             DNA replication         8           4     1.30        0.0266
+## 42 GO:0000083 regulation of transcription involved in ...         5           3     0.81        0.0321
+## 43 GO:0032924          activin receptor signaling pathway         5           3     0.81        0.0321
+## 44 GO:0038092                     nodal signaling pathway         5           3     0.81        0.0321
+## 45 GO:0051302                 regulation of cell division         5           3     0.81        0.0321
+## 46 GO:0048523     negative regulation of cellular process       215          42    34.91        0.0331
+## 47 GO:0045666 positive regulation of neuron differenti...        17           6     2.76        0.0413
+## 48 GO:0019058                            viral life cycle         9           4     1.46        0.0421
+## 49 GO:0055088                           lipid homeostasis         9           4     1.46        0.0421
+## 50 GO:0006366 transcription from RNA polymerase II pro...       313          56    50.82        0.0463</code></pre>
+</div>
+<div id="noonan" class="section level2">
+<h2><span class="header-section-number">3.2</span> Noonan</h2>
+<pre class="r"><code>noonan.allRes</code></pre>
+<pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
+## 1  GO:0033173          calcineurin-NFAT signaling cascade         4           3     0.34        0.0021
+## 2  GO:0034698                    response to gonadotropin         4           3     0.34        0.0021
+## 3  GO:0048016       inositol phosphate-mediated signaling         4           3     0.34        0.0021
+## 4  GO:0071320                   cellular response to cAMP         4           3     0.34        0.0021
+## 5  GO:0071371 cellular response to gonadotropin stimul...         4           3     0.34        0.0021
+## 6  GO:0097720              calcineurin-mediated signaling         4           3     0.34        0.0021
+## 7  GO:0030154                        cell differentiation       243          28    20.67        0.0035
+## 8  GO:0048869              cellular developmental process       246          28    20.92        0.0046
+## 9  GO:0000083 regulation of transcription involved in ...         5           3     0.43        0.0050
+## 10 GO:0019722                  calcium-mediated signaling         5           3     0.43        0.0050
+## 11 GO:0002429 immune response-activating cell surface ...        10           4     0.85        0.0064
+## 12 GO:0007268              chemical synaptic transmission        10           4     0.85        0.0064
+## 13 GO:0098916        anterograde trans-synaptic signaling        10           4     0.85        0.0064
+## 14 GO:0099536                          synaptic signaling        10           4     0.85        0.0064
+## 15 GO:0099537                    trans-synaptic signaling        10           4     0.85        0.0064
+## 16 GO:0007274         neuromuscular synaptic transmission         2           2     0.17        0.0070
+## 17 GO:0048168 regulation of neuronal synaptic plastici...         2           2     0.17        0.0070
+## 18 GO:0060396 growth hormone receptor signaling pathwa...         2           2     0.17        0.0070
+## 19 GO:0060397 JAK-STAT cascade involved in growth horm...         2           2     0.17        0.0070
+## 20 GO:0060416                  response to growth hormone         2           2     0.17        0.0070
+## 21 GO:0060762 regulation of branching involved in mamm...         2           2     0.17        0.0070
+## 22 GO:0071378 cellular response to growth hormone stim...         2           2     0.17        0.0070
+## 23 GO:0071480        cellular response to gamma radiation         2           2     0.17        0.0070
+## 24 GO:0072203 cell proliferation involved in metanephr...         2           2     0.17        0.0070
+## 25 GO:0002220 innate immune response activating cell s...         6           3     0.51        0.0094
+## 26 GO:0002223 stimulatory C-type lectin receptor signa...         6           3     0.51        0.0094
+## 27 GO:0002253               activation of immune response        17           5     1.45        0.0097
+## 28 GO:0002757 immune response-activating signal transd...        17           5     1.45        0.0097
+## 29 GO:0045088        regulation of innate immune response        17           5     1.45        0.0097
+## 30 GO:0006357 regulation of transcription from RNA pol...       303          31    25.77        0.0119
+## 31 GO:0019932         second-messenger-mediated signaling         7           3     0.60        0.0155
+## 32 GO:0045087                      innate immune response        26           6     2.21        0.0159
+## 33 GO:0050776               regulation of immune response        26           6     2.21        0.0159
+## 34 GO:0002764 immune response-regulating signaling pat...        19           5     1.62        0.0160
+## 35 GO:0046683                response to organophosphorus        13           4     1.11        0.0180
+## 36 GO:0051591                            response to cAMP        13           4     1.11        0.0180
+## 37 GO:0007259                            JAK-STAT cascade         3           2     0.26        0.0200
+## 38 GO:0014904                    myotube cell development         3           2     0.26        0.0200
+## 39 GO:0016925                         protein sumoylation         3           2     0.26        0.0200
+## 40 GO:0072111 cell proliferation involved in kidney de...         3           2     0.26        0.0200
+## 41 GO:0072215       regulation of metanephros development         3           2     0.26        0.0200
+## 42 GO:0097696                                STAT cascade         3           2     0.26        0.0200
+## 43 GO:0050778      positive regulation of immune response        20           5     1.70        0.0200
+## 44 GO:0071417 cellular response to organonitrogen comp...        20           5     1.70        0.0200
+## 45 GO:0006952                            defense response        44           8     3.74        0.0224
+## 46 GO:0044763            single-organism cellular process       295          30    25.09        0.0231
+## 47 GO:0002218        activation of innate immune response        14           4     1.19        0.0237
+## 48 GO:0002758 innate immune response-activating signal...        14           4     1.19        0.0237
+## 49 GO:0003013                  circulatory system process        14           4     1.19        0.0237
+## 50 GO:0008015                           blood circulation        14           4     1.19        0.0237</code></pre>
+</div>
+<div id="summary" class="section level2">
+<h2><span class="header-section-number">3.3</span> Summary</h2>
+<p>E081 hits in enriched in neuron development process but there is no brain related function enriched in Noonan hits.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

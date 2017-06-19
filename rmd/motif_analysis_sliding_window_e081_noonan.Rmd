@@ -1,0 +1,128 @@
+---
+title: "Deep brain - Motif Analysis - Sliding Window (E081, Noonan)"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+    
+<style>
+pre code, pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important;
+    word-break: keep-all !important;
+    word-wrap: initial !important;
+}
+</style>
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# AME results
+
+[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: [E081](../data/AME results_E081.html), [Noonan](../data/AME results_Noonan.html).
+
+# TF that involves in brain function
+
+* Noonan:
+    - http://www.uniprot.org/uniprot/P19419 - neuronal cell body
+    - http://www.uniprot.org/uniprot/P32519 - weakly expressed in fetal brain
+    - http://www.uniprot.org/uniprot/Q9BQA5 - Highly expressed in brain
+    - http://www.uniprot.org/uniprot/P50549 - Very highly expressed in brain
+    - http://www.uniprot.org/uniprot/P11161 - brain development ([genome browser](https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&lastVirtModeType=default&lastVirtModeExtraState=&virtModeType=default&virtMode=0&nonVirtPosition=&position=chr7%3A27129663-27131955&hgsid=596333013_CA2ApsQ4BfArlrAQSdBNbQTcZNZT))
+    - http://www.uniprot.org/uniprot/Q02446 - Abundant in brain
+
+* E081:
+    - http://www.uniprot.org/uniprot/P48985 - Developing nervous system, and in adult epithelial cells of the gastrointestinal tract. (in Mus musculus (Mouse))
+    - http://www.uniprot.org/uniprot/Q9NVV9 - Weaker expression in brain and placenta
+    - http://www.uniprot.org/uniprot/P70660 - Expression restricted to the embryonic nervous system. (in Mus musculus (Mouse))
+    - http://www.uniprot.org/uniprot/Q7RTU3 - May determine the distinct specification program of class A neurons in the dorsal part of the spinal cord and suppress specification of class B neurons.
+    - http://www.uniprot.org/uniprot/Q9H2A3 - Transcriptional regulator. Involved in neuronal differentiation. Activates transcription by binding to the E box (5'-CANNTG-3').
+    - http://www.uniprot.org/uniprot/Q99592 - Transcriptional repressor that plays a role in various developmental processes such as myogenesis and brain development.
+    - http://www.uniprot.org/uniprot/Q8TAK6 - Expressed in the brain, in oligodendrocytes. Strongly expressed in oligodendrogliomas, while expression is weak to moderate in astrocytomas. Expression in glioblastomas is highly variable.
+    - http://www.uniprot.org/uniprot/Q02575 - May serve as DNA-binding protein and may be involved in the control of cell-type determination, possibly within the developing nervous system.
+    - http://www.uniprot.org/uniprot/Q61286 - Abundantly expressed during development of the central nervous system, in particular in proliferating neuroblasts and in cells at the initial stages of differentiation. (in Mus musculus (Mouse))
+    - http://www.uniprot.org/uniprot/P15923 - Involved in the initiation of neuronal differentiation.
+    - http://www.uniprot.org/uniprot/Q15583 - Links the nodal signaling pathway to the bifurcation of the forebrain and the establishment of ventral midline structures.
+    - http://www.uniprot.org/uniprot/P15806 - Expressed during the development of the nervous system.
+    - http://www.uniprot.org/uniprot/O14770 - Isoform 3 and isoform 4 can bind to a EPHA8 promoter sequence containing the DNA motif 5'-CGGTCA-3'; in cooperation with a PBX protein (such as PBX2) is proposed to be involved in the transcriptional activation of EPHA8 in the developing midbrain.
+    - http://www.uniprot.org/uniprot/O00470 - Also expressed at high levels in the cerebellum.
+    - http://www.uniprot.org/uniprot/O35885 - AS-C proteins are involved in the determination of the neuronal precursors in the peripheral nervous system and the central nervous system.
+    - http://www.uniprot.org/uniprot/P15884 - Involved in the initiation of neuronal differentiation.
+    - http://www.uniprot.org/uniprot/Q96JB3 - Highest levels in cerebellum. Transcriptional repressor.
+    - http://www.uniprot.org/uniprot/Q15784 - Transcriptional regulator implicated in neuronal determination. 
+    - http://www.uniprot.org/uniprot/Q8NDY6 - May function as transcriptional repressor. May modulate the expression of genes required for the differentiation and/or maintenance of pancreatic and neuronal cell types.
+    - http://www.uniprot.org/uniprot/P61244 - High levels found in the brain 
+    - http://www.uniprot.org/uniprot/Q5TA89 - Plays an important role as neurogenesis negative regulator (By similarity).
+    - http://www.uniprot.org/uniprot/O15178 - neural plate morphogenesis, neural tube closure
+    - http://www.uniprot.org/uniprot/Q13485 - neural crest cell differentiation, neuron fate commitment
+    - http://www.uniprot.org/uniprot/Q8NFJ8 - Forms with PRDM8 a transcriptional repressor complex controlling genes involved in neural development and neuronal differentiation.
+    - http://www.uniprot.org/uniprot/Q15915 - Acts as a transcriptional activator. Involved in neurogenesis. Plays important roles in the early stage of organogenesis of the CNS, as well as during dorsal spinal cord development and maturation of the cerebellum.
+    - http://www.uniprot.org/uniprot/Q13516 - Required for oligodendrocyte and motor neuron specification in the spinal cord, as well as for the development of somatic motor neurons in the hindbrain.
+    - http://www.uniprot.org/uniprot/O43889 - neuronal cell body
+    - http://www.uniprot.org/uniprot/P03966 - Expressed in the proliferating cells of the developing CNS and the epidermis.
+    - http://www.uniprot.org/uniprot/P61244 - neuron apoptotic process
+    
+* Both:
+    - http://www.uniprot.org/uniprot/P41212 - neurogenesis
+    - http://www.uniprot.org/uniprot/Q99581 - In brain, exclusively expressed in the major serotonergic neurons of the dorsal and median raphe nuclei located in the midbrain and pons
+    - http://www.uniprot.org/uniprot/P40763 - brain, nervous system development
+
+# GO term analysis of hitted TF
+
+Here JASPAR TFs is selected as the background protein list.
+
+```{r}
+clean_gene_name <- function(x){
+    e <- strsplit(x, '::')
+    re <- c()
+    for(i in e){
+        i <- strsplit(i, '(', fixed = T)[[1]]
+        re <- c(re, i[1])
+    }
+    return(re)
+}
+go_term_bp <- function(gene_cleaned, back_cleaned){
+    ensembl = useMart(biomart = "ENSEMBL_MART_ENSEMBL",dataset="hsapiens_gene_ensembl", host = "jul2015.archive.ensembl.org")
+    goids = getBM(attributes = c('hgnc_symbol', 'go_id'), 
+                  filters = 'hgnc_symbol', 
+                  values = back_cleaned, 
+                  mart = ensembl)
+    gene2GO <- lapply(split(goids, goids['hgnc_symbol']), function(x){x[, 2]})
+    gene_list_analysis <- factor(as.integer(back_cleaned %in% gene_cleaned))
+    names(gene_list_analysis) <- back_cleaned
+    myGOdata <- new("topGOdata", description="Important Sequences in Sliding Window Analysis Mapped to TF Genes", ontology="BP", allGenes=gene_list_analysis,  annot = annFUN.gene2GO, gene2GO = gene2GO)
+    resultFisher <- runTest(myGOdata, algorithm="classic", statistic="fisher") 
+    allRes <- GenTable(myGOdata, classicFisher = resultFisher, orderBy = "resultFisher", ranksOf = "classicFisher", topNodes = 50)
+    return(allRes)
+    
+}
+e081 <- read.table('../data/ame_E081.txt', sep = ' ', skip = 13)
+e081.gene <- e081$V7
+e081.gene_cleaned <- apply(as.matrix(e081.gene, ncol=1), 1, clean_gene_name)
+noonan <- read.table('../data/ame_Noonan.txt', sep = ' ', skip = 13)
+noonan.gene <- noonan$V7
+noonan.gene_cleaned <- apply(as.matrix(noonan.gene, ncol=1), 1, clean_gene_name)
+background <- read.table('../data/background_jaspar_gene.txt')
+background.cleaned <- apply(background, 1, clean_gene_name)
+library(topGO)
+library(biomaRt)
+e081.allRes <- go_term_bp(e081.gene_cleaned, background.cleaned)
+noonan.allRes <- go_term_bp(noonan.gene_cleaned, background.cleaned)
+```
+
+## E081
+
+```{r}
+e081.allRes
+```
+
+## Noonan
+
+```{r}
+noonan.allRes
+```
+
+## Summary
+
+E081 hits in enriched in neuron development process but there is no brain related function enriched in Noonan hits.
