@@ -20,7 +20,7 @@ options(width=2000)
 
 # AME results
 
-[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: [E081](../data/AME results_E081.html), [Noonan](../data/AME results_Noonan.html).
+[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: [E081](AME_results_E081.html), [Noonan](AME_results_Noonan.html).
 
 # TF that involves in brain function
 

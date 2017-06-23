@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Motif Analysis - Sliding Window (E081, Noonan)</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>19 June, 2017</em></h4>
+<h4 class="date"><em>22 June, 2017</em></h4>
 
 </div>
 
@@ -318,7 +318,7 @@ pre code, pre, code {
 </style>
 <div id="ame-results" class="section level1">
 <h1><span class="header-section-number">1</span> AME results</h1>
-<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: <a href="../data/AME%20results_E081.html">E081</a>, <a href="../data/AME%20results_Noonan.html">Noonan</a>.</p>
+<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: <a href="AME_results_E081.html">E081</a>, <a href="AME_results_Noonan.html">Noonan</a>.</p>
 </div>
 <div id="tf-that-involves-in-brain-function" class="section level1">
 <h1><span class="header-section-number">2</span> TF that involves in brain function</h1>
@@ -407,8 +407,50 @@ noonan.gene &lt;- noonan$V7
 noonan.gene_cleaned &lt;- apply(as.matrix(noonan.gene, ncol=1), 1, clean_gene_name)
 background &lt;- read.table(&#39;../data/background_jaspar_gene.txt&#39;)
 background.cleaned &lt;- apply(background, 1, clean_gene_name)
-library(topGO)
-library(biomaRt)
+library(topGO)</code></pre>
+<pre><code>## Loading required package: BiocGenerics</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>## 
+## Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:parallel&#39;:
+## 
+##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ, clusterExport, clusterMap, parApply, parCapply, parLapply, parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     IQR, mad, xtabs</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     anyDuplicated, append, as.data.frame, cbind, colnames, do.call, duplicated, eval, evalq, Filter, Find, get, grep, grepl, intersect, is.unsorted, lapply, lengths, Map, mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply, union, unique, unsplit, which, which.max, which.min</code></pre>
+<pre><code>## Loading required package: graph</code></pre>
+<pre><code>## Loading required package: Biobase</code></pre>
+<pre><code>## Welcome to Bioconductor
+## 
+##     Vignettes contain introductory material; view with &#39;browseVignettes()&#39;. To cite Bioconductor, see &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre><code>## Loading required package: GO.db</code></pre>
+<pre><code>## Loading required package: AnnotationDbi</code></pre>
+<pre><code>## Loading required package: stats4</code></pre>
+<pre><code>## Loading required package: IRanges</code></pre>
+<pre><code>## Loading required package: S4Vectors</code></pre>
+<pre><code>## 
+## Attaching package: &#39;S4Vectors&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     colMeans, colSums, expand.grid, rowMeans, rowSums</code></pre>
+<pre><code>## </code></pre>
+<pre><code>## Loading required package: SparseM</code></pre>
+<pre><code>## 
+## Attaching package: &#39;SparseM&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     backsolve</code></pre>
+<pre><code>## 
+## groupGOTerms:    GOBPTerm, GOMFTerm, GOCCTerm environments built.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;topGO&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:IRanges&#39;:
+## 
+##     members</code></pre>
+<pre class="r"><code>library(biomaRt)
 e081.allRes &lt;- go_term_bp(e081.gene_cleaned, background.cleaned)</code></pre>
 <pre><code>## 
 ## Building most specific GOs .....</code></pre>
