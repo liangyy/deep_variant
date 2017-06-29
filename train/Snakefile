@@ -13,11 +13,11 @@ rule all:
 
 rule train:
     input:
-        train = config['train'],
-        valid = config['valid']
+        train = lambda wildcards: config[wildcards.task_name]['data']['train'],
+        valid = lambda wildcards: config[wildcards.task_name]['data']['valid']
     params:
         outfolder = lambda wildcards: 'train/{{task_name}}.{headname}_{groupname}/'.format(headname=wildcards.head, groupname=wildcards.group),
-        niter = lambda wildcards: config[wildcards.body_name]['niter'],
+        niter = lambda wildcards: config[wildcards.task_name]['niter'],
         l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
         l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
         batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
