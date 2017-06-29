@@ -30,4 +30,4 @@ Training:
 partition: 'gpu2'
 type_of_head: 'logistic'
 selected_head:
-  best: ''
+  best: 'default/15-0.0861-0.0994.hdf5'
