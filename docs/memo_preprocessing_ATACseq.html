@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Memo - annotate existing sequences with new labels (ATAC-seq from Noonan’s lab)</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>28 June, 2017</em></h4>
+<h4 class="date"><em>29 June, 2017</em></h4>
 
 </div>
 
@@ -364,6 +364,134 @@ awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to &quot;standard output&qu
 cat: write error: Broken pipe
 &gt;&gt;&gt; &gt;&gt;&gt; intersecting data/Noonan_hNSC_P5-2_peaks.bed
 &gt;&gt;&gt; previous = 86563, after = 86563</code></pre>
+</div>
+<div id="merge-labels-and-prepare-input-file-for-training" class="section level1">
+<h1><span class="header-section-number">4</span> Merge labels and prepare input file for training</h1>
+<div id="merge-all-labels" class="section level2">
+<h2><span class="header-section-number">4.1</span> Merge all labels</h2>
+<pre class="bash"><code>$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ cd data
+$ ls Noonan_h*intersect &gt; ../test/0629_ATACseq_merged/merge.txt
+$ python my_scripts/merge_labels.py test/0628_ATACseq_list.txt/label.hdf5 test/0629_ATACseq_merged/merge.txt test/0629_ATACseq_merged/</code></pre>
+</div>
+<div id="combine-labels-with-sequences" class="section level2">
+<h2><span class="header-section-number">4.2</span> Combine labels with sequences</h2>
+<div id="training" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Training</h3>
+<pre class="bash"><code>$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5
+HDF5 &quot;my_train/DeepSEA_train_12__with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 4 ) / ( 4400000, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 &quot;test/0629_ATACseq_merged/label_merge.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;merged&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 4 ) / ( 2608182, 4 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5 trainxdata merged 1 2200000 test/0629_ATACseq_merged/</code></pre>
+</div>
+<div id="testing" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Testing</h3>
+<pre class="bash"><code>$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5
+HDF5 &quot;my_train/DeepSEA_test_12__with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 4 ) / ( 455024, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 &quot;test/0629_ATACseq_merged/label_merge.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;merged&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 4 ) / ( 2608182, 4 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5 trainxdata merged 2309367 2536878 test/0629_ATACseq_merged/</code></pre>
+</div>
+<div id="validation" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> Validation</h3>
+<pre class="bash"><code>$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5
+HDF5 &quot;my_train/DeepSEA_valid_12__with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 4 ) / ( 8000, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}
+HDF5 &quot;test/0629_ATACseq_merged/label_merge.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;merged&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 4 ) / ( 2608182, 4 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/0629_ATACseq_merged/label_merge.hdf5 trainxdata merged 2200001 2204000 test/0629_ATACseq_merged/</code></pre>
+</div>
+<div id="summary" class="section level3">
+<h3><span class="header-section-number">4.2.4</span> Summary</h3>
+<pre class="bash"><code>$ h5dump -A -H test/0629_ATACseq_merged/*with_label.hdf5
+HDF5 &quot;test/0629_ATACseq_merged/DeepSEA_test_12__with_label_with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 4 ) / ( 455024, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 &quot;test/0629_ATACseq_merged/DeepSEA_train_12__with_label_with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 4 ) / ( 4400000, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 &quot;test/0629_ATACseq_merged/DeepSEA_valid_12__with_label_with_label.hdf5&quot; {
+GROUP &quot;/&quot; {
+   DATASET &quot;traindata&quot; {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 4 ) / ( 8000, 4 ) }
+   }
+   DATASET &quot;trainxdata&quot; {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}</code></pre>
+</div>
+</div>
 </div>
 
 
