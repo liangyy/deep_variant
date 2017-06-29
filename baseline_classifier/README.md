@@ -21,7 +21,7 @@ Training:
     l1: 0
     l2: 0
 partition: 'gpu2'
-type_of_head: 'either logistic or svm'
+type_of_head: '[HeadName]'  # Either logistic or svm
 selected_head:
   best: 'fill in this part after training (select the best model)'
 ```
@@ -35,7 +35,7 @@ selected_head:
   Here, you don't have to care about naming different classifier head differently.
 But for sequence+motif pair, you need to specify it.
 
-  **Best practice**: name the config file as `config.[TaskName].[classifier_head].yaml`
+  **Best practice**: name the config file as `config.[TaskName].[HeadName].yaml`
 
 ## Prepare motif representation
 
@@ -73,4 +73,21 @@ that have the same sequence+motif.
 
 ```
 $ snakemake --configfile config.[TaskName].[classifier_head].yaml
+```
+
+### Select best model
+
+Do this manually
+
+## Merge head with body
+
+Set the `selected_head` entry in config file.
+```
+selected_head:
+  best: '[TrainName]/[ModelName]'  # Add it by manually checking performance
+```
+
+Run:
+```
+$ snakemake model/[TaskName]_[HeadName].best.hdf5 --configfile config.[TaskName].[HeadName].yaml
 ```

@@ -44,3 +44,13 @@ $ snakemake sbatch/TrainData_label-name-1.1.sbatch --configfile config.[task].ya
   It generates `sbatch/TrainData_label-name-1.x.sbatch` where `x = 1, ..., n` with `n` specified by `repeat: n` in config file. Inside this call, it does the following things:
     1. For each repeat, randomly select instances from the training data
     2. Generate fasta file for gkm-SVM from training data in hdf5 format
+
+## Generate validation report
+
+Test the performance on a validation data set.
+
+```
+$ snakemake report/deepsea_train-ATACseq.deepsea_valid-ATACseq.training_report.html --configfile config_train.atac.yaml
+```
+
+You can either run it on backend or on cluster (It may take long time).
