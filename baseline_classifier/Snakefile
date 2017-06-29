@@ -2,15 +2,15 @@
 # And train a logistic classifier on the top of it
 # Instead of training directly, it writes a training scripts that is ready to be submitted to cluster
 
-def get_all_training_sbatch(config, wildcards):
+def get_all_training_sbatch(config):
     out = []
     for i in config['Training']:
-        outa.append('sbatch/{motif_name}.{head}_{group}.train.sbatch'.format(motif_name=wildcards.motif_name, head=config['type_of_head'], group=i))
+        out.append('sbatch/{motif_name}.{head}_{group}.train.sbatch'.format(motif_name=config['task_name'], head=config['type_of_head'], group=i))
     return out
 
 rule all:
     input:
-        files = lambda wildcards: get_all_training_sbatch(config, wildcards)
+        files = get_all_training_sbatch(config)
 
 rule assemble:
     input:

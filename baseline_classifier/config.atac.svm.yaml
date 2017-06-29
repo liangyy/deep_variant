@@ -1,3 +1,4 @@
+task_name: 'JASPAR-ATACseq'
 JASPAR-ATACseq:
   motifs: 'motifs/pfm_vertebrates.txt'
   background: '0.27665749,0.22330697,0.22330697,0.27665749'
