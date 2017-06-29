@@ -1,0 +1,64 @@
+# This module takes data in standard format and train a logistic classifier
+# It is similar to baseline_classifier without feature generate step (rule assemble)
+
+rule train:
+    input:
+        train = config['train'],
+        valid = config['valid']
+    params:
+        outfolder = lambda wildcards: 'train/{{task_name}}.{headname}_{groupname}/'.format(headname=wildcards.head, groupname=wildcards.group),
+        niter = lambda wildcards: config[wildcards.body_name]['niter'],
+        l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
+        l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
+        batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
+        partition = config['partition'],
+        # head = config['type_of_head']
+    output:
+        'sbatch/{task_name}.{head}_{group}.train.sbatch'
+    run:
+        sbatch = '''#!/bin/bash
+#SBATCH --job-name={taskname}.{head}_{group}
+#SBATCH --output={taskname}.{head}_{group}.out
+#SBATCH --error={taskname}.{head}_{group}.err
+#SBATCH --time=24:00:00
+#SBATCH --partition={partition}
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+module load cuda/7.5
+cd repo/deep_variant/baseline_classifier
+mkdir {outdir}
+python scripts/train_head_on_cluster.py \
+--train {train} \
+--valid {valid} \
+--outdir {outdir} \
+--batch_size {batch_size} \
+--epoch {niter} \
+--l1 {l1} \
+--l2 {l2} \
+--head {head}
+'''.format(taskname=wildcards.task_name, train=input.train, valid=input.valid,
+niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder,
+l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition,
+head=wildcards.head)
+        o = open(output[0], 'w')
+        o.write(sbatch)
+        o.close()
+
+# The training is done by submitting a training script to cluster. The output is a collection of trained models along optimization.
+# The best model is selected based on certain criteria, for instance, validation loss
+# The final step is to combine feature extraction with selected logistic head as below
+
+rule add_head:
+    input:
+        head = lambda wildcards: 'train/{task_name}.{headname}_{head}'.format(task_name=wildcards.task_name, headname=wildcards.type_of_head, head=config['selected_head'][wildcards.head_name]),
+        body = lambda wildcards: config[wildcards.task_name]['feature_model']
+    output:
+        'model/{task_name}_{type_of_head}.{head_name}.hdf5'
+    shell:
+        'python scripts/merge_body_and_head.py --body {input.motif_feature} --head {input.head} --out {output[0]}'

@@ -1,0 +1,19 @@
+task_name: 'DeepSEA-ATACseq'
+DeepSEA-ATACseq:
+  niter: 80
+  body_model: 'motifs/pfm_vertebrates.txt'
+  data:
+    train:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
+      y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_train_12__with_label_with_label.hdf5' # in standard format
+    valid:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
+      y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_valid_12__with_label_with_label.hdf5' # in standard format
+Training:
+  default:
+    l1: 0
+    l2: 0
+partition: 'gpu2'
+type_of_head: 'logistic'
+selected_head:
+  best: ''
