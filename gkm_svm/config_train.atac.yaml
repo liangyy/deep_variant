@@ -1,8 +1,8 @@
 label:
-  hNSC_50: 1
-  hNSC_P15-1: 2
-  hNSC_P5-1: 3
-  hNSC_P5-2: 4
+  hNSC-50: 1
+  hNSC-P15-1: 2
+  hNSC-P5-1: 3
+  hNSC-P5-2: 4
 training_data:
   deepsea_train-ATACseq:
     x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
