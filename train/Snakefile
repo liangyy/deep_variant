@@ -1,6 +1,16 @@
 # This module takes data in standard format and train a logistic classifier
 # It is similar to baseline_classifier without feature generate step (rule assemble)
 
+def get_all_training_sbatch(config):
+    out = []
+    for i in config['Training']:
+        out.append('sbatch/{task_name}.{head}_{group}.train.sbatch'.format(task_name=config['task_name'], head=config['type_of_head'], group=i))
+    return out
+
+rule all:
+    input:
+        files = get_all_training_sbatch(config)
+
 rule train:
     input:
         train = config['train'],
