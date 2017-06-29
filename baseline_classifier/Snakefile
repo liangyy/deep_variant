@@ -87,9 +87,9 @@ head=wildcards.head)
 
 rule add_head:
     input:
-        head = lambda wildcards: 'train/{motif_name}.{headname}_{head}'.format(motif_name=wildcards.motif_name, headname=config['type_of_head'], head=config['selected_head'][wildcards.head_name]),
+        head = lambda wildcards: 'train/{motif_name}.{headname}_{head}'.format(motif_name=wildcards.motif_name, headname=wildcards.type_of_head, head=config['selected_head'][wildcards.head_name]),
         motif_feature = 'prototype/{motif_name}.init.hdf5'
     output:
-        'model/{motif_name}.{head_name}.hdf5'
+        'model/{motif_name}_{type_of_head}.{head_name}.hdf5'
     shell:
         'python scripts/merge_body_and_head.py --body {input.motif_feature} --head {input.head} --out {output[0]}'
