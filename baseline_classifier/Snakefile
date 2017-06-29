@@ -2,6 +2,16 @@
 # And train a logistic classifier on the top of it
 # Instead of training directly, it writes a training scripts that is ready to be submitted to cluster
 
+def get_all_training_sbatch(config, wildcards):
+    out = []
+    for i in config['Training']:
+        outa.append('sbatch/{motif_name}.{head}_{group}.train.sbatch'.format(motif_name=wildcards.motif_name, head=config['type_of_head'], group=i))
+    return out
+
+rule all:
+    input:
+        files = lambda wildcards: get_all_training_sbatch(config, wildcards)
+
 rule assemble:
     input:
         motif = lambda wildcards: config[wildcards.motif_name]['motifs'],
@@ -27,13 +37,13 @@ rule train:
         train = 'data/{motif_name}.train.feature.hdf5',
         valid = 'data/{motif_name}.valid.feature.hdf5'
     params:
-        outfolder = lambda wildcards: 'train/{{motif_name}}.{headname}_{groupname}/'.format(headname=config['type_of_head'], groupname=wildcards.group),
+        outfolder = lambda wildcards: 'train/{{motif_name}}.{headname}_{groupname}/'.format(headname=wildcards.head, groupname=wildcards.group),
         niter = lambda wildcards: config[wildcards.motif_name]['niter'],
         l1 = lambda wildcards: config['Training'][wildcards.group]['l1'],
         l2 = lambda wildcards: config['Training'][wildcards.group]['l2'],
         batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
         partition = config['partition'],
-        head = config['type_of_head']
+        # head = config['type_of_head']
     output:
         'sbatch/{motif_name}.{head}_{group}.train.sbatch'
     run:
@@ -66,7 +76,7 @@ python scripts/train_head_on_cluster.py \
 '''.format(taskname=wildcards.motif_name, train=input.train, valid=input.valid,
 niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder,
 l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition,
-head=params.head)
+head=wildcards.head)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
