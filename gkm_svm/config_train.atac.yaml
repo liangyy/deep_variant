@@ -1,0 +1,19 @@
+label:
+  E081: 1
+  E082: 2
+  E129: 3
+  Noonan: 4
+training_data:
+  deepsea_train-ATACseq:
+    x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
+    y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_train_12__with_label_with_label.hdf5'
+validation_data:
+  deepsea_test-ATACseq:
+    x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    y: 'None'
+size: 5000 # per label
+repeat: 3
+seed: 2017
+window_size: 300
+thread: 4
+cache: 6000

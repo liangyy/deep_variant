@@ -153,6 +153,28 @@ rule logit_raw_and_to_hdf5:
     shell:
         'python scripts/raw_to_hdf5.py --predict {input.pred} --out {output[0]}'
 
+rule predict_sbatch:
+    output:
+        'sbatch/{trdata_name}_{label}.{id}.{vldata_name}.sbatch'
+    params:
+        name = 'pred.{vldata_name}.{trdata_name}'
+    run:
+        sbatch = '''#!/bin/bash
+#SBATCH --job-name={name}
+#SBATCH --output={name}.out
+#SBATCH --error={name}.err
+#SBATCH --time=24:00:00
+#SBATCH --partition=broadwl
+#SBATCH --mem-per-cpu=50G
+#SBATCH --nodes=1
+
+cd /project2/xinhe/yanyul
+source setup.sh
+source activate deepvarpred_test
+cd repo/deep_variant/gkm_svm
+snakemake --unlock report/deepsea_train.training_report.Rmd --configfile config_train_test.yaml
+snakemake --rerun-incomplete --cores 25 report/deepsea_train_small.training_report.Rmd --configfile config_train_test.yaml
+'''.format(name=params.name, config)
 
 def get_all_results(config):
     files = []
