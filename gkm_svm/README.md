@@ -2,6 +2,8 @@
 
 ## Config file
 
+### Config for training
+
 ```
 label:
   [label-name-1]: 1
@@ -14,8 +16,8 @@ training_data:
     y: 'hdf5 file with entry name traindata'
 validation_data:
   [ValidData]:
-    x: 'hdf5 file with entry name trainxdata'
-    y: 'hdf5 file with entry name traindata'  # it is not necessary during training but it is used to select best model
+    x: 'hdf5 file with entry name trainxdata' # it is not necessary during training but it is used to select best model. Use the validation set
+    y: 'hdf5 file with entry name traindata'
 size: 5000 # number of sequences in training set
 repeat: n
 seed: 2017
@@ -24,8 +26,13 @@ thread: 4
 cache: 6000
 ```
 
+### Config for testing
+
+```
+```
+
   **Best practice**:
-    1. Name config file as `config.[task].yaml`
+    1. Name config file as `config_train.[task].yaml` and `config_pred.[task].yaml` respectively
     2. Use '-' to as space in `[label-name-x]` instead of '_'
 
 ## Prepare `sbatch` file for training
