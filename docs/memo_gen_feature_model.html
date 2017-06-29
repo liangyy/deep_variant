@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yanyu Liang" />
+
+
+<title>Memo - generate feature model from DeepSEA</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Deep Variant</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Tasks</a>
+</li>
+<li>
+  <a href="analysis_list.html">Analysis</a>
+</li>
+<li>
+  <a href="memo_list.html">Technical Memo</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/deep_variant">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Memo - generate feature model from DeepSEA</h1>
+<h4 class="author"><em>Yanyu Liang</em></h4>
+<h4 class="date"><em>29 June, 2017</em></h4>
+
+</div>
+
+
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+<div id="deepsea-model-in-keras" class="section level1">
+<h1><span class="header-section-number">1</span> DeepSEA model in Keras</h1>
+<pre class="bash"><code>$ source activate keras
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA
+$ python my_scripts/DeepSEA_keras_v2.py my_scripts/operation.txt debug/keras_deepsea.hdf5
+Using Theano backend.
+Building the model
+Compiling the model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d_1 (Conv1D)            (None, 993, 320)          10560     
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0         
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0         
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280   
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0         
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0         
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360   
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0         
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925  
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 919)               850994    
+_________________________________________________________________
+activation_3 (Activation)    (None, 919)               0         
+=================================================================
+Total params: 52,843,119.0
+Trainable params: 52,843,119.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Assigning weights
+Assigning weight to conv1d_1
+weight shape previous -- (8, 4, 320)
+    previous -- (320, 32)
+    after -- (8, 4, 320)
+Assigning weight to conv1d_2
+weight shape previous -- (8, 320, 480)
+    previous -- (480, 2560)
+    after -- (8, 320, 480)
+Assigning weight to conv1d_3
+weight shape previous -- (8, 480, 960)
+    previous -- (960, 3840)
+    after -- (8, 480, 960)
+Assigning weight to dense_1
+weight shape previous -- (50880, 925)
+    previous -- (925, 50880)
+    after -- (50880, 925)
+Assigning weight to dense_2
+weight shape previous -- (925, 919)
+    previous -- (919, 925)
+    after -- (925, 919)
+Saving model</code></pre>
+</div>
+<div id="extract-the-feature-model" class="section level1">
+<h1><span class="header-section-number">2</span> Extract the feature model</h1>
+<pre class="bash"><code>$ cd ../deep_brain/
+$ python my_scripts/run_DeepSEA_keras_feature.py --help
+
+gen_DeepSEA_keras_intermediate_model.py [DeepSEA_model_in_keras] [layer_index]
+If [layer_index] is -1, print out model summary and exit
+
+$ python my_scripts/gen_DeepSEA_keras_intermediate_model.py ../DeepSEA/debug/keras_deepsea.hdf5 -1
+Using Theano backend.
+Loading model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv1d_1 (Conv1D)            (None, 993, 320)          10560
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0
+_________________________________________________________________
+dense_2 (Dense)              (None, 919)               850994
+_________________________________________________________________
+activation_3 (Activation)    (None, 919)               0
+=================================================================
+Total params: 52,843,119.0
+Trainable params: 52,843,119.0
+Non-trainable params: 0.0
+_________________________________________________________________
+$ python my_scripts/gen_DeepSEA_keras_intermediate_model.py ../DeepSEA/debug/keras_deepsea.hdf5 12
+Using Theano backend.
+Loading model
+Building intermediate layer
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv1d_1_input (InputLayer)  (None, 1000, 4)           0
+_________________________________________________________________
+conv1d_1 (Conv1D)            (None, 993, 320)          10560
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0
+=================================================================
+Total params: 51,992,125.0
+Trainable params: 51,992,125.0
+Non-trainable params: 0.0
+_________________________________________________________________</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

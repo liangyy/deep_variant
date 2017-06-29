@@ -1,0 +1,179 @@
+---
+title: "Memo - generate feature model from DeepSEA"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# DeepSEA model in Keras
+
+```{bash, eval=F}
+$ source activate keras
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA
+$ python my_scripts/DeepSEA_keras_v2.py my_scripts/operation.txt debug/keras_deepsea.hdf5
+Using Theano backend.
+Building the model
+Compiling the model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d_1 (Conv1D)            (None, 993, 320)          10560     
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0         
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0         
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280   
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0         
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0         
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360   
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0         
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925  
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 919)               850994    
+_________________________________________________________________
+activation_3 (Activation)    (None, 919)               0         
+=================================================================
+Total params: 52,843,119.0
+Trainable params: 52,843,119.0
+Non-trainable params: 0.0
+_________________________________________________________________
+Assigning weights
+Assigning weight to conv1d_1
+weight shape previous -- (8, 4, 320)
+    previous -- (320, 32)
+    after -- (8, 4, 320)
+Assigning weight to conv1d_2
+weight shape previous -- (8, 320, 480)
+    previous -- (480, 2560)
+    after -- (8, 320, 480)
+Assigning weight to conv1d_3
+weight shape previous -- (8, 480, 960)
+    previous -- (960, 3840)
+    after -- (8, 480, 960)
+Assigning weight to dense_1
+weight shape previous -- (50880, 925)
+    previous -- (925, 50880)
+    after -- (50880, 925)
+Assigning weight to dense_2
+weight shape previous -- (925, 919)
+    previous -- (919, 925)
+    after -- (925, 919)
+Saving model
+```
+
+# Extract the feature model
+
+```{bash, eval=F}
+$ cd ../deep_brain/
+$ python my_scripts/run_DeepSEA_keras_feature.py --help
+
+gen_DeepSEA_keras_intermediate_model.py [DeepSEA_model_in_keras] [layer_index]
+If [layer_index] is -1, print out model summary and exit
+
+$ python my_scripts/gen_DeepSEA_keras_intermediate_model.py ../DeepSEA/debug/keras_deepsea.hdf5 -1
+Using Theano backend.
+Loading model
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv1d_1 (Conv1D)            (None, 993, 320)          10560
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0
+_________________________________________________________________
+dense_2 (Dense)              (None, 919)               850994
+_________________________________________________________________
+activation_3 (Activation)    (None, 919)               0
+=================================================================
+Total params: 52,843,119.0
+Trainable params: 52,843,119.0
+Non-trainable params: 0.0
+_________________________________________________________________
+$ python my_scripts/gen_DeepSEA_keras_intermediate_model.py ../DeepSEA/debug/keras_deepsea.hdf5 12
+Using Theano backend.
+Loading model
+Building intermediate layer
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+conv1d_1_input (InputLayer)  (None, 1000, 4)           0
+_________________________________________________________________
+conv1d_1 (Conv1D)            (None, 993, 320)          10560
+_________________________________________________________________
+activation_1 (Activation)    (None, 993, 320)          0
+_________________________________________________________________
+max_pooling1d_1 (MaxPooling1 (None, 248, 320)          0
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 248, 320)          0
+_________________________________________________________________
+conv1d_2 (Conv1D)            (None, 241, 480)          1229280
+_________________________________________________________________
+max_pooling1d_2 (MaxPooling1 (None, 60, 480)           0
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 60, 480)           0
+_________________________________________________________________
+conv1d_3 (Conv1D)            (None, 53, 960)           3687360
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 53, 960)           0
+_________________________________________________________________
+permute_1 (Permute)          (None, 960, 53)           0
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 50880)             0
+_________________________________________________________________
+dense_1 (Dense)              (None, 925)               47064925
+_________________________________________________________________
+activation_2 (Activation)    (None, 925)               0
+=================================================================
+Total params: 51,992,125.0
+Trainable params: 51,992,125.0
+Non-trainable params: 0.0
+_________________________________________________________________
+```
