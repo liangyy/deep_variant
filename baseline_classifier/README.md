@@ -3,6 +3,7 @@
 ## Config file
 
 ```
+task_name: '[TaskName]'
 [TaskName]:
   motifs: 'motifs/pfm_vertebrates.txt'
   background: '0.27665749,0.22330697,0.22330697,0.27665749'
@@ -67,3 +68,9 @@ snakemake prototype/TaskName.init.hdf5 --configfile config.TaskName.yaml --rerun
 that have the same sequence+motif.
 
 ## Training
+
+### Generate `sbatch`
+
+```
+$ snakemake --configfile config.[TaskName].[classifier_head].yaml
+```
