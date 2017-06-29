@@ -41,7 +41,7 @@ cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
 module load cuda/7.5
-cd repo/deep_variant/baseline_classifier
+cd repo/deep_variant/train_deepsea
 mkdir {outdir}
 python scripts/train_head_on_cluster.py \
 --train {train} \

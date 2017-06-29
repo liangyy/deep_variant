@@ -1,0 +1,8 @@
+Using Theano backend.
+WARNING (theano.sandbox.cuda): The cuda backend is deprecated and will be removed in the next release (v0.10).  Please switch to the gpuarray backend. You can get more information about how to switch at this URL:
+ https://github.com/Theano/Theano/wiki/Converting-to-the-new-gpu-back-end%28gpuarray%29
+
+/project2/xinhe/yanyul/softwares/Anaconda2/envs/deepvarpred_test/lib/python3.5/site-packages/theano/sandbox/cuda/__init__.py:556: UserWarning: Theano flag device=gpu* (old gpu back-end) only support floatX=float32. You have floatX=float64. Use the new gpu back-end with device=cuda* for that value of floatX.
+  warnings.warn(msg)
+Using gpu device 0: Tesla K80 (CNMeM is disabled, cuDNN 5005)
+WARNING (theano.configdefaults): install mkl with `conda install mkl-service`: No module named 'mkl'
