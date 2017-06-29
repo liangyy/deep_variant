@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yanyu Liang" />
+
+
+<title>Memo - extract sequences from ATAC-seq data (Noonan’s lab)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Deep Variant</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Tasks</a>
+</li>
+<li>
+  <a href="analysis_list.html">Analysis</a>
+</li>
+<li>
+  <a href="memo_list.html">Technical Memo</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/deep_variant">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Memo - extract sequences from ATAC-seq data (Noonan’s lab)</h1>
+<h4 class="author"><em>Yanyu Liang</em></h4>
+<h4 class="date"><em>28 June, 2017</em></h4>
+
+</div>
+
+
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+<div id="output-directory" class="section level1">
+<h1><span class="header-section-number">1</span> Output directory</h1>
+<pre class="bash"><code>$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ mkdir test/0628_binize_ATACseq/</code></pre>
+</div>
+<div id="region-to-bin-bin-size-200-bp" class="section level1">
+<h1><span class="header-section-number">2</span> Region to bin (bin size = 200 bp)</h1>
+<pre class="bash"><code>$ python my_scripts/0_region2bins.py data/Noonan_hNSC_50_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse &gt; test/0628_binize_ATACseq//Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P15-1_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse &gt; test/0628_binize_ATACseq//Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P5-1_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse &gt; test/0628_binize_ATACseq//Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P5-2_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse &gt; test/0628_binize_ATACseq//Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged</code></pre>
+</div>
+<div id="label-bins" class="section level1">
+<h1><span class="header-section-number">3</span> Label bins</h1>
+<div id="prepare-input-for-wrapper_label_intervals.py" class="section level2">
+<h2><span class="header-section-number">3.1</span> Prepare input for <code>wrapper_label_intervals.py</code></h2>
+<pre class="bash"><code>$ ls data/Noonan_hNSC_50_peaks.bed &gt; test/0628_binize_ATACseq/hNSC_50.txt
+$ ls data/Noonan_hNSC_P15-1_peaks.bed &gt; test/0628_binize_ATACseq/hNSC_P15-1.txt
+$ ls data/Noonan_hNSC_P5-1_peaks.bed &gt; test/0628_binize_ATACseq/hNSC_P5-1.txt
+$ ls data/Noonan_hNSC_P5-2_peaks.bed &gt; test/0628_binize_ATACseq/hNSC_P5-2.txt
+$ cat test/0628_binize_ATACseq/*txt
+data/Noonan_hNSC_50_peaks.bed
+data/Noonan_hNSC_P15-1_peaks.bed
+data/Noonan_hNSC_P5-1_peaks.bed
+data/Noonan_hNSC_P5-2_peaks.bed</code></pre>
+</div>
+<div id="run-wrapper_label_intervals.py" class="section level2">
+<h2><span class="header-section-number">3.2</span> Run <code>wrapper_label_intervals.py</code></h2>
+<pre class="bash"><code>$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_50.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_50.txt_out
+&gt;&gt;&gt; working on data/Noonan_hNSC_50_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; sort data/Noonan_hNSC_50_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; checking data/Noonan_hNSC_50_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; number of columns data/Noonan_hNSC_50_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+&gt;&gt;&gt; &gt;&gt;&gt; intersecting data/Noonan_hNSC_50_peaks.bed
+&gt;&gt;&gt; previous = 124826, after = 124826
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P15-1.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P15-1.txt_out
+&gt;&gt;&gt; working on data/Noonan_hNSC_P15-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; sort data/Noonan_hNSC_P15-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; checking data/Noonan_hNSC_P15-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; number of columns data/Noonan_hNSC_P15-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+&gt;&gt;&gt; &gt;&gt;&gt; intersecting data/Noonan_hNSC_P15-1_peaks.bed
+&gt;&gt;&gt; previous = 84105, after = 84105
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P5-1.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P5-1.txt_out
+&gt;&gt;&gt; working on data/Noonan_hNSC_P5-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; sort data/Noonan_hNSC_P5-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; checking data/Noonan_hNSC_P5-1_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; number of columns data/Noonan_hNSC_P5-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+&gt;&gt;&gt; &gt;&gt;&gt; intersecting data/Noonan_hNSC_P5-1_peaks.bed
+&gt;&gt;&gt; previous = 67160, after = 67160
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P5-2.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P5-2.txt_out
+&gt;&gt;&gt; working on data/Noonan_hNSC_P5-2_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; sort data/Noonan_hNSC_P5-2_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; checking data/Noonan_hNSC_P5-2_peaks.bed
+&gt;&gt;&gt; &gt;&gt;&gt; number of columns data/Noonan_hNSC_P5-2_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to &quot;standard output&quot; failed (Broken pipe)
+cat: write error: Broken pipe
+&gt;&gt;&gt; &gt;&gt;&gt; intersecting data/Noonan_hNSC_P5-2_peaks.bed
+&gt;&gt;&gt; previous = 86563, after = 86563</code></pre>
+</div>
+</div>
+<div id="bin-to-input-format" class="section level1">
+<h1><span class="header-section-number">4</span> Bin to input format</h1>
+<div id="bin-to-fasta" class="section level2">
+<h2><span class="header-section-number">4.1</span> Bin to fasta</h2>
+<pre class="bash"><code>$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.</code></pre>
+</div>
+<div id="line-number-of-illegal-bin" class="section level2">
+<h2><span class="header-section-number">4.2</span> Line number of illegal bin</h2>
+<pre class="bash"><code>$ cat test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final|grep -n 81194800 -A 7
+160121:chr17    81194600    81194800    160121  1,2 left,left
+160122:chr17    81194800    81195000    160122  1,0 left,hitted
+160123-chr17    81195000    81195200    160123  1,0 right,hitted
+160124-chr17    81195200    81195400    160124  2,1 right,right
+160125-chr17    81195400    81195600    160125  3,2 right,right
+160126-chr17    81195600    81195800    160126  4,3 right,right
+160127-chr17    81195800    81196000    160127  4   right
+160128-chr18    9200    9400    160128  4   left
+160129-chr18    9400    9600    160129  3,4 left,left
+$ cat test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final|grep -n 81194800 -A 7
+190940:chr17    81194600    81194800    190940  1   left
+190941:chr17    81194800    81195000    190941  0   hitted
+190942-chr17    81195000    81195200    190942  1   right
+190943-chr17    81195200    81195400    190943  2   right
+190944-chr17    81195400    81195600    190944  3   right
+190945-chr17    81195600    81195800    190945  4   right
+190946-chr18    9200    9400    190946  4   left
+190947-chr18    9400    9600    190947  3,4 left,left
+190948-chr18    9600    9800    190948  2,3 left,left</code></pre>
+</div>
+</div>
+<div id="fasta-to-hdf5" class="section level1">
+<h1><span class="header-section-number">5</span> Fasta to hdf5</h1>
+<pre class="bash"><code>$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_50.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P15-1.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P5-1.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P5-2.txt_out/</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

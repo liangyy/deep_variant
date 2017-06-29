@@ -1,0 +1,164 @@
+---
+title: "Memo - extract sequences from ATAC-seq data (Noonan's lab)"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Output directory
+
+```{bash, eval=F}
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ mkdir test/0628_binize_ATACseq/
+```
+
+# Region to bin (bin size = 200 bp)
+
+```{bash, eval=F}
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_50_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/0628_binize_ATACseq//Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P15-1_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/0628_binize_ATACseq//Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P5-1_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/0628_binize_ATACseq//Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/Noonan_hNSC_P5-2_peaks.bed.sorted.intersect test/0628_binize_ATACseq/
+bedtools merge -i test/0628_binize_ATACseq//Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/0628_binize_ATACseq//Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged
+```
+
+# Label bins
+
+## Prepare input for `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ ls data/Noonan_hNSC_50_peaks.bed > test/0628_binize_ATACseq/hNSC_50.txt
+$ ls data/Noonan_hNSC_P15-1_peaks.bed > test/0628_binize_ATACseq/hNSC_P15-1.txt
+$ ls data/Noonan_hNSC_P5-1_peaks.bed > test/0628_binize_ATACseq/hNSC_P5-1.txt
+$ ls data/Noonan_hNSC_P5-2_peaks.bed > test/0628_binize_ATACseq/hNSC_P5-2.txt
+$ cat test/0628_binize_ATACseq/*txt
+data/Noonan_hNSC_50_peaks.bed
+data/Noonan_hNSC_P15-1_peaks.bed
+data/Noonan_hNSC_P5-1_peaks.bed
+data/Noonan_hNSC_P5-2_peaks.bed
+```
+
+## Run `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_50.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_50.txt_out
+>>> working on data/Noonan_hNSC_50_peaks.bed
+>>> >>> sort data/Noonan_hNSC_50_peaks.bed
+>>> >>> checking data/Noonan_hNSC_50_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_50_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_50_peaks.bed
+>>> previous = 124826, after = 124826
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P15-1.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P15-1.txt_out
+>>> working on data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P15-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P15-1_peaks.bed
+>>> previous = 84105, after = 84105
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P5-1.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P5-1.txt_out
+>>> working on data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P5-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P5-1_peaks.bed
+>>> previous = 67160, after = 67160
+$ python my_scripts/wrapper_label_intervals.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final test/0628_binize_ATACseq/hNSC_P5-2.txt test/0628_binize_ATACseq/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_binize_ATACseq//hNSC_P5-2.txt_out
+>>> working on data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P5-2_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P5-2_peaks.bed
+>>> previous = 86563, after = 86563
+```
+
+# Bin to input format
+
+## Bin to fasta
+
+```{bash, eval=F}
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+```
+
+## Line number of illegal bin
+
+```{bash, eval=F}
+$ cat test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final|grep -n 81194800 -A 7
+160121:chr17	81194600	81194800	160121	1,2	left,left
+160122:chr17	81194800	81195000	160122	1,0	left,hitted
+160123-chr17	81195000	81195200	160123	1,0	right,hitted
+160124-chr17	81195200	81195400	160124	2,1	right,right
+160125-chr17	81195400	81195600	160125	3,2	right,right
+160126-chr17	81195600	81195800	160126	4,3	right,right
+160127-chr17	81195800	81196000	160127	4	right
+160128-chr18	9200	9400	160128	4	left
+160129-chr18	9400	9600	160129	3,4	left,left
+$ cat test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final|grep -n 81194800 -A 7
+190940:chr17	81194600	81194800	190940	1	left
+190941:chr17	81194800	81195000	190941	0	hitted
+190942-chr17	81195000	81195200	190942	1	right
+190943-chr17	81195200	81195400	190943	2	right
+190944-chr17	81195400	81195600	190944	3	right
+190945-chr17	81195600	81195800	190945	4	right
+190946-chr18	9200	9400	190946	4	left
+190947-chr18	9400	9600	190947	3,4	left,left
+190948-chr18	9600	9800	190948	2,3	left,left
+```
+
+# Fasta to hdf5
+
+```{bash, eval=F}
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_50.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P15-1.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P5-1.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0628_binize_ATACseq/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0628_binize_ATACseq/hNSC_P5-2.txt_out/
+```

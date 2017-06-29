@@ -1,0 +1,73 @@
+---
+title: "Memo - annotate existing sequences with new labels (ATAC-seq from Noonan's lab)"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Data
+```{bash, eval=F}
+$ /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data
+$ cp ../ASD/other_annotation/epigenomic_annotation/Noonan_hNSC_*bb deep_variant/yanyu/deep_brain/data/
+```
+
+# BigBed to Bed
+
+```{bash, eval=F}
+$ bash process_ATACseq_from_Noonan.sh
+```
+
+# Label DeepSEA sequence with ATAC-seq signal
+
+```{bash, eval=F}
+$ cd ../
+$ python my_scripts/wrapper_label_intervals.py data/allTFs.pos.withID.bed data/0628_ATACseq_list.txt test
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0628_ATACseq_list.txt
+>>> working on data/Noonan_hNSC_50_peaks.bed
+>>> >>> sort data/Noonan_hNSC_50_peaks.bed
+>>> >>> checking data/Noonan_hNSC_50_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_50_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_50_peaks.bed
+>>> previous = 124826, after = 124826
+>>> working on data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P15-1_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P15-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P15-1_peaks.bed
+>>> previous = 84105, after = 84105
+>>> working on data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P5-1_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P5-1_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P5-1_peaks.bed
+>>> previous = 67160, after = 67160
+>>> working on data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> sort data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> checking data/Noonan_hNSC_P5-2_peaks.bed
+>>> >>> number of columns data/Noonan_hNSC_P5-2_peaks.bed
+awk: cmd. line:1: (FILENAME=- FNR=2731) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_hNSC_P5-2_peaks.bed
+>>> previous = 86563, after = 86563
+```
