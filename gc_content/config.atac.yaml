@@ -1,0 +1,139 @@
+summary:
+  extracted-ATACseq: 'hNSC-50,hNSC-P15-1,hNSC-P5-1,hNSC-P5-2'
+  deepsea-ATACseq: 'deepsea_hNSC-50,deepsea_hNSC-P15-1,deepsea_hNSC-P5-1,deepsea_hNSC-P5-2'
+hNSC-50:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_hNSC-50.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 1
+  data_y:
+    label_num: -1 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/label.hdf5'
+    name: 'data/Noonan_hNSC_50_peaks.bed.sorted.intersect'
+    double: 'No'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+    name: 'trainxdata'
+    double: 'Yes'
+hNSC-P15-1:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_hNSC-P15-1.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 2
+  data_y:
+    label_num: -1 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P15-1.txt_out/label.hdf5'
+    name: 'data/Noonan_hNSC_P15-1_peaks.bed.sorted.intersect'
+    double: 'No'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P15-1.txt_out/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+    name: 'trainxdata'
+    double: 'Yes'
+hNSC-P5-1:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_hNSC-P5-1.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 3
+  data_y:
+    label_num: -1 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-1.txt_out/label.hdf5'
+    name: 'data/Noonan_hNSC_P5-1_peaks.bed.sorted.intersect'
+    double: 'No'
+    remove: '160122-160127'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-1.txt_out/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+    name: 'trainxdata'
+    double: 'Yes'
+hNSC-P5-2:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_hNSC-P5-2.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 4
+  data_y:
+    label_num: -1 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-2.txt_out/label.hdf5'
+    name: 'data/Noonan_hNSC_P5-1_peaks.bed.sorted.intersect'
+    double: 'No'
+    remove: '190941-190945'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-2.txt_out/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+    name: 'trainxdata'
+    double: 'Yes'
+deepsea_hNSC-50:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_deepsea.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 1
+  data_y:
+    label_num: 1 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+    name: 'traindata'
+    double: 'Yes'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+    double: 'Yes'
+deepsea_hNSC-P15-1:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_deepsea.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 2
+  data_y:
+    label_num: 2 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+    name: 'traindata'
+    double: 'Yes'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+    double: 'Yes'
+deepsea_hNSC-P5-1:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_deepsea.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 3
+  data_y:
+    label_num: 3 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+    name: 'traindata'
+    double: 'Yes'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+    double: 'Yes'
+deepsea_hNSC-P5-2:
+  data_ypred:
+    path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_deepsea.ypred.hdf5'
+    name: 'y_pred'
+    double: 'Yes'
+    remove: 'None'
+    label_num: 4
+  data_y:
+    label_num: 4 # 1-based
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+    name: 'traindata'
+    double: 'Yes'
+    remove: 'None'
+  data_x:
+    path: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+    name: 'trainxdata'
+    double: 'Yes'
