@@ -62,7 +62,7 @@ hNSC-P5-2:
   data_y:
     label_num: -1 # 1-based
     path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-2.txt_out/label.hdf5'
-    name: 'data/Noonan_hNSC_P5-1_peaks.bed.sorted.intersect'
+    name: 'data/Noonan_hNSC_P5-2_peaks.bed.sorted.intersect'
     double: 'No'
     remove: '190941-190945'
   data_x:
