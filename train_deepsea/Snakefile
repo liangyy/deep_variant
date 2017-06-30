@@ -71,4 +71,5 @@ rule add_head:
     output:
         'model/{task_name}_{type_of_head}.{head_name}.hdf5'
     shell:
-        'python scripts/merge_body_and_head.py --body {input.motif_feature} --head {input.head} --out {output[0]}'
+        'python scripts/merge_body_and_head.py --body {input.body} --head {input.head} --out {output[0]}'
+

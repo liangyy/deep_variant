@@ -1,7 +1,7 @@
 task_name: 'DeepSEA-ATACseq'
 DeepSEA-ATACseq:
   niter: 80
-  body_model: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
+  feature_model: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
   data:
     train: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_train_12__with_label_with_label.hdf5' # in standard format
     valid: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0629_ATACseq_merged/DeepSEA_valid_12__with_label_with_label.hdf5' # in standard format
@@ -12,4 +12,4 @@ Training:
 partition: 'gpu2'
 type_of_head: 'logistic'
 selected_head:
-  best: ''
+  best: 'default/06-0.0550-0.0626.hdf5'
