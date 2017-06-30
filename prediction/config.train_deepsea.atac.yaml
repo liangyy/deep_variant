@@ -1,0 +1,9 @@
+model: '/project2/xinhe/yanyul/repo/deep_variant/train_deepsea/model/DeepSEA-ATACseq_logistic.best.hdf5'
+data:
+  deepsea: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+  hNSC-50: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/Noonan_hNSC_50_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  hNSC-P15-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P15-1.txt_out/Noonan_hNSC_P15-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  hNSC-P5-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-1.txt_out/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  hNSC-P5-2: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-2.txt_out/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+partition: 'gpu2'
+prefix: 'type1-ATACseq'
