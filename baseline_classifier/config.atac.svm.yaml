@@ -48,4 +48,4 @@ Training:
 partition: 'gpu2'
 type_of_head: 'svm'
 selected_head:
-  best: '1e-3/10-0.0481-0.0628'
+  best: '1e-3/10-0.0481-0.0628.hdf5'

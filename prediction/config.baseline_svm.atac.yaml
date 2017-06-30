@@ -6,4 +6,4 @@ data:
   hNSC-P5-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-1.txt_out/Noonan_hNSC_P5-1_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
   hNSC-P5-2: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_P5-2.txt_out/Noonan_hNSC_P5-2_peaks.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
 partition: 'gpu2'
-prefix: 'JASPAR-logistic-ATACseq'
+prefix: 'JASPAR-svm-ATACseq'
