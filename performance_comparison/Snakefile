@@ -40,15 +40,16 @@ by <- '{by}'
 aucs <- c()
 for(i in strsplit(model_list, '--')[[1]]){{
     temp <- read_feather(paste0('result/{task}/auc_', i, '.feather'))
-    if(by == 'model'){
+    if(by == 'model'){{
         temp$model <- i
-    }else(by == 'sequence'){
+        colnames(temp)[colnames(temp) == 'info'] <- 'sequence'
+    }}else{{
         temp$sequence <- i
         colnames(temp)[colnames(temp) == 'info'] <- 'model'
-    }
+    }}
     aucs <- rbind(aucs, temp)
 }}
-aucs$grp <- paste(aucs$model, aucs$info)
+aucs$grp <- paste(aucs$model, aucs$sequence)
 temp <- unique(aucs$info)
 cols <- c('red', 'black')
 names(cols) <- temp

@@ -1,5 +1,5 @@
 reweight: '0'
-deepsea-ATACseq.reweight:
+deepsea-ATACseq:
   group1:
     info: 'train_deepsea'
     data:
