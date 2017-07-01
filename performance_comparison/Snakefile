@@ -15,7 +15,8 @@ rule summary_rmd:
         temp('report/{task}.auc_comparison.Rmd')
     params:
         lambda wildcards: '--'.join(config[wildcards.task]),
-	lambda wildcards: wildcards.task
+	    lambda wildcards: wildcards.task,
+        config['by']
     run:
         rmd = '''---
 title: "Training - Compare AUCs"
@@ -35,10 +36,16 @@ knitr::opts_knit$set(root.dir = '../')
 library(feather)
 library(ggplot2)
 model_list <- '{models}'
+by <- '{by}'
 aucs <- c()
 for(i in strsplit(model_list, '--')[[1]]){{
     temp <- read_feather(paste0('result/{task}/auc_', i, '.feather'))
-    temp$model <- i
+    if(by == 'model'){
+        temp$model <- i
+    }else(by == 'sequence'){
+        temp$sequence <- i
+        colnames(temp)[colnames(temp) == 'info'] <- 'model'
+    }
     aucs <- rbind(aucs, temp)
 }}
 aucs$grp <- paste(aucs$model, aucs$info)
@@ -48,10 +55,10 @@ names(cols) <- temp
 ggplot(aucs) + geom_bar(aes(x = data, y = score, group = grp, fill = model), stat = 'identity', position = 'dodge') +
 facet_wrap(~curve) + # scale_colour_manual(values = cols) +
 # scale_fill_brewer(palette="OrRd") +
-# labs(color = 'sequence source') + 
+# labs(color = 'sequence source') +
 ggtitle('AUCs')
 ```
-'''.format(models=params[0], task=params[1])
+'''.format(models=params[0], task=params[1], by=params[2])
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
