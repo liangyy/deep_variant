@@ -1,0 +1,4 @@
+deep_brain-ATACseq:
+  deepsea: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/deepsea-stage1stage2.reweight_plot.html'
+  extracted: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/extracted-stage1stage2.reweight_plot.html'
+by: 'sequence'
