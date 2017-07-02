@@ -45,7 +45,7 @@ if(opt$extract_mode == 'positive'){
       seq.idx <- sample(1 : nrow(pos), 1)
       seq <- c(seq, pos)
       pos.idx <- sample(1 : ncol(pos), 1)
-      position <- c(position, pass.idx)
+      position <- c(position, pos.idx)
   }
 }
 
