@@ -1,0 +1,4 @@
+deep_brain-ATACseq_extracted_gc:
+  extracted: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/extracted-ATACseq.reweight_curves.feather'
+  extracted.no-reweight: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/extracted-ATACseq_curves.feather'
+by: 'sequence'
