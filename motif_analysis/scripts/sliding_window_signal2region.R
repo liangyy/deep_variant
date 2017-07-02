@@ -43,7 +43,8 @@ if(opt$extract_mode == 'positive'){
     position <- c()
     seq <- sample(1 : nrow(pos), n, replace=T)
     position <- sample(1 : ncol(pos), n, replace=T)
-    dup.ind <- duplicated(paste(seq, position))
+    temp <- paste(seq, position)
+    dup.ind <- duplicated(temp)
     temp <- temp[!dup.ind]
     order.idx <- order(temp)
     seq <- seq[!dup.ind][order.idx]
