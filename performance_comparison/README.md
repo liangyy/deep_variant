@@ -37,6 +37,8 @@ It is also possible to combine files with the difference other than the ones lis
 by: 'sequence'  # DIFFERENCE is here
 ```
 
+**Caution**: The final plot will group different labels and color each bar by method but ignore the information of 'sequence' or other information. So, one thing to keep in mind is that the list of input files should share something.
+
 **Best practice**: TaskName can be set as question-specific in high level with detailed information on what is compared if applicable, like LabelSet or LabelSet-Sequence.Reweight. Config file can be named accordingly, say `config.TaskName.yaml` or shorthand of it.
 
 ## Run the module
