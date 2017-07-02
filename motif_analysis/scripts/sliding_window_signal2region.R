@@ -38,7 +38,7 @@ if(opt$extract_mode == 'positive'){
         position <- c(position, pass.idx)
     }
 }else if(opt$extract_mode == 'random'){
-    n <- opt$quantile * nrow(pos) * ncol(pos)
+    n <- opt$quantile * nrow(pos) * ncol(pos) * 0.25
     seq <- c()
     position <- c()
     seq <- sample(1 : nrow(pos), n, replace=T)
