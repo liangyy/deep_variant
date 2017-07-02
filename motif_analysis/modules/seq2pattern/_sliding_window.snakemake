@@ -202,18 +202,18 @@ rule extract_signal:
     input:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_{{mode}}.feather'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.txt'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.txt'.format(model=config['model']['name'])
     params:
         config['method']['sliding_window']['quantile']
     shell:
-        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --mode={wildcards.mode} --quantile={params[0]}'
+        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --quantile={params[0]} --extract_mode={wildcards.extract_mode}'
 
 rule signal2seq:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.txt'.format(model=config['model']['name']),
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.hdf5'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.fa'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.fa'.format(model=config['model']['name'])
     params:
         mask_size = config['method']['sliding_window']['mask_size'],
         window_size = config['method']['sliding_window']['window_size']
