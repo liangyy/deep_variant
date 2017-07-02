@@ -38,15 +38,11 @@ if(opt$extract_mode == 'positive'){
         position <- c(position, pass.idx)
     }
 }else if(opt$extract_mode == 'random'){
-  n <- opt$quantile * nrow(pos) * ncol(pos)
-  seq <- c()
-  position <- c()
-  for(x in 1 : n){
-      seq.idx <- sample(1 : nrow(pos), 1)
-      seq <- c(seq, pos)
-      pos.idx <- sample(1 : ncol(pos), 1)
-      position <- c(position, pos.idx)
-  }
+    n <- opt$quantile * nrow(pos) * ncol(pos)
+    seq <- c()
+    position <- c()
+    seq <- sample(1 : nrow(pos), n, replace=T)
+    position <- sample(1 : ncol(pos), n, replace=T)
 }
 
 out <- data.frame(seq_id = seq, pos_id = position)
