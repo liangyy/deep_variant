@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>28 June, 2017</em></h4>
+<h4 class="date"><em>01 July, 2017</em></h4>
 
 </div>
 
@@ -324,45 +324,59 @@ div.tocify {
 </ul></li>
 </ol>
 </div>
+<div id="genomic-data" class="section level1">
+<h1><span class="header-section-number">2</span> Genomic Data</h1>
+<ol style="list-style-type: decimal">
+<li>Stage1
+<ul>
+<li>Fetal brain DNase-seq from Roadmap (E081, E082)</li>
+<li>H3K27ac mark from Noonan’s lab (Noonan)</li>
+<li>One label from Deepsea model (E129)</li>
+</ul></li>
+<li>Stage2
+<ul>
+<li>ATAC-seq data from Noonan’s lab (hNSC-50, hNSC-P15-1, hNSC-P5-1, hNSC-P5-2)</li>
+</ul></li>
+</ol>
+</div>
 <div id="train-new-models" class="section level1">
-<h1><span class="header-section-number">2</span> Train new models</h1>
+<h1><span class="header-section-number">3</span> Train new models</h1>
 <p>There are three strategies:</p>
 <ol start="0" style="list-style-type: decimal">
 <li>Baseline classifier. <a href="baseline.html">here</a>
 <ul>
 <li>Train an SVM or logistic classifier using JASPAR as annotation
 <ul>
-<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html">JASPAR logistic</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html">JASPAR logistic, reweighted</a></li>
-<li>Evalution using allelic imbalance site <strong>TODO</strong></li>
-<li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html">here</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html">with reweight</a></li>
+<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html">Stage1 JASPAR logistic</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html">Stage1 JASPAR logistic, reweighted</a></li>
+<li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html">Stage1 here</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html">Stage1 with reweight</a></li>
 </ul></li>
 <li>Gkm-SVM classifier is trained on 5000 positive and 5000 negative sequences one annotation at a time.
 <ul>
-<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html">gkmsvm_on_deepsea_testing</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html">gkmsvm_on_deepsea_testing.reweight</a></li>
-<li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html">here</a></li>
+<li>ROC/PR curve <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html">Stage1 gkmsvm_on_deepsea_testing</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html">Stage1 gkmsvm_on_deepsea_testing.reweight</a></li>
+<li>Compare performance with DeepSEA representation <a href="https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html">Stage1 here</a></li>
 </ul></li>
 </ul></li>
 <li>Use DeepSEA sequences and DeepSEA feature representation.
 <ul>
-<li>See results and analysis <a href="type1.html">here</a>.</li>
-<li>See performance on new sequences <a href="type1_newseq.html">here</a></li>
-<li>ROC/PR curve <a href="http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html">Type1</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html">Type1, reweighted</a></li>
-<li>Evalution using allelic imbalance site <a href="type1_allelic_imbalance.html">here</a></li>
+<li>See results and analysis <a href="type1.html">Stage1 here</a>.</li>
+<li>See performance on new sequences <a href="type1_newseq.html">Stage1 here</a></li>
+<li>ROC/PR curve <a href="http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html">Stage1 Type1</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html">Stage1 Type1, reweighted</a></li>
+<li>Evalution using allelic imbalance site <a href="type1_allelic_imbalance.html">Stage1 here</a></li>
 </ul></li>
 <li>Use DeepSEA sequences but train a new model using the same architecture as DeepSEA.
 <ul>
-<li>See results and analysis <a href="type2.html">here</a>. <strong>ONGOING</strong></li>
+<li>See results and analysis <a href="type2.html">Stage1 here</a>. <strong>ONGOING</strong></li>
 </ul></li>
 <li>Include new sequences and train a new model using the same architecture. <strong>TODO</strong></li>
 </ol>
 </div>
 <div id="other-analysis" class="section level1">
-<h1><span class="header-section-number">3</span> Other analysis</h1>
+<h1><span class="header-section-number">4</span> Other analysis</h1>
 <p>There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.</p>
 <ol style="list-style-type: decimal">
 <li><strong>Motif Analysis</strong>:
 <ul>
-<li>Examine which filter or a set of filters that contribute most to a particular prediction task. See details <a href="motif_analysis.html">here</a>. <strong>ONGOING</strong></li>
+<li>Examine which filter or a set of filters that contribute most to a particular prediction task. See details <a href="motif_analysis.html">Stage1 here</a>. <strong>ONGOING</strong></li>
 </ul></li>
 <li><strong>Training Strategy</strong>
 <ul>
@@ -371,7 +385,7 @@ div.tocify {
 <li><strong>Performance Evaluation</strong>
 <ul>
 <li>How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion <a href="auc.html">here</a></li>
-<li>Redo DeepSEA evaluation on DNase footprint data <a href="deepsea_dgf.html">here</a></li>
+<li>Redo DeepSEA evaluation on DNase footprint data (See <a href="#allelic-imbalance-analysis">here</a>)</li>
 </ul></li>
 <li><strong>Application</strong>
 <ul>
@@ -379,17 +393,17 @@ div.tocify {
 </ul></li>
 <li><strong>Data Quality</strong>:
 <ul>
-<li>GC content. <a href="https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html">DeepSEA test set</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html">Sequences extracted from BED file</a></li>
+<li>GC content. <a href="https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html">Stage1 DeepSEA test set</a>, <a href="https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html">Stage1 Sequences extracted from BED file</a></li>
 </ul></li>
-<li><strong>Allelic Imbalance Analysis</strong>:
+<li><strong>Allelic Imbalance Analysis</strong>{#allelic-imbalance-analysis}:
 <ul>
 <li>DeepSEA results (Table S3). Presented by data set at <a href="allelic_imbalance_deepsea.html">here</a></li>
-<li>Rerun analysis considering both imbalanced variants and balanced variants <a href="allelic_imbalance_rerun.html">here</a></li>
+<li>Rerun analysis considering both imbalanced variants and balanced variants <a href="allelic_imbalance_rerun.html">dhere</a></li>
 </ul></li>
 </ol>
 </div>
 <div id="todo-list" class="section level1">
-<h1><span class="header-section-number">4</span> TODO list</h1>
+<h1><span class="header-section-number">5</span> TODO list</h1>
 <ul>
 <li>4/9/17:
 <ol style="list-style-type: decimal">

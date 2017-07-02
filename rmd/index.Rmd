@@ -15,25 +15,46 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
     - See pipeline memo [here](memo_extract.html) for E081, E082, Noonan, E129 (DeepSEA label)
     - See pipeline memo [here](memo_extract_ATACseq.html) for ATAC-seq data from Noonan's lab
 
+# Genomic Data
+
+1. Stage1
+    - Fetal brain DNase-seq from Roadmap (E081, E082)
+    - H3K27ac mark from Noonan's lab (Noonan)
+    - One label from Deepsea model (E129)
+2. Stage2
+    - ATAC-seq data from Noonan's lab (hNSC-50, hNSC-P15-1, hNSC-P5-1, hNSC-P5-2)
+
 # Train new models
 
 There are three strategies:
 
 0. Baseline classifier. [here](baseline.html)
     - Train an SVM or logistic classifier using JASPAR as annotation
-        - ROC/PR curve [JASPAR logistic](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html), [JASPAR logistic, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
-        - Evalution using allelic imbalance site **TODO**
-        - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html), [with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
+        - ROC/PR curve 
+          [Stage1 JASPAR logistic](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html), 
+          [Stage1 JASPAR logistic, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
+        - Compare performance with DeepSEA representation 
+          [Stage1 here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html), 
+          [Stage1 with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
     - Gkm-SVM classifier is trained on 5000 positive and 5000 negative sequences one annotation at a time.
-        - ROC/PR curve [gkmsvm_on_deepsea_testing](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html), [gkmsvm_on_deepsea_testing.reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html)
-        - Compare performance with DeepSEA representation [here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
+        - ROC/PR curve 
+          [Stage1 gkmsvm_on_deepsea_testing](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html), 
+          [Stage1 gkmsvm_on_deepsea_testing.reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html)
+        - Compare performance with DeepSEA representation 
+          [Stage1 here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
 1. Use DeepSEA sequences and DeepSEA feature representation. 
-    - See results and analysis [here](type1.html). 
-    - See performance on new sequences [here](type1_newseq.html)
-    - ROC/PR curve [Type1](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html), [Type1, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html)
-    - Evalution using allelic imbalance site [here](type1_allelic_imbalance.html)
+    - See results and analysis 
+      [Stage1 here](type1.html). 
+    - See performance on new sequences 
+      [Stage1 here](type1_newseq.html)
+    - ROC/PR curve 
+      [Stage1 Type1](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html), 
+      [Stage1 Type1, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html)
+    - Evalution using allelic imbalance site 
+      [Stage1 here](type1_allelic_imbalance.html)
 2. Use DeepSEA sequences but train a new model using the same architecture as DeepSEA. 
-    - See results and analysis [here](type2.html). **ONGOING**
+    - See results and analysis 
+      [Stage1 here](type2.html). **ONGOING**
 3. Include new sequences and train a new model using the same architecture. **TODO**
 
 # Other analysis
@@ -41,19 +62,26 @@ There are three strategies:
 There are some other directions and issues we need to explore and tackle. The analysis of them are listed here.
 
 1. **Motif Analysis**:
-    - Examine which filter or a set of filters that contribute most to a particular prediction task. See details [here](motif_analysis.html). **ONGOING**
+    - Examine which filter or a set of filters that contribute most to a particular prediction task. See details 
+      [Stage1 here](motif_analysis.html). **ONGOING**
 2. **Training Strategy**
     - How to boost the model to specialize on a particular prediction task, say on certain tissue type? (change architecture? how to deal with overfitting?) **TODO**
 3. **Performance Evaluation**
-    - How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion [here](auc.html)
-    - Redo DeepSEA evaluation on DNase footprint data [here](deepsea_dgf.html)
+    - How to measure the performance on imbalanced data. For instance, how to interpret ROC AUC and PR AUC? See related discussion 
+      [here](auc.html)
+    - Redo DeepSEA evaluation on DNase footprint data (See Allelic Imbalance Analysis below)
 4. **Application**
     - IBD GWAS SNPs. See [here](SNP_enrichment.html) Rmarkdown script is at [here](https://uchicago.box.com/s/zdntptc8udymivtyoapxpu365rpo3b18)
 5. **Data Quality**: 
-    - GC content. [DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html), [Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html)
+    - GC content. 
+      [Stage1 DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html), 
+      [Stage1 Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html),
+      [Stage2 Deepsea sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-ATACseq.gc_content.html),
+      [Stage2 Extracted sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-ATACseq.gc_content.html)
 6. **Allelic Imbalance Analysis**:
     - DeepSEA results (Table S3). Presented by data set at [here](allelic_imbalance_deepsea.html)
-    - Rerun analysis considering both imbalanced variants and balanced variants [here](allelic_imbalance_rerun.html)
+    - Rerun analysis considering both imbalanced variants and balanced variants 
+      [here](allelic_imbalance_rerun.html)
 
 # TODO list
 
