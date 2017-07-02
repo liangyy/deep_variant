@@ -30,32 +30,32 @@ There are three strategies:
 
 0. Baseline classifier. [here](baseline.html)
     - Train an SVM or logistic classifier using JASPAR as annotation
-        - ROC/PR curve 
-          [Stage1 JASPAR logistic](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html), 
-          [Stage1 JASPAR logistic, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
-        - Compare performance with DeepSEA representation 
-          [Stage1 here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html), 
-          [Stage1 with reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
     - Gkm-SVM classifier is trained on 5000 positive and 5000 negative sequences one annotation at a time.
-        - ROC/PR curve 
-          [Stage1 gkmsvm_on_deepsea_testing](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html), 
-          [Stage1 gkmsvm_on_deepsea_testing.reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html)
-        - Compare performance with DeepSEA representation 
-          [Stage1 here](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
+          
 1. Use DeepSEA sequences and DeepSEA feature representation. 
-    - See results and analysis 
-      [Stage1 here](type1.html). 
-    - See performance on new sequences 
-      [Stage1 here](type1_newseq.html)
-    - ROC/PR curve 
-      [Stage1 Type1](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html), 
-      [Stage1 Type1, reweighted](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html)
-    - Evalution using allelic imbalance site 
-      [Stage1 here](type1_allelic_imbalance.html)
+    - See training result [Stage1 here](type1.html). 
+    - See performance on new sequences [Stage1 here](type1_newseq.html)
+    - Evalution using allelic imbalance site [Stage1 here](type1_allelic_imbalance.html)
 2. Use DeepSEA sequences but train a new model using the same architecture as DeepSEA. 
-    - See results and analysis 
-      [Stage1 here](type2.html). **ONGOING**
-3. Include new sequences and train a new model using the same architecture. **TODO**
+    - See results and analysis [Stage1 here](type2.html). **Leave for future**
+3. Include new sequences and train a new model using the same architecture. **Leave for future**
+
+# Results
+
+1. ROC/PR curve
+    - [Stage1, JASPAR logistic, deepsea+extracted, no reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR_plot.html)
+    - [Stage1 JASPAR logistic, deepsea+extracted, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/JASPAR.reweight_plot.html)
+    - [Stage1 gkmsvm, deepsea, no reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea_plot.html)
+    - [Stage1 gkmsvm, deepsea, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.gkm_deepsea.reweight_plot.html)
+    - [Stage1, train_deepsea, deepsea+extracted, no reweight](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/pr_roc_curve/report/deepsea_vs_newseq_plot.html)
+    - [Stage1, train_deepsea, deepsea+extracted, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html)
+    - [Stage1 Stage2, all methods, deepsea sequence, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/deepsea-stage1stage2.reweight_plot.html)
+    - [Stage1 Stage2, all methods, extracted sequence, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/extracted-stage1stage2.reweight_plot.html)
+2. AUC scores
+    - [Stage1, train_deepsea vs. JASPAR, no reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html)
+    - [Stage1, train_deepsea vs. JASPAR, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
+    - [Stage1, train_deepsea vs. gkmsvm, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
+    - [Stage1 Stage2, compare all methods, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-stage1stage2.auc_comparison.html)
 
 # Other analysis
 
