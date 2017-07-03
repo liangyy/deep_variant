@@ -213,10 +213,10 @@ rule signal2seq:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.txt'.format(model=config['model']['name']),
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.hdf5'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.fa'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.WinSize_{{window_size}}.fa'.format(model=config['model']['name'])
     params:
         mask_size = config['method']['sliding_window']['mask_size'],
-        window_size = config['method']['sliding_window']['window_size']
+        # window_size = config['method']['sliding_window']['window_size']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {params.mask_size} --window_size {params.window_size} --merge 1'
+        --out {output[0]} --mask_size {params.mask_size} --window_size {wildcards.window_size} --merge 1'
