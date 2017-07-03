@@ -17,7 +17,7 @@ rule get_pattern_pos:
 
 rule get_pattern_neg:
     input:
-        n = 'data/{data}/selected_negative.hdf5',
+        n = 'data/{dataname}.{data}/selected_negative.hdf5',
         model = config['model']['path']
     output:
         on = 'pattern/{model}/{{dataname}}.{{data}}/motif_activation/pattern_negative.feather'.format(model=config['model']['name'])
