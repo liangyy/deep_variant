@@ -303,7 +303,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Deep brain - Motif Analysis - Sliding Window (E081, Noonan)</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>22 June, 2017</em></h4>
+<h4 class="date"><em>02 July, 2017</em></h4>
 
 </div>
 
@@ -318,10 +318,14 @@ pre code, pre, code {
 </style>
 <div id="ame-results" class="section level1">
 <h1><span class="header-section-number">1</span> AME results</h1>
-<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: <a href="AME_results_E081.html">E081</a>, <a href="AME_results_Noonan.html">Noonan</a>.</p>
+<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences.</p>
+<p>Results of top 1% windowns (window size is 50, mask size is 8) can be found: <a href="AME_results_E081.html">E081</a>, <a href="AME_results_Noonan.html">Noonan</a>.</p>
+<p>Results of randomly selected windows can be found: <a href="AME_results_E081.random.html">E081 random</a>, <a href="AME_results_Noonan.random.html">Noonan random</a>.</p>
 </div>
-<div id="tf-that-involves-in-brain-function" class="section level1">
-<h1><span class="header-section-number">2</span> TF that involves in brain function</h1>
+<div id="tfs-are-involved-in-brain-function" class="section level1">
+<h1><span class="header-section-number">2</span> TFs are involved in brain function</h1>
+<div id="top-1" class="section level2">
+<h2><span class="header-section-number">2.1</span> Top 1%</h2>
 <ul>
 <li>Noonan:
 <ul>
@@ -363,6 +367,8 @@ pre code, pre, code {
 <li><a href="http://www.uniprot.org/uniprot/O43889" class="uri">http://www.uniprot.org/uniprot/O43889</a> - neuronal cell body</li>
 <li><a href="http://www.uniprot.org/uniprot/P03966" class="uri">http://www.uniprot.org/uniprot/P03966</a> - Expressed in the proliferating cells of the developing CNS and the epidermis.</li>
 <li><a href="http://www.uniprot.org/uniprot/P61244" class="uri">http://www.uniprot.org/uniprot/P61244</a> - neuron apoptotic process</li>
+<li><a href="http://www.uniprot.org/uniprot/A8MYZ6" class="uri">http://www.uniprot.org/uniprot/A8MYZ6</a> - positive regulation of dendritic spine development</li>
+<li><a href="http://www.uniprot.org/uniprot/Q9R1E0" class="uri">http://www.uniprot.org/uniprot/Q9R1E0</a> - regulation of neural precursor cell proliferation</li>
 </ul></li>
 <li>Both:
 <ul>
@@ -372,119 +378,67 @@ pre code, pre, code {
 </ul></li>
 </ul>
 </div>
+<div id="random-windows" class="section level2">
+<h2><span class="header-section-number">2.2</span> Random windows</h2>
+<ul>
+<li>Noonan:
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/P40763" class="uri">http://www.uniprot.org/uniprot/P40763</a> - brain, nervous system development (both) <a href="http://www.uniprot.org/uniprot/P50549" class="uri">http://www.uniprot.org/uniprot/P50549</a> - Very highly expressed in brain (Noonan)</li>
+<li><a href="http://www.uniprot.org/uniprot/P14921" class="uri">http://www.uniprot.org/uniprot/P14921</a> - hypothalamus development (new)</li>
+</ul></li>
+<li>E081
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/O15409" class="uri">http://www.uniprot.org/uniprot/O15409</a> - Plays a role in synapse formation by regulating SRPX2 levels. Involved in neural mechanisms mediating the development of speech and language. Expressed in the brain at 15 and 22 weeks of gestation, with a pattern of strong cortical, basal ganglia, thalamic and cerebellar expression. (new)</li>
+<li><a href="http://www.uniprot.org/uniprot/Q99592" class="uri">http://www.uniprot.org/uniprot/Q99592</a> - Transcriptional repressor that plays a role in various developmental processes such as myogenesis and brain development. (E081)</li>
+<li><a href="http://www.uniprot.org/uniprot/Q02575" class="uri">http://www.uniprot.org/uniprot/Q02575</a> - May serve as DNA-binding protein and may be involved in the control of cell-type determination, possibly within the developing nervous system. (E081)</li>
+</ul></li>
+<li>Both
+<ul>
+<li><a href="http://www.uniprot.org/uniprot/P41212" class="uri">http://www.uniprot.org/uniprot/P41212</a> - neurogenesis (both)</li>
+<li><a href="http://www.uniprot.org/uniprot/P32519" class="uri">http://www.uniprot.org/uniprot/P32519</a> - weakly expressed in fetal brain (Noonan)</li>
+<li><a href="http://www.uniprot.org/uniprot/Q99581" class="uri">http://www.uniprot.org/uniprot/Q99581</a> - In brain, exclusively expressed in the major serotonergic neurons of the dorsal and median raphe nuclei located in the midbrain and pons (both)</li>
+</ul></li>
+</ul>
+</div>
+</div>
 <div id="go-term-analysis-of-hitted-tf" class="section level1">
 <h1><span class="header-section-number">3</span> GO term analysis of hitted TF</h1>
 <p>Here JASPAR TFs is selected as the background protein list.</p>
-<pre class="r"><code>clean_gene_name &lt;- function(x){
-    e &lt;- strsplit(x, &#39;::&#39;)
-    re &lt;- c()
-    for(i in e){
-        i &lt;- strsplit(i, &#39;(&#39;, fixed = T)[[1]]
-        re &lt;- c(re, i[1])
-    }
-    return(re)
-}
-go_term_bp &lt;- function(gene_cleaned, back_cleaned){
-    ensembl = useMart(biomart = &quot;ENSEMBL_MART_ENSEMBL&quot;,dataset=&quot;hsapiens_gene_ensembl&quot;, host = &quot;jul2015.archive.ensembl.org&quot;)
-    goids = getBM(attributes = c(&#39;hgnc_symbol&#39;, &#39;go_id&#39;), 
-                  filters = &#39;hgnc_symbol&#39;, 
-                  values = back_cleaned, 
-                  mart = ensembl)
-    gene2GO &lt;- lapply(split(goids, goids[&#39;hgnc_symbol&#39;]), function(x){x[, 2]})
-    gene_list_analysis &lt;- factor(as.integer(back_cleaned %in% gene_cleaned))
-    names(gene_list_analysis) &lt;- back_cleaned
-    myGOdata &lt;- new(&quot;topGOdata&quot;, description=&quot;Important Sequences in Sliding Window Analysis Mapped to TF Genes&quot;, ontology=&quot;BP&quot;, allGenes=gene_list_analysis,  annot = annFUN.gene2GO, gene2GO = gene2GO)
-    resultFisher &lt;- runTest(myGOdata, algorithm=&quot;classic&quot;, statistic=&quot;fisher&quot;) 
-    allRes &lt;- GenTable(myGOdata, classicFisher = resultFisher, orderBy = &quot;resultFisher&quot;, ranksOf = &quot;classicFisher&quot;, topNodes = 50)
-    return(allRes)
-    
-}
-e081 &lt;- read.table(&#39;../data/ame_E081.txt&#39;, sep = &#39; &#39;, skip = 13)
-e081.gene &lt;- e081$V7
-e081.gene_cleaned &lt;- apply(as.matrix(e081.gene, ncol=1), 1, clean_gene_name)
-noonan &lt;- read.table(&#39;../data/ame_Noonan.txt&#39;, sep = &#39; &#39;, skip = 13)
-noonan.gene &lt;- noonan$V7
-noonan.gene_cleaned &lt;- apply(as.matrix(noonan.gene, ncol=1), 1, clean_gene_name)
-background &lt;- read.table(&#39;../data/background_jaspar_gene.txt&#39;)
-background.cleaned &lt;- apply(background, 1, clean_gene_name)
-library(topGO)</code></pre>
-<pre><code>## Loading required package: BiocGenerics</code></pre>
-<pre><code>## Loading required package: parallel</code></pre>
-<pre><code>## 
-## Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:parallel&#39;:
-## 
-##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ, clusterExport, clusterMap, parApply, parCapply, parLapply, parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     IQR, mad, xtabs</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     anyDuplicated, append, as.data.frame, cbind, colnames, do.call, duplicated, eval, evalq, Filter, Find, get, grep, grepl, intersect, is.unsorted, lapply, lengths, Map, mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply, union, unique, unsplit, which, which.max, which.min</code></pre>
-<pre><code>## Loading required package: graph</code></pre>
-<pre><code>## Loading required package: Biobase</code></pre>
-<pre><code>## Welcome to Bioconductor
-## 
-##     Vignettes contain introductory material; view with &#39;browseVignettes()&#39;. To cite Bioconductor, see &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
-<pre><code>## Loading required package: GO.db</code></pre>
-<pre><code>## Loading required package: AnnotationDbi</code></pre>
-<pre><code>## Loading required package: stats4</code></pre>
-<pre><code>## Loading required package: IRanges</code></pre>
-<pre><code>## Loading required package: S4Vectors</code></pre>
-<pre><code>## 
-## Attaching package: &#39;S4Vectors&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     colMeans, colSums, expand.grid, rowMeans, rowSums</code></pre>
-<pre><code>## </code></pre>
-<pre><code>## Loading required package: SparseM</code></pre>
-<pre><code>## 
-## Attaching package: &#39;SparseM&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     backsolve</code></pre>
-<pre><code>## 
-## groupGOTerms:    GOBPTerm, GOMFTerm, GOCCTerm environments built.</code></pre>
-<pre><code>## 
-## Attaching package: &#39;topGO&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:IRanges&#39;:
-## 
-##     members</code></pre>
-<pre class="r"><code>library(biomaRt)
-e081.allRes &lt;- go_term_bp(e081.gene_cleaned, background.cleaned)</code></pre>
-<pre><code>## 
-## Building most specific GOs .....</code></pre>
-<pre><code>##  ( 2185 GO terms found. )</code></pre>
-<pre><code>## 
-## Build GO DAG topology ..........</code></pre>
-<pre><code>##  ( 4797 GO terms and 11281 relations. )</code></pre>
-<pre><code>## 
-## Annotating nodes ...............</code></pre>
-<pre><code>##  ( 369 genes annotated to the GO terms. )</code></pre>
-<pre><code>## 
-##           -- Classic Algorithm -- 
-## 
-##       the algorithm is scoring 1811 nontrivial nodes
-##       parameters: 
-##           test statistic: fisher</code></pre>
-<pre class="r"><code>noonan.allRes &lt;- go_term_bp(noonan.gene_cleaned, background.cleaned)</code></pre>
-<pre><code>## 
-## Building most specific GOs .....</code></pre>
-<pre><code>##  ( 2185 GO terms found. )</code></pre>
-<pre><code>## 
-## Build GO DAG topology ..........</code></pre>
-<pre><code>##  ( 4797 GO terms and 11281 relations. )</code></pre>
-<pre><code>## 
-## Annotating nodes ...............</code></pre>
-<pre><code>##  ( 369 genes annotated to the GO terms. )</code></pre>
-<pre><code>## 
-##           -- Classic Algorithm -- 
-## 
-##       the algorithm is scoring 1212 nontrivial nodes
-##       parameters: 
-##           test statistic: fisher</code></pre>
-<div id="e081" class="section level2">
-<h2><span class="header-section-number">3.1</span> E081</h2>
+<div id="overview" class="section level2">
+<h2><span class="header-section-number">3.1</span> Overview</h2>
+<pre class="r"><code>library(pander)
+pandoc.table(tf.count)</code></pre>
+<table style="width:44%;">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Positive</th>
+<th align="center">Random</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>E081</strong></td>
+<td align="center">81</td>
+<td align="center">24</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>Noonan</strong></td>
+<td align="center">34</td>
+<td align="center">21</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="top-1-1" class="section level2">
+<h2><span class="header-section-number">3.2</span> Top 1%</h2>
+<div id="e081" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> E081</h3>
 <pre class="r"><code>e081.allRes</code></pre>
 <pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
 ## 1  GO:0019722                  calcium-mediated signaling         5           4     0.81        0.0028
@@ -538,8 +492,8 @@ e081.allRes &lt;- go_term_bp(e081.gene_cleaned, background.cleaned)</code></pre>
 ## 49 GO:0055088                           lipid homeostasis         9           4     1.46        0.0421
 ## 50 GO:0006366 transcription from RNA polymerase II pro...       313          56    50.82        0.0463</code></pre>
 </div>
-<div id="noonan" class="section level2">
-<h2><span class="header-section-number">3.2</span> Noonan</h2>
+<div id="noonan" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Noonan</h3>
 <pre class="r"><code>noonan.allRes</code></pre>
 <pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
 ## 1  GO:0033173          calcineurin-NFAT signaling cascade         4           3     0.34        0.0021
@@ -593,8 +547,122 @@ e081.allRes &lt;- go_term_bp(e081.gene_cleaned, background.cleaned)</code></pre>
 ## 49 GO:0003013                  circulatory system process        14           4     1.19        0.0237
 ## 50 GO:0008015                           blood circulation        14           4     1.19        0.0237</code></pre>
 </div>
+</div>
+<div id="randomly-selected-windows" class="section level2">
+<h2><span class="header-section-number">3.3</span> Randomly selected windows</h2>
+<div id="e081-1" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> E081</h3>
+<pre class="r"><code>e081.random.allRes</code></pre>
+<pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
+## 1  GO:0006357 regulation of transcription from RNA pol...       303          22    17.18        0.0036
+## 2  GO:0006366 transcription from RNA polymerase II pro...       313          22    17.75        0.0076
+## 3  GO:0030154                        cell differentiation       243          19    13.78        0.0123
+## 4  GO:0048869              cellular developmental process       246          19    13.95        0.0148
+## 5  GO:0044763            single-organism cellular process       295          21    16.73        0.0168
+## 6  GO:0033173          calcineurin-NFAT signaling cascade         4           2     0.23        0.0172
+## 7  GO:0048016       inositol phosphate-mediated signaling         4           2     0.23        0.0172
+## 8  GO:0097720              calcineurin-mediated signaling         4           2     0.23        0.0172
+## 9  GO:0019722                  calcium-mediated signaling         5           2     0.28        0.0277
+## 10 GO:0046677                      response to antibiotic         5           2     0.28        0.0277
+## 11 GO:0060795 cell fate commitment involved in formati...         5           2     0.28        0.0277
+## 12 GO:1904018 positive regulation of vasculature devel...         5           2     0.28        0.0277
+## 13 GO:0044699                     single-organism process       334          22    18.94        0.0335
+## 14 GO:0021761                   limbic system development        15           3     0.85        0.0462
+## 15 GO:0019932         second-messenger-mediated signaling         7           2     0.40        0.0542
+## 16 GO:0050851 antigen receptor-mediated signaling path...         7           2     0.40        0.0542
+## 17 GO:0060428                 lung epithelium development         7           2     0.40        0.0542
+## 18 GO:0070555                   response to interleukin-1         7           2     0.40        0.0542
+## 19 GO:0009612             response to mechanical stimulus        16           3     0.91        0.0548
+## 20 GO:0001705                          ectoderm formation         1           1     0.06        0.0567
+## 21 GO:0001712             ectodermal cell fate commitment         1           1     0.06        0.0567
+## 22 GO:0001787           natural killer cell proliferation         1           1     0.06        0.0567
+## 23 GO:0001866                     NK T cell proliferation         1           1     0.06        0.0567
+## 24 GO:0001941          postsynaptic membrane organization         1           1     0.06        0.0567
+## 25 GO:0006997                        nucleus organization         1           1     0.06        0.0567
+## 26 GO:0007501          mesodermal cell fate specification         1           1     0.06        0.0567
+## 27 GO:0007528          neuromuscular junction development         1           1     0.06        0.0567
+## 28 GO:0008356                    asymmetric cell division         1           1     0.06        0.0567
+## 29 GO:0010668             ectodermal cell differentiation         1           1     0.06        0.0567
+## 30 GO:0010715 regulation of extracellular matrix disas...         1           1     0.06        0.0567
+## 31 GO:0010996               response to auditory stimulus         1           1     0.06        0.0567
+## 32 GO:0021756                        striatum development         1           1     0.06        0.0567
+## 33 GO:0021757                 caudate nucleus development         1           1     0.06        0.0567
+## 34 GO:0021758                         putamen development         1           1     0.06        0.0567
+## 35 GO:0022617            extracellular matrix disassembly         1           1     0.06        0.0567
+## 36 GO:0030575                   nuclear body organization         1           1     0.06        0.0567
+## 37 GO:0030578                       PML body organization         1           1     0.06        0.0567
+## 38 GO:0031223                           auditory behavior         1           1     0.06        0.0567
+## 39 GO:0032354    response to follicle-stimulating hormone         1           1     0.06        0.0567
+## 40 GO:0034465                 response to carbon monoxide         1           1     0.06        0.0567
+## 41 GO:0042078                germ-line stem cell division         1           1     0.06        0.0567
+## 42 GO:0042220                         response to cocaine         1           1     0.06        0.0567
+## 43 GO:0042297                              vocal learning         1           1     0.06        0.0567
+## 44 GO:0043113                         receptor clustering         1           1     0.06        0.0567
+## 45 GO:0044849                               estrous cycle         1           1     0.06        0.0567
+## 46 GO:0045601 regulation of endothelial cell different...         1           1     0.06        0.0567
+## 47 GO:0045603 positive regulation of endothelial cell ...         1           1     0.06        0.0567
+## 48 GO:0048133 male germ-line stem cell asymmetric divi...         1           1     0.06        0.0567
+## 49 GO:0048169 regulation of long-term neuronal synapti...         1           1     0.06        0.0567
+## 50 GO:0050854 regulation of antigen receptor-mediated ...         1           1     0.06        0.0567</code></pre>
+</div>
+<div id="noonan-1" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> Noonan</h3>
+<pre class="r"><code>noonan.random.allRes</code></pre>
+<pre><code>##         GO.ID                                        Term Annotated Significant Expected classicFisher
+## 1  GO:0060396 growth hormone receptor signaling pathwa...         2           2     0.10        0.0025
+## 2  GO:0060397 JAK-STAT cascade involved in growth horm...         2           2     0.10        0.0025
+## 3  GO:0060416                  response to growth hormone         2           2     0.10        0.0025
+## 4  GO:0071378 cellular response to growth hormone stim...         2           2     0.10        0.0025
+## 5  GO:0031328 positive regulation of cellular biosynth...       244          18    12.58        0.0063
+## 6  GO:0045893 positive regulation of transcription, DN...       244          18    12.58        0.0063
+## 7  GO:0045935 positive regulation of nucleobase-contai...       244          18    12.58        0.0063
+## 8  GO:0051173 positive regulation of nitrogen compound...       244          18    12.58        0.0063
+## 9  GO:0051254 positive regulation of RNA metabolic pro...       244          18    12.58        0.0063
+## 10 GO:1902680 positive regulation of RNA biosynthetic ...       244          18    12.58        0.0063
+## 11 GO:1903508 positive regulation of nucleic acid-temp...       244          18    12.58        0.0063
+## 12 GO:0009891 positive regulation of biosynthetic proc...       245          18    12.63        0.0067
+## 13 GO:0010557 positive regulation of macromolecule bio...       245          18    12.63        0.0067
+## 14 GO:0007259                            JAK-STAT cascade         3           2     0.15        0.0074
+## 15 GO:0097696                                STAT cascade         3           2     0.15        0.0074
+## 16 GO:0031325 positive regulation of cellular metaboli...       248          18    12.78        0.0081
+## 17 GO:0010628      positive regulation of gene expression       249          18    12.84        0.0086
+## 18 GO:0010604 positive regulation of macromolecule met...       252          18    12.99        0.0104
+## 19 GO:0045944 positive regulation of transcription fro...       228          17    11.75        0.0104
+## 20 GO:0009893    positive regulation of metabolic process       253          18    13.04        0.0110
+## 21 GO:0000768 syncytium formation by plasma membrane f...         4           2     0.21        0.0143
+## 22 GO:0006949                         syncytium formation         4           2     0.21        0.0143
+## 23 GO:0033173          calcineurin-NFAT signaling cascade         4           2     0.21        0.0143
+## 24 GO:0048016       inositol phosphate-mediated signaling         4           2     0.21        0.0143
+## 25 GO:0060142 regulation of syncytium formation by pla...         4           2     0.21        0.0143
+## 26 GO:0097720              calcineurin-mediated signaling         4           2     0.21        0.0143
+## 27 GO:0019722                  calcium-mediated signaling         5           2     0.26        0.0230
+## 28 GO:0032355                       response to estradiol         5           2     0.26        0.0230
+## 29 GO:0060795 cell fate commitment involved in formati...         5           2     0.26        0.0230
+## 30 GO:0048522     positive regulation of cellular process       266          18    13.71        0.0236
+## 31 GO:0030154                        cell differentiation       243          17    12.53        0.0249
+## 32 GO:0044763            single-organism cellular process       295          19    15.21        0.0275
+## 33 GO:0048518 positive regulation of biological proces...       269          18    13.87        0.0279
+## 34 GO:0048869              cellular developmental process       246          17    12.68        0.0292
+## 35 GO:0006357 regulation of transcription from RNA pol...       303          19    15.62        0.0431
+## 36 GO:0019932         second-messenger-mediated signaling         7           2     0.36        0.0454
+## 37 GO:0050851 antigen receptor-mediated signaling path...         7           2     0.36        0.0454
+## 38 GO:0001659                     temperature homeostasis         1           1     0.05        0.0515
+## 39 GO:0001705                          ectoderm formation         1           1     0.05        0.0515
+## 40 GO:0001712             ectodermal cell fate commitment         1           1     0.05        0.0515
+## 41 GO:0001787           natural killer cell proliferation         1           1     0.05        0.0515
+## 42 GO:0001866                     NK T cell proliferation         1           1     0.05        0.0515
+## 43 GO:0001937 negative regulation of endothelial cell ...         1           1     0.05        0.0515
+## 44 GO:0003337 mesenchymal to epithelial transition inv...         1           1     0.05        0.0515
+## 45 GO:0003339 regulation of mesenchymal to epithelial ...         1           1     0.05        0.0515
+## 46 GO:0003340 negative regulation of mesenchymal to ep...         1           1     0.05        0.0515
+## 47 GO:0006164      purine nucleotide biosynthetic process         1           1     0.05        0.0515
+## 48 GO:0006754                    ATP biosynthetic process         1           1     0.05        0.0515
+## 49 GO:0006997                        nucleus organization         1           1     0.05        0.0515
+## 50 GO:0007501          mesodermal cell fate specification         1           1     0.05        0.0515</code></pre>
+</div>
+</div>
 <div id="summary" class="section level2">
-<h2><span class="header-section-number">3.3</span> Summary</h2>
+<h2><span class="header-section-number">3.4</span> Summary</h2>
 <p>E081 hits in enriched in neuron development process but there is no brain related function enriched in Noonan hits.</p>
 </div>
 </div>

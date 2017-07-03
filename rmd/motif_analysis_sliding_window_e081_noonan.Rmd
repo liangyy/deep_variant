@@ -20,9 +20,16 @@ options(width=2000)
 
 # AME results
 
-[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. Results can be found: [E081](AME_results_E081.html), [Noonan](AME_results_Noonan.html).
+[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. 
 
-# TF that involves in brain function
+Results of top 1% windowns (window size is 50, mask size is 8) can be found: [E081](AME_results_E081.html), [Noonan](AME_results_Noonan.html).
+
+Results of randomly selected windows can be found:
+[E081 random](AME_results_E081.random.html), [Noonan random](AME_results_Noonan.random.html).
+
+# TFs are involved in brain function
+
+## Top 1%
 
 * Noonan:
     - http://www.uniprot.org/uniprot/P19419 - neuronal cell body
@@ -62,17 +69,37 @@ options(width=2000)
     - http://www.uniprot.org/uniprot/O43889 - neuronal cell body
     - http://www.uniprot.org/uniprot/P03966 - Expressed in the proliferating cells of the developing CNS and the epidermis.
     - http://www.uniprot.org/uniprot/P61244 - neuron apoptotic process
-    
+    - http://www.uniprot.org/uniprot/A8MYZ6 - positive regulation of dendritic spine development
+    - http://www.uniprot.org/uniprot/Q9R1E0 - regulation of neural precursor cell proliferation
 * Both:
     - http://www.uniprot.org/uniprot/P41212 - neurogenesis
     - http://www.uniprot.org/uniprot/Q99581 - In brain, exclusively expressed in the major serotonergic neurons of the dorsal and median raphe nuclei located in the midbrain and pons
     - http://www.uniprot.org/uniprot/P40763 - brain, nervous system development
 
+## Random windows
+
+* Noonan:
+    - http://www.uniprot.org/uniprot/P40763 - brain, nervous system development (both)
+    http://www.uniprot.org/uniprot/P50549 - Very highly expressed in brain (Noonan)
+    - http://www.uniprot.org/uniprot/P14921 - hypothalamus development (new)
+
+* E081
+	- http://www.uniprot.org/uniprot/O15409 - Plays a role in synapse formation by regulating SRPX2 levels. Involved in neural mechanisms mediating the development of speech and language. Expressed in the brain at 15 and 22 weeks of gestation, with a pattern of strong cortical, basal ganglia, thalamic and cerebellar expression. (new)
+	- http://www.uniprot.org/uniprot/Q99592 - Transcriptional repressor that plays a role in various developmental processes such as myogenesis and brain development. (E081)
+	- http://www.uniprot.org/uniprot/Q02575 - May serve as DNA-binding protein and may be involved in the control of cell-type determination, possibly within the developing nervous system. (E081)
+	
+* Both
+	- http://www.uniprot.org/uniprot/P41212 - neurogenesis (both)
+	- http://www.uniprot.org/uniprot/P32519 - weakly expressed in fetal brain (Noonan)
+	- http://www.uniprot.org/uniprot/Q99581 - In brain, exclusively expressed in the major serotonergic neurons of the dorsal and median raphe nuclei located in the midbrain and pons (both)
+
 # GO term analysis of hitted TF
 
 Here JASPAR TFs is selected as the background protein list.
 
-```{r}
+## Overview
+
+```{r, echo=FALSE, message=FALSE}
 clean_gene_name <- function(x){
     e <- strsplit(x, '::')
     re <- c()
@@ -105,24 +132,63 @@ noonan.gene <- noonan$V7
 noonan.gene_cleaned <- apply(as.matrix(noonan.gene, ncol=1), 1, clean_gene_name)
 background <- read.table('../data/background_jaspar_gene.txt')
 background.cleaned <- apply(background, 1, clean_gene_name)
+e081.random <- read.table('../data/ame_E081.random.txt', sep = ' ', skip = 13)
+e081.random.gene <- e081.random$V7
+e081.random.gene_cleaned <- apply(as.matrix(e081.random.gene, ncol=1), 1, clean_gene_name)
+noonan.random <- read.table('../data/ame_Noonan.random.txt', sep = ' ', skip = 13)
+noonan.random.gene <- noonan.random$V7
+noonan.random.gene_cleaned <- apply(as.matrix(noonan.random.gene, ncol=1), 1, clean_gene_name)
+tf.count <- data.frame(
+                        Positive = c(length(e081.gene_cleaned), length(noonan.gene_cleaned)), 
+                        Random = c(length(e081.random.gene_cleaned), length(noonan.random.gene_cleaned)))
+row.names(tf.count) <- c('E081', 'Noonan')
+```
+
+```{r, results='asis'}
+library(pander)
+pandoc.table(tf.count)
+```
+
+## Top 1%
+
+```{r, echo=FALSE, message=FALSE}
 library(topGO)
 library(biomaRt)
 e081.allRes <- go_term_bp(e081.gene_cleaned, background.cleaned)
 noonan.allRes <- go_term_bp(noonan.gene_cleaned, background.cleaned)
 ```
 
-## E081
+### E081
 
 ```{r}
 e081.allRes
 ```
 
-## Noonan
+### Noonan
 
 ```{r}
 noonan.allRes
 ```
 
+## Randomly selected windows
+
+```{r, echo=FALSE, message=FALSE}
+e081.random.allRes <- go_term_bp(e081.random.gene_cleaned, background.cleaned)
+noonan.random.allRes <- go_term_bp(noonan.random.gene_cleaned, background.cleaned)
+```
+
+### E081
+
+```{r}
+e081.random.allRes
+```
+
+### Noonan
+
+```{r}
+noonan.random.allRes
+```
+
 ## Summary
 
-E081 hits in enriched in neuron development process but there is no brain related function enriched in Noonan hits.
+The top 1% of the positive windows in E081 and Noonan hit in enriched in neuron development process.
