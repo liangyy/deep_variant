@@ -6,36 +6,36 @@ rule prepare_input_pos:
     input:
         p = 'data/{dataname}.{data}/selected_positive.hdf5'
     output:
-        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_positive.hdf5'
+        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_positive.MaskSize_{mask_size}.hdf5'
     params:
-        mask_size = config['method']['sliding_window']['mask_size']
+        # mask_size = config['method']['sliding_window']['mask_size']
     shell:
         'python scripts/sliding_window_prepare.py --input {input.p} \
-        --mask_size {params.mask_size} \
+        --mask_size {wildcards.mask_size} \
         --output {output[0]}'
 
 rule prepare_input_neg:
     input:
         p = 'data/{dataname}.{data}/selected_negative.hdf5'
     output:
-        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.hdf5'
+        'pattern/{model}/{dataname}.{data}/sliding_window/slided_sequences_negative.MaskSize_{mask_size}.hdf5'
     params:
-        mask_size = config['method']['sliding_window']['mask_size']
+        # mask_size = config['method']['sliding_window']['mask_size']
     shell:
         'python scripts/sliding_window_prepare.py --input {input.p} \
-        --mask_size {params.mask_size} \
+        --mask_size {wildcards.mask_size} \
         --output {output[0]}'
 
 rule get_sliding_pattern_pos_sbatch:
     input:
-        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_positive.hdf5'.format(model=config['model']['name']),
+        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_positive.MaskSize_{{mask_size}}.hdf5'.format(model=config['model']['name']),
         model = config['model']['path']
     output:
-        'sbatch/{model}.{{dataname}}.{{data}}.sliding_positive.sbatch'.format(model=config['model']['name'])
+        'sbatch/{model}.{{dataname}}.{{data}}.sliding_positive.MaskSize_{{mask_size}}.sbatch'.format(model=config['model']['name'])
     params:
-        mask_size = config['method']['sliding_window']['mask_size'],
+        # mask_size = config['method']['sliding_window']['mask_size'],
         label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
-        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
+        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name']),
         name = '{model}.{{dataname}}.{{data}}.sliding_positive'.format(model=config['model']['name'])
     run:
         sbatch = '''#!/bin/bash
@@ -58,21 +58,21 @@ python scripts/sliding_window_compute.py --model {model} \
 --input {input} \
 --output {output} \
 --mask_size {mask_size} \
---label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+--label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=wildcards.mask_size, label_idx=params.label_idx)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
 
 rule get_sliding_pattern_neg_sbatch:
     input:
-        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_negative.hdf5'.format(model=config['model']['name']),
+        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_negative.MaskSize_{{mask_size}}.hdf5'.format(model=config['model']['name']),
         model = config['model']['path']
     output:
-        'sbatch/{model}.{{dataname}}.{{data}}.sliding_negative.sbatch'.format(model=config['model']['name'])
+        'sbatch/{model}.{{dataname}}.{{data}}.sliding_negative.MaskSize_{{mask_size}}.sbatch'.format(model=config['model']['name'])
     params:
-        mask_size = config['method']['sliding_window']['mask_size'],
+        # mask_size = config['method']['sliding_window']['mask_size'],
         label_idx = lambda wildcards: config[wildcards.dataname][wildcards.data]['label_num'],
-        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name']),
+        op = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name']),
         name = '{model}.{{dataname}}.{{data}}.sliding_negative'.format(model=config['model']['name'])
     run:
         sbatch = '''#!/bin/bash
@@ -95,7 +95,7 @@ python scripts/sliding_window_compute.py --model {model} \
 --input {input} \
 --output {output} \
 --mask_size {mask_size} \
---label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=params.mask_size, label_idx=params.label_idx)
+--label_idx {label_idx}'''.format(name=params.name, model=input.model, input=input.p, output=params.op, mask_size=wildcards.mask_size, label_idx=params.label_idx)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
@@ -118,10 +118,10 @@ python scripts/sliding_window_compute.py --model {model} \
 
 rule report_slide_gen_rmd:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name'])
     output:
-        o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.Rmd'.format(model=config['model']['name']))
+        o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.Rmd'.format(model=config['model']['name']))
     params:
         envir = '../../'
     run:
@@ -190,19 +190,19 @@ ggplot(data) + geom_boxplot(aes(x = variable, y = value, fill = label)) + ggtitl
 
 rule report_slide_gen_html:
     input:
-        rmd = 'report/{model}/{{dataname}}.{{data}}_sliding_window.Rmd'.format(model=config['model']['name']),
-        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.feather'.format(model=config['model']['name']),
-        n = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.feather'.format(model=config['model']['name'])
+        rmd = 'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.Rmd'.format(model=config['model']['name']),
+        p = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_positive.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name']),
+        n = 'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_negative.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name'])
     output:
-        'report/{model}/{{dataname}}.{{data}}_sliding_window.html'.format(model=config['model']['name'])
+        'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.html'.format(model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
 
 rule extract_signal:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_{{mode}}.feather'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_{{mode}}.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.txt'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
     params:
         config['method']['sliding_window']['quantile']
     shell:
@@ -210,13 +210,13 @@ rule extract_signal:
 
 rule signal2seq:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.txt'.format(model=config['model']['name']),
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.hdf5'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.MaskSize_{{mask_size}}.hdf5'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.WinSize_{{window_size}}.fa'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.WinSize_{{window_size}}.MaskSize_{{mask_size}}.fa'.format(model=config['model']['name'])
     params:
-        mask_size = config['method']['sliding_window']['mask_size'],
+        # mask_size = config['method']['sliding_window']['mask_size'],
         # window_size = config['method']['sliding_window']['window_size']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {params.mask_size} --window_size {wildcards.window_size} --merge 1'
+        --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge 1'

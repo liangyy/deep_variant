@@ -3,7 +3,7 @@ method:
     snakemake: '_mutagensis.snakemake'
   sliding_window:
     snakemake: '_sliding_window.snakemake'
-    mask_size: 22
+    # mask_size: 22
     # window_size: 50
     quantile: 0.01
   motif_gradient:
