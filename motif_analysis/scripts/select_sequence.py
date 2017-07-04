@@ -60,7 +60,7 @@ if args.reweight != '1':
     x_pos = x[y == 1][y_pred[y == 1] >= threhold_pos]
     y_pred_pos = y_pred[y == 1][y_pred[y == 1] >= threhold_pos]
     x_neg = x[y == 0][y_pred[y == 0] <= threhold_neg]
-    y_pred_neg = y_pred[y == 1][y_pred[y == 1] >= threhold_neg]
+    y_pred_neg = y_pred[y == 0][y_pred[y == 0] <= threhold_neg]
     my_python.eprint('The threshold for positive instance is {tpos}'.format(tpos=threhold_pos))
     my_python.eprint('The threshold for negative instance is {tneg}'.format(tneg=threhold_neg))
 else:
@@ -88,5 +88,5 @@ else:
     x_neg = x[x_neg_idx]
     y_pred_neg = y_pred[x_neg_idx]
 
-my_python.saveDataDict(args.out_pos, {'x': x_pos, 'y_pred': y_pred_pos})
-my_python.saveDataDict(args.out_neg, {'x': x_neg, 'y_pred': y_pred_neg})
+my_python.saveDataDict(args.out_pos, {'x': x_pos, 'y_pred': y_pred_pos, 'idx' : x_pos_idx})
+my_python.saveDataDict(args.out_neg, {'x': x_neg, 'y_pred': y_pred_neg, 'idx': x_neg_idx})
