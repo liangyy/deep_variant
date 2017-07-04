@@ -13,7 +13,7 @@ method:
 reweight: '1'
 model:
   name: 'Type1'
-  path: ''
+  path: '../train_deepsea/model/DeepSEA-ATACseq_logistic.best.hdf5'
   first_layer_idx: 1 # 0-based
   motif_layer_idx: 0 # 0-based
   nmotifs: 320
