@@ -98,7 +98,7 @@ elif args.merge != 1:
                 delta = (args.window_size - (end - start)) / 2
                 start = max(1, start - delta)
                 end = min(end + delta, sequence.shape[1] + 1)
-        extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
+        extracted = sequence[int(seq * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
         ex_seq = ''
         for j in range(extracted.shape[0]):
             num = extracted[j,:].argmax()

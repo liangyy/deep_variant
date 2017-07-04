@@ -204,9 +204,10 @@ rule extract_signal:
     output:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
     params:
-        config['method']['sliding_window']['quantile']
+        config['method']['sliding_window']['quantile'],
+        config['method']['sliding_window']['merge']
     shell:
-        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --quantile={params[0]} --extract_mode={wildcards.extract_mode}'
+        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --quantile={params[0]} --extract_mode={wildcards.extract_mode} --merge={params[1]}'
 
 rule signal2seq:
     input:
@@ -217,6 +218,7 @@ rule signal2seq:
     params:
         # mask_size = config['method']['sliding_window']['mask_size'],
         # window_size = config['method']['sliding_window']['window_size']
+        merge = config['method']['sliding_window']['merge']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge 1'
+        --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge {params.merge}'

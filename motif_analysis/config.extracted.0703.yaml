@@ -5,7 +5,8 @@ method:
     snakemake: '_sliding_window.snakemake'
     # mask_size: 22
     # window_size: 50
-    quantile: 0.01
+    quantile: 0.001
+    merge: '0'
   motif_gradient:
     snakemake: '_motif_gradient.snakemake'
   motif_activation:

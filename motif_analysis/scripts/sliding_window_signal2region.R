@@ -9,7 +9,8 @@ option_list = list(
                 help="output file name [default= %default]", metavar="character"),
     make_option(c('-m', '--extract_mode'), type='character', default='positive',
                 help='match the mode with the input file (positive|negative) or set it to random', metavar='character'),
-    make_option(c('-q', '--quantile'), type='double', default=0.0001)
+    make_option(c('-q', '--quantile'), type='double', default=0.0001),
+    make_option(c('-M', '--merge'), type='double', default=1)
 );
 
 opt_parser = OptionParser(option_list=option_list);
@@ -38,7 +39,11 @@ if(opt$extract_mode == 'positive'){
         position <- c(position, pass.idx)
     }
 }else if(opt$extract_mode == 'random'){
-    n <- opt$quantile * nrow(pos) * ncol(pos) * 0.25
+    if(opt$merge == 1){
+        n <- opt$quantile * nrow(pos) * ncol(pos) * 0.25
+    }else{
+        n <- opt$quantile * nrow(pos) * ncol(pos)
+    }
     seq <- c()
     position <- c()
     seq <- sample(1 : nrow(pos), n, replace=T)
