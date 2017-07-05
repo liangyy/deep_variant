@@ -1,0 +1,221 @@
+reweight: '0'
+extracted-stage1stage2.no-reweight:
+  group1:
+    info: 'train_deepsea'
+    data:
+      hNSC-50:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/label.hdf5'
+          name: 'data/Noonan_hNSC_50_peaks.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-ATACseq_hNSC-50.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/hNSC-50.gc.feather'
+      E081:
+        y:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/label.hdf5'
+          name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '1073109-1073114'
+        ypred:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/E081-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        gc: '../gc_content/results/E081.gc.feather'
+      E082:
+        y:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/label.hdf5'
+          name: 'data/E082-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '1238543-1238548'
+        ypred:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/E082-DNase.macs2.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: 'None'
+        gc: '../gc_content/results/E082.gc.feather'
+      E129:
+        y:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/label.hdf5'
+          name: 'data/E129-H3K9me3.narrowPeak.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/E129-H3K9me3.narrowPeak_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        gc: '../gc_content/results/E129.gc.feather'
+      Noonan:
+        y:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/label.hdf5'
+          name: 'data/Noonan_union.bed.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '../../../deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/Noonan_union.bed_bin200.bed.sorted.merged.final.expended_keras_deepsea_12_42-0.1703-0.1520_pred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: 'None'
+        gc: '../gc_content/results/Noonan.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      hNSC-50:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/label.hdf5'
+          name: 'data/Noonan_hNSC_50_peaks.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-logistic-ATACseq_hNSC-50.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/hNSC-50.gc.feather'
+      E081:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/label.hdf5'
+          name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '1073109-1073114'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E081.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E081.gc.feather'
+      E082:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/label.hdf5'
+          name: 'data/E082-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '1238543-1238548'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E082.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E082.gc.feather'
+      E129:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/label.hdf5'
+          name: 'data/E129-H3K9me3.narrowPeak.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_E129.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E129.gc.feather'
+      Noonan:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/label.hdf5'
+          name: 'data/Noonan_union.bed.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR_logistic_Noonan.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/Noonan.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      hNSC-50:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0628_binize_ATACseq/hNSC_50.txt_out/label.hdf5'
+          name: 'data/Noonan_hNSC_50_peaks.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-svm-ATACseq_hNSC-50.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/hNSC-50.gc.feather'
+      E081:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E081.txt_out/label.hdf5'
+          name: 'data/E081-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '1073109-1073114'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/svm_E081.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E081.gc.feather'
+      E082:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E082.txt_out/label.hdf5'
+          name: 'data/E082-DNase.macs2.narrowPeak.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '1238543-1238548'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/svm_E082.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E082.gc.feather'
+      E129:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/E129.txt_out/label.hdf5'
+          name: 'data/E129-H3K9me3.narrowPeak.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/svm_E129.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/E129.gc.feather'
+      Noonan:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/040917_binize_datasets/Noonan.txt_out/label.hdf5'
+          name: 'data/Noonan_union.bed.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/svm_Noonan.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/Noonan.gc.feather'
