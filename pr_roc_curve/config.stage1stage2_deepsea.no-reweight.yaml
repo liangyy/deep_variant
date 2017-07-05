@@ -1,5 +1,5 @@
 reweight: '0'
-deepsea-stage1stage2.reweight:
+deepsea-stage1stage2.no-reweight:
   group1:
     info: 'train_deepsea'
     data:
