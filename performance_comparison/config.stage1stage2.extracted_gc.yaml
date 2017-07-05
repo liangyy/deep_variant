@@ -1,0 +1,4 @@
+deep_brain-stage1stage2_extracted_gc:
+  extracted: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/extracted-stage1stage2.reweight_curves.feather'
+  extracted.no-reweight: '/project2/xinhe/yanyul/repo/deep_variant/pr_roc_curve/result/extracted-stage1stage2.no-reweight_curves.feather'
+by: 'sequence'
