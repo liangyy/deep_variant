@@ -1,0 +1,19 @@
+AME (Analysis of Motif Enrichment): Compiled on Jun 27 2017 at 23:27:24
+------------------------------
+Copyright (c) Robert McLeay <r.mcleay@imb.uq.edu.au> & Timothy Bailey <t.bailey@imb.uq.edu.au>, 2009.
+
+Command line
+ame --verbose 1 --oc . --control shuffled_extracted_positive.positive.WinSize_22.MaskSize_22.fa --bgformat 1 --scoring avg --method ranksum --pvalue-report-threshold 0.05 extracted_positive.positive.WinSize_22.MaskSize_22.fa db/JASPAR/JASPAR_CORE_2016_vertebrates.meme
+
+Not in partition maximization mode. Fixing partition at the number of primary sequences (979).
+
+Threshold p-value for reporting results: 0.05
+Motif p-values are corrected by #Motifs * #ThresholdsTested - (519 * 1 = 519)
+
+1. Ranksum p-values of motif MA0829.1 Srebf1(var.2) (ATCACGTGAY) top 979 seqs (left,right,twotailed): 1 9.212e-07 1.842e-06 U-value: 4.196e+05 (Corrected p-values: 1 0.000478 0.000478)
+2. Ranksum p-values of motif MA0794.1 PROX1 (YAAGACGYCTTA) top 979 seqs (left,right,twotailed): 1 1.095e-06 2.19e-06 U-value: 4.2e+05 (Corrected p-values: 1 0.0005681 0.0005681)
+3. Ranksum p-values of motif MA0835.1 BATF3 (TGATGACGTCATCA) top 979 seqs (left,right,twotailed): 1 1.503e-05 3.007e-05 U-value: 4.27e+05 (Corrected p-values: 1 0.007772 0.007772)
+4. Ranksum p-values of motif MA0656.1 JDP2(var.2) (GATGACGTCAYC) top 979 seqs (left,right,twotailed): 1 2.942e-05 5.885e-05 U-value: 4.29e+05 (Corrected p-values: 1 0.01515 0.01515)
+5. Ranksum p-values of motif MA0871.1 TFEC (RTCACRTGAB) top 979 seqs (left,right,twotailed): 1 4.264e-05 8.528e-05 U-value: 4.301e+05 (Corrected p-values: 1 0.02189 0.02189)
+6. Ranksum p-values of motif MA0843.1 TEF (BRTTACRTAAYM) top 979 seqs (left,right,twotailed): 1 4.719e-05 9.439e-05 U-value: 4.304e+05 (Corrected p-values: 1 0.0242 0.0242)
+7. Ranksum p-values of motif MA0903.1 HOXB3 (NNYMATTARN) top 979 seqs (left,right,twotailed): 0.9999 5.457e-05 0.0001091 U-value: 4.308e+05 (Corrected p-values: 1 0.02792 0.02792)

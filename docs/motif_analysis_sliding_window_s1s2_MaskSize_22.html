@@ -1,0 +1,3390 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yanyu Liang" />
+
+
+<title>Deep brain - Motif Analysis - Sliding Window Mask Size = 22bp</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Deep Variant</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Tasks</a>
+</li>
+<li>
+  <a href="analysis_list.html">Analysis</a>
+</li>
+<li>
+  <a href="memo_list.html">Technical Memo</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/deep_variant">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Deep brain - Motif Analysis - Sliding Window Mask Size = 22bp</h1>
+<h4 class="author"><em>Yanyu Liang</em></h4>
+<h4 class="date"><em>04 July, 2017</em></h4>
+
+</div>
+
+
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+<div id="procedure" class="section level1">
+<h1><span class="header-section-number">1</span> Procedure</h1>
+<p><a href="http://meme-suite.org/tools/ame">AME</a> (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences.</p>
+<p>Some windows were extracted and fed to AME to perform motif enrichment analysis (search in JASPAR 2016 vertebrates). Here top 0.1% windows that decrease the score most in positive sequences and top 0.1% windows that increase the score most in negative sequences and randomly selected windows in positive sequences were analyzed respectively.</p>
+<p>Results of randomly selected windows can be found: - <a href="AME_results_E081.top0.1_positive.html">E081 top 0.1% positive</a>, - <a href="AME_results_E081.random_positive.html">E081 random positive</a>, - <a href="AME_results_E081.top0.1_negative.html">E081 top 0.1% negative</a>, - <a href="AME_results_Noonan.top0.1_positive.html">Noonan top 0.1% positive</a>, - <a href="AME_results_Noonan.random_positive.html">Noonan random positive</a>, - <a href="AME_results_Noonan.top0.1_negative.html">Noonan top 0.1% negative</a>, - <a href="AME_results_hNSC-50.top0.1_positive.html">hNSC-50 top 0.1% positive</a>, - <a href="AME_results_hNSC-50.random_positive.html">hNSC-50 random positive</a>, - <a href="AME_results_hNSC-50.top0.1_negative.html">hNSC-50 top 0.1% negative</a>,</p>
+</div>
+<div id="go-term-analysis-of-hitted-tf" class="section level1">
+<h1><span class="header-section-number">2</span> GO term analysis of hitted TF</h1>
+<p>Here JASPAR TFs is selected as the background protein list.</p>
+<div id="overview" class="section level2">
+<h2><span class="header-section-number">2.1</span> Overview</h2>
+<pre class="r"><code>library(pander)
+pandoc.table(tf.counts)</code></pre>
+<table style="width:94%;">
+<colgroup>
+<col width="19%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">top0.1_positive</th>
+<th align="center">top0.1_negative</th>
+<th align="center">random_positive</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>E081</strong></td>
+<td align="center">127</td>
+<td align="center">72</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>Noonan</strong></td>
+<td align="center">7</td>
+<td align="center">38</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>hNSC-50</strong></td>
+<td align="center">132</td>
+<td align="center">52</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## Warning in .local(object, test.stat, ...): No enrichment can pe performed - there are no feasible GO terms!</code></pre>
+<pre class="r"><code>panderOptions(&#39;knitr.auto.asis&#39;, FALSE)
+panderOptions(&#39;table.split.table&#39;, Inf)
+for (i in names(go.results)){
+  cat(&#39;\n&#39;)
+  cat(&quot;## &quot;, i, &quot;\n&quot;)
+  pander(go.results[[i]])
+  cat(&#39;\n&#39;)
+}</code></pre>
+</div>
+<div id="e081.top0.1_positive" class="section level2">
+<h2><span class="header-section-number">2.2</span> E081.top0.1_positive</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0006260" class="uri">GO:0006260</a></td>
+<td align="center">DNA replication</td>
+<td align="center">8</td>
+<td align="center">6</td>
+<td align="center">2.23</td>
+<td align="center">0.007</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021953" class="uri">GO:0021953</a></td>
+<td align="center">central nervous system neuron differenti…</td>
+<td align="center">39</td>
+<td align="center">17</td>
+<td align="center">10.86</td>
+<td align="center">0.019</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021520" class="uri">GO:0021520</a></td>
+<td align="center">spinal cord motor neuron cell fate speci…</td>
+<td align="center">7</td>
+<td align="center">5</td>
+<td align="center">1.95</td>
+<td align="center">0.020</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000083" class="uri">GO:0000083</a></td>
+<td align="center">regulation of transcription involved in …</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.39</td>
+<td align="center">0.023</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060706" class="uri">GO:0060706</a></td>
+<td align="center">cell differentiation involved in embryon…</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.39</td>
+<td align="center">0.023</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021515" class="uri">GO:0021515</a></td>
+<td align="center">cell differentiation in spinal cord</td>
+<td align="center">21</td>
+<td align="center">10</td>
+<td align="center">5.85</td>
+<td align="center">0.038</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021522" class="uri">GO:0021522</a></td>
+<td align="center">spinal cord motor neuron differentiation</td>
+<td align="center">13</td>
+<td align="center">7</td>
+<td align="center">3.62</td>
+<td align="center">0.040</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000278" class="uri">GO:0000278</a></td>
+<td align="center">mitotic cell cycle</td>
+<td align="center">24</td>
+<td align="center">11</td>
+<td align="center">6.68</td>
+<td align="center">0.040</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001708" class="uri">GO:0001708</a></td>
+<td align="center">cell fate specification</td>
+<td align="center">24</td>
+<td align="center">11</td>
+<td align="center">6.68</td>
+<td align="center">0.040</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0048663" class="uri">GO:0048663</a></td>
+<td align="center">neuron fate commitment</td>
+<td align="center">27</td>
+<td align="center">12</td>
+<td align="center">7.52</td>
+<td align="center">0.042</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010002" class="uri">GO:0010002</a></td>
+<td align="center">cardioblast differentiation</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.67</td>
+<td align="center">0.053</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021527" class="uri">GO:0021527</a></td>
+<td align="center">spinal cord association neuron different…</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.67</td>
+<td align="center">0.053</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021871" class="uri">GO:0021871</a></td>
+<td align="center">forebrain regionalization</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.67</td>
+<td align="center">0.053</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021978" class="uri">GO:0021978</a></td>
+<td align="center">telencephalon regionalization</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.67</td>
+<td align="center">0.053</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051054" class="uri">GO:0051054</a></td>
+<td align="center">positive regulation of DNA metabolic pro…</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.67</td>
+<td align="center">0.053</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000082" class="uri">GO:0000082</a></td>
+<td align="center">G1/S transition of mitotic cell cycle</td>
+<td align="center">11</td>
+<td align="center">6</td>
+<td align="center">3.06</td>
+<td align="center">0.054</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0044843" class="uri">GO:0044843</a></td>
+<td align="center">cell cycle G1/S phase transition</td>
+<td align="center">11</td>
+<td align="center">6</td>
+<td align="center">3.06</td>
+<td align="center">0.054</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0048665" class="uri">GO:0048665</a></td>
+<td align="center">neuron fate specification</td>
+<td align="center">14</td>
+<td align="center">7</td>
+<td align="center">3.9</td>
+<td align="center">0.062</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021895" class="uri">GO:0021895</a></td>
+<td align="center">cerebral cortex neuron differentiation</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0030878" class="uri">GO:0030878</a></td>
+<td align="center">thyroid gland development</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0042693" class="uri">GO:0042693</a></td>
+<td align="center">muscle cell fate commitment</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045740" class="uri">GO:0045740</a></td>
+<td align="center">positive regulation of DNA replication</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0050900" class="uri">GO:0050900</a></td>
+<td align="center">leukocyte migration</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0070365" class="uri">GO:0070365</a></td>
+<td align="center">hepatocyte differentiation</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">1.11</td>
+<td align="center">0.067</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000910" class="uri">GO:0000910</a></td>
+<td align="center">cytokinesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001711" class="uri">GO:0001711</a></td>
+<td align="center">endodermal cell fate commitment</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001714" class="uri">GO:0001714</a></td>
+<td align="center">endodermal cell fate specification</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003016" class="uri">GO:0003016</a></td>
+<td align="center">respiratory system process</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003263" class="uri">GO:0003263</a></td>
+<td align="center">cardioblast proliferation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003264" class="uri">GO:0003264</a></td>
+<td align="center">regulation of cardioblast proliferation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003266" class="uri">GO:0003266</a></td>
+<td align="center">regulation of secondary heart field card…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0006261" class="uri">GO:0006261</a></td>
+<td align="center">DNA-dependent DNA replication</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010842" class="uri">GO:0010842</a></td>
+<td align="center">retina layer formation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0032465" class="uri">GO:0032465</a></td>
+<td align="center">regulation of cytokinesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0032466" class="uri">GO:0032466</a></td>
+<td align="center">negative regulation of cytokinesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0032875" class="uri">GO:0032875</a></td>
+<td align="center">regulation of DNA endoreduplication</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0032877" class="uri">GO:0032877</a></td>
+<td align="center">positive regulation of DNA endoreduplica…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0034505" class="uri">GO:0034505</a></td>
+<td align="center">tooth mineralization</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0035088" class="uri">GO:0035088</a></td>
+<td align="center">establishment or maintenance of apical/b…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0042023" class="uri">GO:0042023</a></td>
+<td align="center">DNA endoreduplication</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0044786" class="uri">GO:0044786</a></td>
+<td align="center">cell cycle DNA replication</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045197" class="uri">GO:0045197</a></td>
+<td align="center">establishment or maintenance of epitheli…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045736" class="uri">GO:0045736</a></td>
+<td align="center">negative regulation of cyclin-dependent …</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0048570" class="uri">GO:0048570</a></td>
+<td align="center">notochord morphogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051782" class="uri">GO:0051782</a></td>
+<td align="center">negative regulation of cell division</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060539" class="uri">GO:0060539</a></td>
+<td align="center">diaphragm development</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060717" class="uri">GO:0060717</a></td>
+<td align="center">chorion development</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060718" class="uri">GO:0060718</a></td>
+<td align="center">chorionic trophoblast cell differentiati…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0061245" class="uri">GO:0061245</a></td>
+<td align="center">establishment or maintenance of bipolar …</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0071157" class="uri">GO:0071157</a></td>
+<td align="center">negative regulation of cell cycle arrest</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.56</td>
+<td align="center">0.077</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="e081.top0.1_negative" class="section level2">
+<h2><span class="header-section-number">2.3</span> E081.top0.1_negative</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0045995" class="uri">GO:0045995</a></td>
+<td align="center">regulation of embryonic development</td>
+<td align="center">9</td>
+<td align="center">5</td>
+<td align="center">1.23</td>
+<td align="center">0.0033</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0055088" class="uri">GO:0055088</a></td>
+<td align="center">lipid homeostasis</td>
+<td align="center">9</td>
+<td align="center">5</td>
+<td align="center">1.23</td>
+<td align="center">0.0033</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001570" class="uri">GO:0001570</a></td>
+<td align="center">vasculogenesis</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">0.82</td>
+<td align="center">0.0038</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003197" class="uri">GO:0003197</a></td>
+<td align="center">endocardial cushion development</td>
+<td align="center">7</td>
+<td align="center">4</td>
+<td align="center">0.96</td>
+<td align="center">0.0080</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003281" class="uri">GO:0003281</a></td>
+<td align="center">ventricular septum development</td>
+<td align="center">7</td>
+<td align="center">4</td>
+<td align="center">0.96</td>
+<td align="center">0.0080</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003181" class="uri">GO:0003181</a></td>
+<td align="center">atrioventricular valve morphogenesis</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">0.55</td>
+<td align="center">0.0088</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060317" class="uri">GO:0060317</a></td>
+<td align="center">cardiac epithelial to mesenchymal transi…</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">0.55</td>
+<td align="center">0.0088</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1905314" class="uri">GO:1905314</a></td>
+<td align="center">semi-lunar valve development</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">0.55</td>
+<td align="center">0.0088</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0031668" class="uri">GO:0031668</a></td>
+<td align="center">cellular response to extracellular stimu…</td>
+<td align="center">15</td>
+<td align="center">6</td>
+<td align="center">2.05</td>
+<td align="center">0.0093</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003279" class="uri">GO:0003279</a></td>
+<td align="center">cardiac septum development</td>
+<td align="center">11</td>
+<td align="center">5</td>
+<td align="center">1.5</td>
+<td align="center">0.0096</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003170" class="uri">GO:0003170</a></td>
+<td align="center">heart valve development</td>
+<td align="center">8</td>
+<td align="center">4</td>
+<td align="center">1.09</td>
+<td align="center">0.0144</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003179" class="uri">GO:0003179</a></td>
+<td align="center">heart valve morphogenesis</td>
+<td align="center">8</td>
+<td align="center">4</td>
+<td align="center">1.09</td>
+<td align="center">0.0144</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1901617" class="uri">GO:1901617</a></td>
+<td align="center">organic hydroxy compound biosynthetic pr…</td>
+<td align="center">8</td>
+<td align="center">4</td>
+<td align="center">1.09</td>
+<td align="center">0.0144</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0031669" class="uri">GO:0031669</a></td>
+<td align="center">cellular response to nutrient levels</td>
+<td align="center">12</td>
+<td align="center">5</td>
+<td align="center">1.64</td>
+<td align="center">0.0148</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1901615" class="uri">GO:1901615</a></td>
+<td align="center">organic hydroxy compound metabolic proce…</td>
+<td align="center">12</td>
+<td align="center">5</td>
+<td align="center">1.64</td>
+<td align="center">0.0148</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0042692" class="uri">GO:0042692</a></td>
+<td align="center">muscle cell differentiation</td>
+<td align="center">31</td>
+<td align="center">9</td>
+<td align="center">4.23</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000429" class="uri">GO:0000429</a></td>
+<td align="center">carbon catabolite regulation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000430" class="uri">GO:0000430</a></td>
+<td align="center">regulation of transcription from RNA pol…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000432" class="uri">GO:0000432</a></td>
+<td align="center">positive regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000436" class="uri">GO:0000436</a></td>
+<td align="center">carbon catabolite activation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0002027" class="uri">GO:0002027</a></td>
+<td align="center">regulation of heart rate</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003190" class="uri">GO:0003190</a></td>
+<td align="center">atrioventricular valve formation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003199" class="uri">GO:0003199</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003214" class="uri">GO:0003214</a></td>
+<td align="center">cardiac left ventricle morphogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0006626" class="uri">GO:0006626</a></td>
+<td align="center">protein targeting to mitochondrion</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0019086" class="uri">GO:0019086</a></td>
+<td align="center">late viral transcription</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0032352" class="uri">GO:0032352</a></td>
+<td align="center">positive regulation of hormone metabolic…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0033762" class="uri">GO:0033762</a></td>
+<td align="center">response to glucagon</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0036304" class="uri">GO:0036304</a></td>
+<td align="center">umbilical cord morphogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045821" class="uri">GO:0045821</a></td>
+<td align="center">positive regulation of glycolytic proces…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045992" class="uri">GO:0045992</a></td>
+<td align="center">negative regulation of embryonic develop…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051194" class="uri">GO:0051194</a></td>
+<td align="center">positive regulation of cofactor metaboli…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051197" class="uri">GO:0051197</a></td>
+<td align="center">positive regulation of coenzyme metaboli…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060837" class="uri">GO:0060837</a></td>
+<td align="center">blood vessel endothelial cell differenti…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060842" class="uri">GO:0060842</a></td>
+<td align="center">arterial endothelial cell differentiatio…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060973" class="uri">GO:0060973</a></td>
+<td align="center">cell migration involved in heart develop…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0061027" class="uri">GO:0061027</a></td>
+<td align="center">umbilical cord development</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061314" class="uri">GO:0061314</a></td>
+<td align="center">Notch signaling involved in heart develo…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0071157" class="uri">GO:0071157</a></td>
+<td align="center">negative regulation of cell cycle arrest</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0090500" class="uri">GO:0090500</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1903214" class="uri">GO:1903214</a></td>
+<td align="center">regulation of protein targeting to mitoc…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2000820" class="uri">GO:2000820</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2001212" class="uri">GO:2001212</a></td>
+<td align="center">regulation of vasculogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0184</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0050878" class="uri">GO:0050878</a></td>
+<td align="center">regulation of body fluid levels</td>
+<td align="center">22</td>
+<td align="center">7</td>
+<td align="center">3.01</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003171" class="uri">GO:0003171</a></td>
+<td align="center">atrioventricular valve development</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0006163" class="uri">GO:0006163</a></td>
+<td align="center">purine nucleotide metabolic process</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0006753" class="uri">GO:0006753</a></td>
+<td align="center">nucleoside phosphate metabolic process</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0009117" class="uri">GO:0009117</a></td>
+<td align="center">nucleotide metabolic process</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0009150" class="uri">GO:0009150</a></td>
+<td align="center">purine ribonucleotide metabolic process</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0009259" class="uri">GO:0009259</a></td>
+<td align="center">ribonucleotide metabolic process</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.68</td>
+<td align="center">0.0198</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="e081.random_positive" class="section level2">
+<h2><span class="header-section-number">2.4</span> E081.random_positive</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0000002" class="uri">GO:0000002</a></td>
+<td align="center">mitochondrial genome maintenance</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000003" class="uri">GO:0000003</a></td>
+<td align="center">reproduction</td>
+<td align="center">69</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000018" class="uri">GO:0000018</a></td>
+<td align="center">regulation of DNA recombination</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000050" class="uri">GO:0000050</a></td>
+<td align="center">urea cycle</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000060" class="uri">GO:0000060</a></td>
+<td align="center">protein import into nucleus, translocati…</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000075" class="uri">GO:0000075</a></td>
+<td align="center">cell cycle checkpoint</td>
+<td align="center">9</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000077" class="uri">GO:0000077</a></td>
+<td align="center">DNA damage checkpoint</td>
+<td align="center">8</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000079" class="uri">GO:0000079</a></td>
+<td align="center">regulation of cyclin-dependent protein s…</td>
+<td align="center">3</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000082" class="uri">GO:0000082</a></td>
+<td align="center">G1/S transition of mitotic cell cycle</td>
+<td align="center">11</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000083" class="uri">GO:0000083</a></td>
+<td align="center">regulation of transcription involved in …</td>
+<td align="center">5</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000086" class="uri">GO:0000086</a></td>
+<td align="center">G2/M transition of mitotic cell cycle</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000122" class="uri">GO:0000122</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">143</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000165" class="uri">GO:0000165</a></td>
+<td align="center">MAPK cascade</td>
+<td align="center">11</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000183" class="uri">GO:0000183</a></td>
+<td align="center">chromatin silencing at rDNA</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000187" class="uri">GO:0000187</a></td>
+<td align="center">activation of MAPK activity</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000209" class="uri">GO:0000209</a></td>
+<td align="center">protein polyubiquitination</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000226" class="uri">GO:0000226</a></td>
+<td align="center">microtubule cytoskeleton organization</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000271" class="uri">GO:0000271</a></td>
+<td align="center">polysaccharide biosynthetic process</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000278" class="uri">GO:0000278</a></td>
+<td align="center">mitotic cell cycle</td>
+<td align="center">24</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000280" class="uri">GO:0000280</a></td>
+<td align="center">nuclear division</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000301" class="uri">GO:0000301</a></td>
+<td align="center">retrograde transport, vesicle recycling …</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000302" class="uri">GO:0000302</a></td>
+<td align="center">response to reactive oxygen species</td>
+<td align="center">5</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000422" class="uri">GO:0000422</a></td>
+<td align="center">mitophagy</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000423" class="uri">GO:0000423</a></td>
+<td align="center">macromitophagy</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000429" class="uri">GO:0000429</a></td>
+<td align="center">carbon catabolite regulation of transcri…</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000430" class="uri">GO:0000430</a></td>
+<td align="center">regulation of transcription from RNA pol…</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000432" class="uri">GO:0000432</a></td>
+<td align="center">positive regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000436" class="uri">GO:0000436</a></td>
+<td align="center">carbon catabolite activation of transcri…</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000578" class="uri">GO:0000578</a></td>
+<td align="center">embryonic axis specification</td>
+<td align="center">3</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000724" class="uri">GO:0000724</a></td>
+<td align="center">double-strand break repair via homologou…</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000725" class="uri">GO:0000725</a></td>
+<td align="center">recombinational repair</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000733" class="uri">GO:0000733</a></td>
+<td align="center">DNA strand renaturation</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000768" class="uri">GO:0000768</a></td>
+<td align="center">syncytium formation by plasma membrane f…</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000819" class="uri">GO:0000819</a></td>
+<td align="center">sister chromatid segregation</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000902" class="uri">GO:0000902</a></td>
+<td align="center">cell morphogenesis</td>
+<td align="center">51</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000904" class="uri">GO:0000904</a></td>
+<td align="center">cell morphogenesis involved in different…</td>
+<td align="center">43</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000910" class="uri">GO:0000910</a></td>
+<td align="center">cytokinesis</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001101" class="uri">GO:0001101</a></td>
+<td align="center">response to acid chemical</td>
+<td align="center">17</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001302" class="uri">GO:0001302</a></td>
+<td align="center">replicative cell aging</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001501" class="uri">GO:0001501</a></td>
+<td align="center">skeletal system development</td>
+<td align="center">59</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001502" class="uri">GO:0001502</a></td>
+<td align="center">cartilage condensation</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001503" class="uri">GO:0001503</a></td>
+<td align="center">ossification</td>
+<td align="center">29</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001505" class="uri">GO:0001505</a></td>
+<td align="center">regulation of neurotransmitter levels</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001523" class="uri">GO:0001523</a></td>
+<td align="center">retinoid metabolic process</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001525" class="uri">GO:0001525</a></td>
+<td align="center">angiogenesis</td>
+<td align="center">31</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001539" class="uri">GO:0001539</a></td>
+<td align="center">cilium or flagellum-dependent cell motil…</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001541" class="uri">GO:0001541</a></td>
+<td align="center">ovarian follicle development</td>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001542" class="uri">GO:0001542</a></td>
+<td align="center">ovulation from ovarian follicle</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0001544" class="uri">GO:0001544</a></td>
+<td align="center">initiation of primordial ovarian follicl…</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0001547" class="uri">GO:0001547</a></td>
+<td align="center">antral ovarian follicle growth</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="noonan.top0.1_positive" class="section level2">
+<h2><span class="header-section-number">2.5</span> Noonan.top0.1_positive</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0001743" class="uri">GO:0001743</a></td>
+<td align="center">optic placode formation</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0002194" class="uri">GO:0002194</a></td>
+<td align="center">hepatocyte cell migration</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003157" class="uri">GO:0003157</a></td>
+<td align="center">endocardium development</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003160" class="uri">GO:0003160</a></td>
+<td align="center">endocardium morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003228" class="uri">GO:0003228</a></td>
+<td align="center">atrial cardiac muscle tissue development</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0014866" class="uri">GO:0014866</a></td>
+<td align="center">skeletal myofibril assembly</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021563" class="uri">GO:0021563</a></td>
+<td align="center">glossopharyngeal nerve development</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021615" class="uri">GO:0021615</a></td>
+<td align="center">glossopharyngeal nerve morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0030240" class="uri">GO:0030240</a></td>
+<td align="center">skeletal muscle thin filament assembly</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0030910" class="uri">GO:0030910</a></td>
+<td align="center">olfactory placode formation</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0043049" class="uri">GO:0043049</a></td>
+<td align="center">otic placode formation</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045069" class="uri">GO:0045069</a></td>
+<td align="center">regulation of viral genome replication</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045071" class="uri">GO:0045071</a></td>
+<td align="center">negative regulation of viral genome repl…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045737" class="uri">GO:0045737</a></td>
+<td align="center">positive regulation of cyclin-dependent …</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0046619" class="uri">GO:0046619</a></td>
+<td align="center">optic placode formation involved in came…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0055009" class="uri">GO:0055009</a></td>
+<td align="center">atrial cardiac muscle tissue morphogenes…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060059" class="uri">GO:0060059</a></td>
+<td align="center">embryonic retina morphogenesis in camera…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060214" class="uri">GO:0060214</a></td>
+<td align="center">endocardium formation</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060297" class="uri">GO:0060297</a></td>
+<td align="center">regulation of sarcomere organization</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060298" class="uri">GO:0060298</a></td>
+<td align="center">positive regulation of sarcomere organiz…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060414" class="uri">GO:0060414</a></td>
+<td align="center">aorta smooth muscle tissue morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060836" class="uri">GO:0060836</a></td>
+<td align="center">lymphatic endothelial cell differentiati…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060838" class="uri">GO:0060838</a></td>
+<td align="center">lymphatic endothelial cell fate commitme…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060849" class="uri">GO:0060849</a></td>
+<td align="center">regulation of transcription involved in …</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0061113" class="uri">GO:0061113</a></td>
+<td align="center">pancreas morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061114" class="uri">GO:0061114</a></td>
+<td align="center">branching involved in pancreas morphogen…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0070307" class="uri">GO:0070307</a></td>
+<td align="center">lens fiber cell development</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0070309" class="uri">GO:0070309</a></td>
+<td align="center">lens fiber cell morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0070857" class="uri">GO:0070857</a></td>
+<td align="center">regulation of bile acid biosynthetic pro…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0070858" class="uri">GO:0070858</a></td>
+<td align="center">negative regulation of bile acid biosynt…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0071698" class="uri">GO:0071698</a></td>
+<td align="center">olfactory placode development</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0071699" class="uri">GO:0071699</a></td>
+<td align="center">olfactory placode morphogenesis</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0090425" class="uri">GO:0090425</a></td>
+<td align="center">acinar cell differentiation</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1901976" class="uri">GO:1901976</a></td>
+<td align="center">regulation of cell cycle checkpoint</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1901978" class="uri">GO:1901978</a></td>
+<td align="center">positive regulation of cell cycle checkp…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1902115" class="uri">GO:1902115</a></td>
+<td align="center">regulation of organelle assembly</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1902117" class="uri">GO:1902117</a></td>
+<td align="center">positive regulation of organelle assembl…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1904031" class="uri">GO:1904031</a></td>
+<td align="center">positive regulation of cyclin-dependent …</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1904251" class="uri">GO:1904251</a></td>
+<td align="center">regulation of bile acid metabolic proces…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1904252" class="uri">GO:1904252</a></td>
+<td align="center">negative regulation of bile acid metabol…</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2000979" class="uri">GO:2000979</a></td>
+<td align="center">positive regulation of forebrain neuron …</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.02</td>
+<td align="center">0.018</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0031401" class="uri">GO:0031401</a></td>
+<td align="center">positive regulation of protein modificat…</td>
+<td align="center">17</td>
+<td align="center">2</td>
+<td align="center">0.31</td>
+<td align="center">0.033</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003159" class="uri">GO:0003159</a></td>
+<td align="center">morphogenesis of an endothelium</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0006699" class="uri">GO:0006699</a></td>
+<td align="center">bile acid biosynthetic process</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0009408" class="uri">GO:0009408</a></td>
+<td align="center">response to heat</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0019079" class="uri">GO:0019079</a></td>
+<td align="center">viral genome replication</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021681" class="uri">GO:0021681</a></td>
+<td align="center">cerebellar granular layer development</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021683" class="uri">GO:0021683</a></td>
+<td align="center">cerebellar granular layer morphogenesis</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021684" class="uri">GO:0021684</a></td>
+<td align="center">cerebellar granular layer formation</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021707" class="uri">GO:0021707</a></td>
+<td align="center">cerebellar granule cell differentiation</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">0.04</td>
+<td align="center">0.036</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="noonan.top0.1_negative" class="section level2">
+<h2><span class="header-section-number">2.6</span> Noonan.top0.1_negative</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0060317" class="uri">GO:0060317</a></td>
+<td align="center">cardiac epithelial to mesenchymal transi…</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">0.28</td>
+<td align="center">0.0012</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1901522" class="uri">GO:1901522</a></td>
+<td align="center">positive regulation of transcription fro…</td>
+<td align="center">9</td>
+<td align="center">4</td>
+<td align="center">0.63</td>
+<td align="center">0.0019</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0007584" class="uri">GO:0007584</a></td>
+<td align="center">response to nutrient</td>
+<td align="center">11</td>
+<td align="center">4</td>
+<td align="center">0.77</td>
+<td align="center">0.0044</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000429" class="uri">GO:0000429</a></td>
+<td align="center">carbon catabolite regulation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000430" class="uri">GO:0000430</a></td>
+<td align="center">regulation of transcription from RNA pol…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000432" class="uri">GO:0000432</a></td>
+<td align="center">positive regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000436" class="uri">GO:0000436</a></td>
+<td align="center">carbon catabolite activation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003190" class="uri">GO:0003190</a></td>
+<td align="center">atrioventricular valve formation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003199" class="uri">GO:0003199</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0019086" class="uri">GO:0019086</a></td>
+<td align="center">late viral transcription</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0033280" class="uri">GO:0033280</a></td>
+<td align="center">response to vitamin D</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0036304" class="uri">GO:0036304</a></td>
+<td align="center">umbilical cord morphogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0042308" class="uri">GO:0042308</a></td>
+<td align="center">negative regulation of protein import in…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060837" class="uri">GO:0060837</a></td>
+<td align="center">blood vessel endothelial cell differenti…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060842" class="uri">GO:0060842</a></td>
+<td align="center">arterial endothelial cell differentiatio…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061027" class="uri">GO:0061027</a></td>
+<td align="center">umbilical cord development</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0061314" class="uri">GO:0061314</a></td>
+<td align="center">Notch signaling involved in heart develo…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0090500" class="uri">GO:0090500</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1900181" class="uri">GO:1900181</a></td>
+<td align="center">negative regulation of protein localizat…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1904590" class="uri">GO:1904590</a></td>
+<td align="center">negative regulation of protein import</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2000820" class="uri">GO:2000820</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2001212" class="uri">GO:2001212</a></td>
+<td align="center">regulation of vasculogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.14</td>
+<td align="center">0.0047</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0031670" class="uri">GO:0031670</a></td>
+<td align="center">cellular response to nutrient</td>
+<td align="center">6</td>
+<td align="center">3</td>
+<td align="center">0.42</td>
+<td align="center">0.0052</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060711" class="uri">GO:0060711</a></td>
+<td align="center">labyrinthine layer development</td>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">0.49</td>
+<td align="center">0.0088</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051145" class="uri">GO:0051145</a></td>
+<td align="center">smooth muscle cell differentiation</td>
+<td align="center">8</td>
+<td align="center">3</td>
+<td align="center">0.56</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0055010" class="uri">GO:0055010</a></td>
+<td align="center">ventricular cardiac muscle tissue morpho…</td>
+<td align="center">8</td>
+<td align="center">3</td>
+<td align="center">0.56</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003177" class="uri">GO:0003177</a></td>
+<td align="center">pulmonary valve development</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003184" class="uri">GO:0003184</a></td>
+<td align="center">pulmonary valve morphogenesis</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003198" class="uri">GO:0003198</a></td>
+<td align="center">epithelial to mesenchymal transition inv…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003222" class="uri">GO:0003222</a></td>
+<td align="center">ventricular trabecula myocardium morphog…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010573" class="uri">GO:0010573</a></td>
+<td align="center">vascular endothelial growth factor produ…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0010574" class="uri">GO:0010574</a></td>
+<td align="center">regulation of vascular endothelial growt…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010575" class="uri">GO:0010575</a></td>
+<td align="center">positive regulation of vascular endothel…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0032103" class="uri">GO:0032103</a></td>
+<td align="center">positive regulation of response to exter…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0032387" class="uri">GO:0032387</a></td>
+<td align="center">negative regulation of intracellular tra…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0035907" class="uri">GO:0035907</a></td>
+<td align="center">dorsal aorta development</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0035912" class="uri">GO:0035912</a></td>
+<td align="center">dorsal aorta morphogenesis</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045746" class="uri">GO:0045746</a></td>
+<td align="center">negative regulation of Notch signaling p…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045990" class="uri">GO:0045990</a></td>
+<td align="center">carbon catabolite regulation of transcri…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045991" class="uri">GO:0045991</a></td>
+<td align="center">carbon catabolite activation of transcri…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0046015" class="uri">GO:0046015</a></td>
+<td align="center">regulation of transcription by glucose</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0046016" class="uri">GO:0046016</a></td>
+<td align="center">positive regulation of transcription by …</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0046823" class="uri">GO:0046823</a></td>
+<td align="center">negative regulation of nucleocytoplasmic…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060343" class="uri">GO:0060343</a></td>
+<td align="center">trabecula formation</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060347" class="uri">GO:0060347</a></td>
+<td align="center">heart trabecula formation</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061311" class="uri">GO:0061311</a></td>
+<td align="center">cell surface receptor signaling pathway …</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0090317" class="uri">GO:0090317</a></td>
+<td align="center">negative regulation of intracellular pro…</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1903828" class="uri">GO:1903828</a></td>
+<td align="center">negative regulation of cellular protein …</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.21</td>
+<td align="center">0.0134</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0042692" class="uri">GO:0042692</a></td>
+<td align="center">muscle cell differentiation</td>
+<td align="center">31</td>
+<td align="center">6</td>
+<td align="center">2.16</td>
+<td align="center">0.0141</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0044281" class="uri">GO:0044281</a></td>
+<td align="center">small molecule metabolic process</td>
+<td align="center">31</td>
+<td align="center">6</td>
+<td align="center">2.16</td>
+<td align="center">0.0141</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="hnsc-50.top0.1_positive" class="section level2">
+<h2><span class="header-section-number">2.7</span> hNSC-50.top0.1_positive</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0006260" class="uri">GO:0006260</a></td>
+<td align="center">DNA replication</td>
+<td align="center">8</td>
+<td align="center">7</td>
+<td align="center">2.31</td>
+<td align="center">0.00088</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0007049" class="uri">GO:0007049</a></td>
+<td align="center">cell cycle</td>
+<td align="center">51</td>
+<td align="center">23</td>
+<td align="center">14.72</td>
+<td align="center">0.00607</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045740" class="uri">GO:0045740</a></td>
+<td align="center">positive regulation of DNA replication</td>
+<td align="center">4</td>
+<td align="center">4</td>
+<td align="center">1.15</td>
+<td align="center">0.00668</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0043525" class="uri">GO:0043525</a></td>
+<td align="center">positive regulation of neuron apoptotic …</td>
+<td align="center">8</td>
+<td align="center">6</td>
+<td align="center">2.31</td>
+<td align="center">0.00855</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051054" class="uri">GO:0051054</a></td>
+<td align="center">positive regulation of DNA metabolic pro…</td>
+<td align="center">6</td>
+<td align="center">5</td>
+<td align="center">1.73</td>
+<td align="center">0.00865</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2000826" class="uri">GO:2000826</a></td>
+<td align="center">regulation of heart morphogenesis</td>
+<td align="center">6</td>
+<td align="center">5</td>
+<td align="center">1.73</td>
+<td align="center">0.00865</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0019058" class="uri">GO:0019058</a></td>
+<td align="center">viral life cycle</td>
+<td align="center">9</td>
+<td align="center">6</td>
+<td align="center">2.6</td>
+<td align="center">0.01960</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1901216" class="uri">GO:1901216</a></td>
+<td align="center">positive regulation of neuron death</td>
+<td align="center">9</td>
+<td align="center">6</td>
+<td align="center">2.6</td>
+<td align="center">0.01960</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000278" class="uri">GO:0000278</a></td>
+<td align="center">mitotic cell cycle</td>
+<td align="center">24</td>
+<td align="center">12</td>
+<td align="center">6.93</td>
+<td align="center">0.01982</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000079" class="uri">GO:0000079</a></td>
+<td align="center">regulation of cyclin-dependent protein s…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0032808" class="uri">GO:0032808</a></td>
+<td align="center">lacrimal gland development</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0048537" class="uri">GO:0048537</a></td>
+<td align="center">mucosal-associated lymphoid tissue devel…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0048541" class="uri">GO:0048541</a></td>
+<td align="center">Peyer’s patch development</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061323" class="uri">GO:0061323</a></td>
+<td align="center">cell proliferation involved in heart mor…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1904029" class="uri">GO:1904029</a></td>
+<td align="center">regulation of cyclin-dependent protein k…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2000136" class="uri">GO:2000136</a></td>
+<td align="center">regulation of cell proliferation involve…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2000738" class="uri">GO:2000738</a></td>
+<td align="center">positive regulation of stem cell differe…</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">0.87</td>
+<td align="center">0.02359</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000083" class="uri">GO:0000083</a></td>
+<td align="center">regulation of transcription involved in …</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.44</td>
+<td align="center">0.02588</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0006275" class="uri">GO:0006275</a></td>
+<td align="center">regulation of DNA replication</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.44</td>
+<td align="center">0.02588</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051302" class="uri">GO:0051302</a></td>
+<td align="center">regulation of cell division</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.44</td>
+<td align="center">0.02588</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060706" class="uri">GO:0060706</a></td>
+<td align="center">cell differentiation involved in embryon…</td>
+<td align="center">5</td>
+<td align="center">4</td>
+<td align="center">1.44</td>
+<td align="center">0.02588</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000122" class="uri">GO:0000122</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">143</td>
+<td align="center">50</td>
+<td align="center">41.28</td>
+<td align="center">0.02869</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060541" class="uri">GO:0060541</a></td>
+<td align="center">respiratory system development</td>
+<td align="center">25</td>
+<td align="center">12</td>
+<td align="center">7.22</td>
+<td align="center">0.02878</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051726" class="uri">GO:0051726</a></td>
+<td align="center">regulation of cell cycle</td>
+<td align="center">42</td>
+<td align="center">18</td>
+<td align="center">12.12</td>
+<td align="center">0.02893</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0022402" class="uri">GO:0022402</a></td>
+<td align="center">cell cycle process</td>
+<td align="center">31</td>
+<td align="center">14</td>
+<td align="center">8.95</td>
+<td align="center">0.03324</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0009890" class="uri">GO:0009890</a></td>
+<td align="center">negative regulation of biosynthetic proc…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010558" class="uri">GO:0010558</a></td>
+<td align="center">negative regulation of macromolecule bio…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0010629" class="uri">GO:0010629</a></td>
+<td align="center">negative regulation of gene expression</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0031327" class="uri">GO:0031327</a></td>
+<td align="center">negative regulation of cellular biosynth…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045934" class="uri">GO:0045934</a></td>
+<td align="center">negative regulation of nucleobase-contai…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051172" class="uri">GO:0051172</a></td>
+<td align="center">negative regulation of nitrogen compound…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051253" class="uri">GO:0051253</a></td>
+<td align="center">negative regulation of RNA metabolic pro…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1902679" class="uri">GO:1902679</a></td>
+<td align="center">negative regulation of RNA biosynthetic …</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1903507" class="uri">GO:1903507</a></td>
+<td align="center">negative regulation of nucleic acid-temp…</td>
+<td align="center">171</td>
+<td align="center">58</td>
+<td align="center">49.36</td>
+<td align="center">0.03333</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010564" class="uri">GO:0010564</a></td>
+<td align="center">regulation of cell cycle process</td>
+<td align="center">20</td>
+<td align="center">10</td>
+<td align="center">5.77</td>
+<td align="center">0.03345</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0030323" class="uri">GO:0030323</a></td>
+<td align="center">respiratory tube development</td>
+<td align="center">20</td>
+<td align="center">10</td>
+<td align="center">5.77</td>
+<td align="center">0.03345</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0030324" class="uri">GO:0030324</a></td>
+<td align="center">lung development</td>
+<td align="center">20</td>
+<td align="center">10</td>
+<td align="center">5.77</td>
+<td align="center">0.03345</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045892" class="uri">GO:0045892</a></td>
+<td align="center">negative regulation of transcription, DN…</td>
+<td align="center">168</td>
+<td align="center">57</td>
+<td align="center">48.49</td>
+<td align="center">0.03539</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2000113" class="uri">GO:2000113</a></td>
+<td align="center">negative regulation of cellular macromol…</td>
+<td align="center">168</td>
+<td align="center">57</td>
+<td align="center">48.49</td>
+<td align="center">0.03539</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0009892" class="uri">GO:0009892</a></td>
+<td align="center">negative regulation of metabolic process</td>
+<td align="center">175</td>
+<td align="center">59</td>
+<td align="center">50.52</td>
+<td align="center">0.03626</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010605" class="uri">GO:0010605</a></td>
+<td align="center">negative regulation of macromolecule met…</td>
+<td align="center">175</td>
+<td align="center">59</td>
+<td align="center">50.52</td>
+<td align="center">0.03626</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0031324" class="uri">GO:0031324</a></td>
+<td align="center">negative regulation of cellular metaboli…</td>
+<td align="center">172</td>
+<td align="center">58</td>
+<td align="center">49.65</td>
+<td align="center">0.03852</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0042476" class="uri">GO:0042476</a></td>
+<td align="center">odontogenesis</td>
+<td align="center">13</td>
+<td align="center">7</td>
+<td align="center">3.75</td>
+<td align="center">0.04847</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0048519" class="uri">GO:0048519</a></td>
+<td align="center">negative regulation of biological proces…</td>
+<td align="center">219</td>
+<td align="center">71</td>
+<td align="center">63.22</td>
+<td align="center">0.04942</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0006259" class="uri">GO:0006259</a></td>
+<td align="center">DNA metabolic process</td>
+<td align="center">24</td>
+<td align="center">11</td>
+<td align="center">6.93</td>
+<td align="center">0.05210</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0043523" class="uri">GO:0043523</a></td>
+<td align="center">regulation of neuron apoptotic process</td>
+<td align="center">16</td>
+<td align="center">8</td>
+<td align="center">4.62</td>
+<td align="center">0.05669</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021953" class="uri">GO:0021953</a></td>
+<td align="center">central nervous system neuron differenti…</td>
+<td align="center">39</td>
+<td align="center">16</td>
+<td align="center">11.26</td>
+<td align="center">0.05984</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0010002" class="uri">GO:0010002</a></td>
+<td align="center">cardioblast differentiation</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.73</td>
+<td align="center">0.06036</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0021575" class="uri">GO:0021575</a></td>
+<td align="center">hindbrain morphogenesis</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.73</td>
+<td align="center">0.06036</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0021781" class="uri">GO:0021781</a></td>
+<td align="center">glial cell fate commitment</td>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">1.73</td>
+<td align="center">0.06036</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="hnsc-50.top0.1_negative" class="section level2">
+<h2><span class="header-section-number">2.8</span> hNSC-50.top0.1_negative</h2>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="32%" />
+<col width="12%" />
+<col width="14%" />
+<col width="11%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">GO.ID</th>
+<th align="center">Term</th>
+<th align="center">Annotated</th>
+<th align="center">Significant</th>
+<th align="center">Expected</th>
+<th align="center">classicFisher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><a href="GO:0060317" class="uri">GO:0060317</a></td>
+<td align="center">cardiac epithelial to mesenchymal transi…</td>
+<td align="center">4</td>
+<td align="center">3</td>
+<td align="center">0.36</td>
+<td align="center">0.0025</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051147" class="uri">GO:0051147</a></td>
+<td align="center">regulation of muscle cell differentiatio…</td>
+<td align="center">18</td>
+<td align="center">6</td>
+<td align="center">1.62</td>
+<td align="center">0.0029</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010830" class="uri">GO:0010830</a></td>
+<td align="center">regulation of myotube differentiation</td>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">0.45</td>
+<td align="center">0.0060</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0006357" class="uri">GO:0006357</a></td>
+<td align="center">regulation of transcription from RNA pol…</td>
+<td align="center">303</td>
+<td align="center">33</td>
+<td align="center">27.33</td>
+<td align="center">0.0078</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000429" class="uri">GO:0000429</a></td>
+<td align="center">carbon catabolite regulation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000430" class="uri">GO:0000430</a></td>
+<td align="center">regulation of transcription from RNA pol…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000432" class="uri">GO:0000432</a></td>
+<td align="center">positive regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0000436" class="uri">GO:0000436</a></td>
+<td align="center">carbon catabolite activation of transcri…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003190" class="uri">GO:0003190</a></td>
+<td align="center">atrioventricular valve formation</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003199" class="uri">GO:0003199</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0007520" class="uri">GO:0007520</a></td>
+<td align="center">myoblast fusion</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0019086" class="uri">GO:0019086</a></td>
+<td align="center">late viral transcription</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0036304" class="uri">GO:0036304</a></td>
+<td align="center">umbilical cord morphogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045821" class="uri">GO:0045821</a></td>
+<td align="center">positive regulation of glycolytic proces…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051194" class="uri">GO:0051194</a></td>
+<td align="center">positive regulation of cofactor metaboli…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051197" class="uri">GO:0051197</a></td>
+<td align="center">positive regulation of coenzyme metaboli…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0060837" class="uri">GO:0060837</a></td>
+<td align="center">blood vessel endothelial cell differenti…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0060842" class="uri">GO:0060842</a></td>
+<td align="center">arterial endothelial cell differentiatio…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0061027" class="uri">GO:0061027</a></td>
+<td align="center">umbilical cord development</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0061314" class="uri">GO:0061314</a></td>
+<td align="center">Notch signaling involved in heart develo…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0071157" class="uri">GO:0071157</a></td>
+<td align="center">negative regulation of cell cycle arrest</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0090500" class="uri">GO:0090500</a></td>
+<td align="center">endocardial cushion to mesenchymal trans…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1901739" class="uri">GO:1901739</a></td>
+<td align="center">regulation of myoblast fusion</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1901741" class="uri">GO:1901741</a></td>
+<td align="center">positive regulation of myoblast fusion</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:2000820" class="uri">GO:2000820</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2001212" class="uri">GO:2001212</a></td>
+<td align="center">regulation of vasculogenesis</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0.18</td>
+<td align="center">0.0079</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0000122" class="uri">GO:0000122</a></td>
+<td align="center">negative regulation of transcription fro…</td>
+<td align="center">143</td>
+<td align="center">20</td>
+<td align="center">12.9</td>
+<td align="center">0.0085</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0031670" class="uri">GO:0031670</a></td>
+<td align="center">cellular response to nutrient</td>
+<td align="center">6</td>
+<td align="center">3</td>
+<td align="center">0.54</td>
+<td align="center">0.0112</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0045892" class="uri">GO:0045892</a></td>
+<td align="center">negative regulation of transcription, DN…</td>
+<td align="center">168</td>
+<td align="center">22</td>
+<td align="center">15.15</td>
+<td align="center">0.0119</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:2000113" class="uri">GO:2000113</a></td>
+<td align="center">negative regulation of cellular macromol…</td>
+<td align="center">168</td>
+<td align="center">22</td>
+<td align="center">15.15</td>
+<td align="center">0.0119</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0042692" class="uri">GO:0042692</a></td>
+<td align="center">muscle cell differentiation</td>
+<td align="center">31</td>
+<td align="center">7</td>
+<td align="center">2.8</td>
+<td align="center">0.0141</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0009890" class="uri">GO:0009890</a></td>
+<td align="center">negative regulation of biosynthetic proc…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0010558" class="uri">GO:0010558</a></td>
+<td align="center">negative regulation of macromolecule bio…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0010629" class="uri">GO:0010629</a></td>
+<td align="center">negative regulation of gene expression</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0031327" class="uri">GO:0031327</a></td>
+<td align="center">negative regulation of cellular biosynth…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0045934" class="uri">GO:0045934</a></td>
+<td align="center">negative regulation of nucleobase-contai…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0051172" class="uri">GO:0051172</a></td>
+<td align="center">negative regulation of nitrogen compound…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0051253" class="uri">GO:0051253</a></td>
+<td align="center">negative regulation of RNA metabolic pro…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:1902679" class="uri">GO:1902679</a></td>
+<td align="center">negative regulation of RNA biosynthetic …</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:1903507" class="uri">GO:1903507</a></td>
+<td align="center">negative regulation of nucleic acid-temp…</td>
+<td align="center">171</td>
+<td align="center">22</td>
+<td align="center">15.43</td>
+<td align="center">0.0153</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0031324" class="uri">GO:0031324</a></td>
+<td align="center">negative regulation of cellular metaboli…</td>
+<td align="center">172</td>
+<td align="center">22</td>
+<td align="center">15.52</td>
+<td align="center">0.0166</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0014902" class="uri">GO:0014902</a></td>
+<td align="center">myotube differentiation</td>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">0.63</td>
+<td align="center">0.0183</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0019080" class="uri">GO:0019080</a></td>
+<td align="center">viral gene expression</td>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">0.63</td>
+<td align="center">0.0183</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0019083" class="uri">GO:0019083</a></td>
+<td align="center">viral transcription</td>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">0.63</td>
+<td align="center">0.0183</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0044033" class="uri">GO:0044033</a></td>
+<td align="center">multi-organism metabolic process</td>
+<td align="center">7</td>
+<td align="center">3</td>
+<td align="center">0.63</td>
+<td align="center">0.0183</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0006366" class="uri">GO:0006366</a></td>
+<td align="center">transcription from RNA polymerase II pro…</td>
+<td align="center">313</td>
+<td align="center">33</td>
+<td align="center">28.23</td>
+<td align="center">0.0193</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0009892" class="uri">GO:0009892</a></td>
+<td align="center">negative regulation of metabolic process</td>
+<td align="center">175</td>
+<td align="center">22</td>
+<td align="center">15.79</td>
+<td align="center">0.0211</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0010605" class="uri">GO:0010605</a></td>
+<td align="center">negative regulation of macromolecule met…</td>
+<td align="center">175</td>
+<td align="center">22</td>
+<td align="center">15.79</td>
+<td align="center">0.0211</td>
+</tr>
+<tr class="odd">
+<td align="center"><a href="GO:0003177" class="uri">GO:0003177</a></td>
+<td align="center">pulmonary valve development</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0224</td>
+</tr>
+<tr class="even">
+<td align="center"><a href="GO:0003184" class="uri">GO:0003184</a></td>
+<td align="center">pulmonary valve morphogenesis</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0.27</td>
+<td align="center">0.0224</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="summary" class="section level2">
+<h2><span class="header-section-number">2.9</span> Summary</h2>
+<p>The top 1% of the positive windows in E081 and Noonan hit in enriched in neuron development process.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

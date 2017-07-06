@@ -1,0 +1,146 @@
+---
+title: "Deep brain - Motif Analysis - Sliding Window Mask Size = 22bp"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Procedure
+
+[AME](http://meme-suite.org/tools/ame) (Analysis of Motif Enrichment; tool in MEME Suite) is used to do motif enrichment analysis. For a given motif set and a set of sequences, test whether a motif occurs significantly in the sequences. 
+
+Some windows were extracted and fed to AME to perform motif enrichment analysis (search in JASPAR 2016 vertebrates). Here top 0.1% windows that decrease the score most in positive sequences and top 0.1% windows that increase the score most in negative sequences and randomly selected windows in positive sequences were analyzed respectively.
+
+Results of randomly selected windows can be found:
+
+  - [E081 top 0.1% positive](AME_results_E081.top0.1_positive.html), 
+  - [E081 random positive](AME_results_E081.random_positive.html),
+  - [E081 top 0.1% negative](AME_results_E081.top0.1_negative.html),
+  - [Noonan top 0.1% positive](AME_results_Noonan.top0.1_positive.html), 
+  - [Noonan random positive](AME_results_Noonan.random_positive.html),
+  - [Noonan top 0.1% negative](AME_results_Noonan.top0.1_negative.html),
+  - [hNSC-50 top 0.1% positive](AME_results_hNSC-50.top0.1_positive.html), 
+  - [hNSC-50 random positive](AME_results_hNSC-50.random_positive.html),
+  - [hNSC-50 top 0.1% negative](AME_results_hNSC-50.top0.1_negative.html),
+
+# GO term analysis of hitted TF
+
+Here JASPAR TFs is selected as the background protein list.
+
+## Overview
+
+```{r, echo=FALSE, message=FALSE}
+clean_gene_name <- function(x){
+  e <- strsplit(x, '::')
+  re <- c()
+  for(i in e){
+    i <- strsplit(i, '(', fixed = T)[[1]]
+    re <- c(re, i[1])
+  }
+  return(re)
+}
+go_term_bp <- function(gene_cleaned, back_cleaned){
+  ensembl = useMart(biomart = "ENSEMBL_MART_ENSEMBL",dataset="hsapiens_gene_ensembl", host = "jul2015.archive.ensembl.org")
+  goids = getBM(attributes = c('hgnc_symbol', 'go_id'), 
+                filters = 'hgnc_symbol', 
+                values = back_cleaned, 
+                mart = ensembl)
+  gene2GO <- lapply(split(goids, goids['hgnc_symbol']), function(x){x[, 2]})
+  gene_list_analysis <- factor(as.integer(back_cleaned %in% gene_cleaned))
+  names(gene_list_analysis) <- back_cleaned
+  myGOdata <- new("topGOdata", description="Important Sequences in Sliding Window Analysis Mapped to TF Genes", ontology="BP", allGenes=gene_list_analysis,  annot = annFUN.gene2GO, gene2GO = gene2GO)
+  resultFisher <- runTest(myGOdata, algorithm="classic", statistic="fisher") 
+  allRes <- GenTable(myGOdata, classicFisher = resultFisher, orderBy = "resultFisher", ranksOf = "classicFisher", topNodes = 50)
+  return(allRes)
+  
+}
+read_and_clean <- function(filename){
+  temp <- tryCatch({
+    read.table(filename, sep = ' ', skip = 12)
+  },
+    error=function(cond) {
+      return(NULL)
+  })
+  if(!is.null(temp)){
+    temp.gene <- temp$V7
+    temp.gene_cleaned <- apply(as.matrix(temp.gene, ncol=1), 1, clean_gene_name)
+    return(temp.gene_cleaned)
+  }else{
+    return(temp)
+  }
+}
+
+background <- read.table('../data/background_jaspar_gene.txt')
+background.cleaned <- apply(background, 1, clean_gene_name)
+
+datasets <- c('E081', 'Noonan', 'hNSC-50')
+conditions <- c('top0.1_positive', 'top0.1_negative', 'random_positive')
+mydata <- list()
+tf.counts <- c()
+for(dataset in datasets){
+  tf.count <- c()
+  for(cond in conditions){
+    filestring <- paste(dataset, cond, sep = '.')
+    gene.list <- read_and_clean(paste0('../data/ame_', filestring, '.txt'))
+    if(is.null(gene.list)){
+      tf.count <- c(tf.count, 0)
+    }else{
+      tf.count <- c(tf.count, length(gene.list))
+      mydata[[filestring]] <- gene.list
+    }
+  }
+  tf.counts <- rbind(tf.counts, tf.count)
+}
+tf.counts <- as.data.frame(tf.counts)
+row.names(tf.counts) <- datasets
+colnames(tf.counts) <- conditions
+```
+
+```{r, results='asis'}
+library(pander)
+pandoc.table(tf.counts)
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(topGO)
+library(biomaRt)
+
+go.results <- list()
+
+for(dataset in datasets){
+  for(cond in conditions){
+    filestring <- paste(dataset, cond, sep = '.')
+    if(!is.null(mydata[[filestring]])){
+      go.results[[filestring]] <- go_term_bp(mydata[[filestring]], background.cleaned)
+    }
+  }
+}
+```
+
+```{r, results='asis'}
+panderOptions('knitr.auto.asis', FALSE)
+panderOptions('table.split.table', Inf)
+for (i in names(go.results)){
+  cat('\n')
+  cat("## ", i, "\n")
+  pander(go.results[[i]])
+  cat('\n')
+}
+```
+
+## Summary
+
+The top 1% of the positive windows in E081 and Noonan hit in enriched in neuron development process.

@@ -1,0 +1,13 @@
+AME (Analysis of Motif Enrichment): Compiled on Jun 27 2017 at 23:27:24
+------------------------------
+Copyright (c) Robert McLeay <r.mcleay@imb.uq.edu.au> & Timothy Bailey <t.bailey@imb.uq.edu.au>, 2009.
+
+Command line
+ame --verbose 1 --oc . --control shuffled_extracted_positive.random.WinSize_22.MaskSize_22.fa --bgformat 1 --scoring avg --method ranksum --pvalue-report-threshold 0.05 extracted_positive.random.WinSize_22.MaskSize_22.fa db/JASPAR/JASPAR_CORE_2016_vertebrates.meme
+
+Not in partition maximization mode. Fixing partition at the number of primary sequences (978).
+
+Threshold p-value for reporting results: 0.05
+Motif p-values are corrected by #Motifs * #ThresholdsTested - (519 * 1 = 519)
+
+1. Ranksum p-values of motif MA0499.1 Myod1 (NSCAGCTGYYNYB) top 978 seqs (left,right,twotailed): 0.9999 9.088e-05 0.0001818 U-value: 4.315e+05 (Corrected p-values: 1 0.04607 0.04607)
