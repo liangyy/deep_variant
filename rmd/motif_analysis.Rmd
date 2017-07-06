@@ -42,6 +42,7 @@ Our goal can be formalized as: for a set of input sequences which k-mer pattern 
     [newseq.E081](https://rawgit.com/liangyy/deep_variant/code/motif_analysis/report/Type1/newseq.E081_sliding_window.html),
     [newseq.Noonan](https://rawgit.com/liangyy/deep_variant/code/motif_analysis/report/Type1/newseq.Noonan_sliding_window.html),
     [motif analysis for E081 and Noonan](motif_analysis_sliding_window_e081_noonan.html)
+    [motif analysis for E081, Noonan, hNSC-50](motif_analysis_sliding_window_s1s2_MaskSize_22.html)
 3. Motif gradient 
     [E081](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/motif_analysis/report/Type1/E081_motif_gradient.html),
     [E082](http://htmlpreview.github.io/?https://github.com/liangyy/deep_variant/blob/code/motif_analysis/report/Type1/E082_motif_gradient.html)
