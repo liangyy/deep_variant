@@ -1,0 +1,33 @@
+# This module takes a list of bed files and compute the pair-wise distance between them (intersection / union)
+
+def get_all_names(config_data):
+    out = []
+    for name in config_data:
+        out.append(name)
+    return out
+
+def get_all_pairs(config_data):
+    out = []
+    names = get_all_names(config_data)
+    n = len(names)
+    for i in range(n):
+        for j in range(i):
+            out.append('result/{taskname}__{data1}__{data2}.txt'.format(data1=names[i], data2=names[j]))
+    return out
+
+rule compute_distances:
+    input:
+        file1 = lambda wildcards: config[wildcards.taskname][wildcards.data1],
+        file2 = lambda wildcards: config[wildcards.taskname][wildcards.data2]
+    output:
+        temp('result/{taskname}__{data1}__{data2}.txt')
+    shell:
+        'bedtools jaccard -a (< sort -k1,1 -k2,2n {input.file1}) -b (< sort -k1,1 -k2,2n {input.file2}) > {output}'
+
+rule collect_result:
+    input:
+        pairs = lambda wildcards: get_all_pairs(config[wildcards.taskname])
+    output:
+        'result/distance.{taskname}.csv'
+    shell:
+        'python scripst/collect_result.py --files {input.pairs} --out {output}'

@@ -1,0 +1,9 @@
+stage1stage2:
+  E081: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/E081-DNase.macs2.narrowPeak.sorted'
+  E082: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/E082-DNase.macs2.narrowPeak.sorted'
+  Noonan: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/Noonan_union.bed.sorted'
+  E129: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/E129-H3K9me3.narrowPeak.sorted'
+  hNSC-50: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/Noonan_hNSC_50_peaks.bed.sorted'
+  hNSC-P5-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/Noonan_hNSC_P5-1_peaks.bed.sorted'
+  hNSC-P5-2: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/Noonan_hNSC_P5-2_peaks.bed.sorted'
+  hNSC-P15-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/Noonan_hNSC_P15-1_peaks.bed.sorted'
