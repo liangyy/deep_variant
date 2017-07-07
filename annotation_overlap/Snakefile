@@ -31,3 +31,64 @@ rule collect_result:
         'result/distance.{taskname}.csv'
     shell:
         'python scripts/collect_result.py --files {input.pairs} --out {output}'
+
+rule rmd:
+    input:
+        csv = 'result/distance.{taskname}.csv'
+    output:
+        'report/distance.{taskname}.Rmd'
+    run:
+        rmd = '''---
+title: "Deep brain - Similarity between genomic annotation"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Distance between annotations
+
+Here we only consider binary labeled data and the similarity is defined as Jaccard distance, namely:
+$$\begin{{align}}
+dist(A, B) = \\frac{{|A \cap B|}}{{|A \cup B|}}
+\end{{align}}$$
+
+```{{r}}
+library(ggplot2)
+dist <- read.table('{input}', sep = ',', header = T)
+dist <- lapply(dist, function(x) if(is.factor(x)) as.character(x) else x)
+jaccard.col <- c('name_1', 'name_2', 'jaccard')
+dist.copy <- dist
+temp <- dist$name_1
+dist.copy$name_1 <- dist.copy$name_2
+dist.copy$name_2 <- temp
+dataname <- unique(c(dist$name_1, dist$name_2))
+dist.self <- data.frame(name_1 = dataname, name_2 = dataname, jaccard = 1)
+dist.copy <- as.data.frame(dist.copy)
+dist <- as.data.frame(dist)
+dist.jaccard <- rbind(dist[, jaccard.col], dist.copy[, jaccard.col], dist.self)
+dist.jaccard$name_1 <- factor(dist.jaccard$name_1, sort(dataname))
+dist.jaccard$name_2 <- factor(dist.jaccard$name_2, sort(dataname))
+ggplot(dist.jaccard, aes(name_1, name_2)) +
+    geom_tile(aes(fill = jaccard)) + 
+    geom_text(aes(label = round(jaccard, 2))) +
+    scale_fill_gradient(low = "white", high = "red")  + ggtitle('Pairwise Jaccard Similarity') + labs(x = 'dataset', y = 'dataset')
+```
+'''.format(input=input.csv)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule html:
+    input:
+        'report/distance.{taskname}.Rmd'
+    output:
+        'report/distance.{taskname}.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
