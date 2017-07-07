@@ -36,7 +36,7 @@ rule rmd:
     input:
         csv = 'result/distance.{taskname}.csv'
     output:
-        'report/distance.{taskname}.Rmd'
+        temp('report/distance.{taskname}.Rmd')
     run:
         rmd = '''---
 title: "Deep brain - Similarity between genomic annotation"
@@ -55,7 +55,7 @@ knitr::opts_knit$set(root.dir = '../')
 # Distance between annotations
 
 Here we only consider binary labeled data and the similarity is defined as Jaccard distance, namely:
-$$\begin{{align}}
+$$\\begin{{align}}
 dist(A, B) = \\frac{{|A \cap B|}}{{|A \cup B|}}
 \end{{align}}$$
 
