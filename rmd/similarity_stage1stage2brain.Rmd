@@ -1,0 +1,24 @@
+---
+title: "Deep brain - Similarity between data sets"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Extract normal brain data from DeepSEA annotations
+
+```{r}
+annotations <- read.table('../data/aucs.with.tissue.txt', sep = '\t', header = T)
+annotations.brain.ind <- annotations$Tissue == 'brain' & annotations$Karyotype == 'normal'
+annotations.fetal <- grepl('fetal', annotations$Tissue)
+annotations.selected <- annotations[annotations.brain.ind | annotations.fetal, ]
+```
+
+```{r, result='asis'}
+library(pander)
+pander(annotations.selected[, c('Cell.Type', 'TF.DNase.HistoneMark','Treatment', 'Tissue')])
+```

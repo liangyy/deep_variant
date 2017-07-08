@@ -78,6 +78,8 @@ There are some other directions and issues we need to explore and tackle. The an
       [Stage1 Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html),
       [Stage2 Deepsea sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-ATACseq.gc_content.html),
       [Stage2 Extracted sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-ATACseq.gc_content.html)
+    - Similarity between data sets
+      [Stage1 Stage2 with Normal Brain data from DeepSEA](similarity_stage1stage2brain.html)
 6. **Allelic Imbalance Analysis**:
     - DeepSEA results (Table S3). Presented by data set at [here](allelic_imbalance_deepsea.html)
     - Rerun analysis considering both imbalanced variants and balanced variants 
