@@ -15,11 +15,11 @@ rule download:
     input:
         config['bed_list']
     params:
-        idx = lambda wildcards: config[wildcards.name]
+        idx = lambda wildcards: config['data'][wildcards.name]
     output:
-        temp('data/{name}.downloaded.gz'
+        temp('data/{name}.downloaded.gz')
     shell:
-        'python download_bed.py --bed_list {input[0]} --id {params.idx} --out {output[0]}'
+        'python scripts/download_bed.py --bed_list {input[0]} --id {params.idx} --out {output[0]}'
 
 rule sort:
     input:
