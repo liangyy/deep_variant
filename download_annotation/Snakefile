@@ -1,0 +1,30 @@
+# This module takes the index of annotation in DeepSEA and download the bed from database website
+# It sorts the original annotation file
+
+def collect_all(config):
+    out = []
+    for i in config['data']:
+        out.append('data/{name}.sorted'.format(name=i))
+    return out
+
+rule all:
+    input:
+        collect_all(config)
+
+rule download:
+    input:
+        config['bed_list']
+    params:
+        idx = lambda wildcards: config[wildcards.name]
+    output:
+        temp('data/{name}.downloaded.gz'
+    shell:
+        'python download_bed.py --bed_list {input[0]} --id {params.idx} --out {output[0]}'
+
+rule sort:
+    input:
+        'data/{name}.downloaded.gz'
+    output:
+        'data/{name}.sorted'
+    shell:
+        'bedtools sort -i <(zcat {input[0]}) > {output[0]}'
