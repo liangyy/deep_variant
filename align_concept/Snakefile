@@ -1,0 +1,91 @@
+# This module works on a tiny subset of sequences from original sequence set (repeat several times to see if the result is reproducible)
+# The aim is to align the known concept (should be presented in numerial code either binary or continuous)
+# The concept can be: i) DNA shape; ii) Binding affinity to nucleosome; iii) more ?
+# Steps of the module:
+#   i) Collect a subset of sequences
+#   ii) Get neural activation map by interpolation
+#   iii) Annotate concept
+#   iv) Score each neuron (align activation with concept)
+#   v) Summarize result
+
+rule collect:
+    input:
+        data = lambda wildcards: config[wildcards.data]
+    params:
+        nrepeat = config['repeat_times'],
+        nseq = config['num_of_sequences']
+    output:
+        fasta = [ 'data/collected.{data}_{i}.fa'.format(i=i) for i in range(config['repeat_times']) ],
+        idx = [ 'data/collected_idx.{data}_{i}.txt'.format(i=i) for i in range(config['repeat_times']) ]  # 0-based separate by ','
+    shell:
+        'python scripts/collect.py --input {input.data} --nrepeat {params.nrepeat} \
+        --out_prefix collected.{wildcards.data} \
+        --nseq {params.nseq}'
+
+def get_layer_index(config):
+    out = []
+    for i in config['layers'].keys():
+        out.append(config['layers'][i]['idx'])
+    out = ','.join(out)
+    return out
+
+def get_layer_name(config):
+    out = []
+    for i in config['layers'].keys():
+        out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']])
+    out = ','.join(out)
+    return out
+
+
+rule neural_activation:
+    input:
+        idx = 'data/collected_idx.{data}_{i}.txt',
+        data = lambda wildcards: config[wildcards.data]
+    params:
+        layers = get_layer_index(config),  # separated by ','
+        model = config['model'],
+        names = get_layer_name(config)
+    output:
+        'data/activation.{data}_{i}.hdf5'
+    shell:
+        'python scripts/activation.py --input {input.data} --index {input.idx} \
+        --layers {params.layers} --names {params.names} \
+        --model {params.model} --output {output[0]}'
+
+rule concept:
+    input:
+        'data/collected.{data}_{i}.fa'
+    output:
+        'data/concept.{data}_{i}.feather'
+    shell:
+        'Rscripts --vanilla --input={input[0]} --output={output[0]} concept.R'
+
+rule align:
+    input:
+        concept = 'data/concept.{data}_{i}.feather',
+        activation = 'data/activation.{data}_{i}.hdf5'
+    output:
+        'data/aligned.{data}_{i}.feather'
+    shell:
+        'python scripts/align.py --concept {input.concept} --activation {input.activation} --output {output[0]}'
+
+rule report_rmd:
+    input:
+        [ 'data/aligned.{data}_{i}.feather'.format(i=i) for i in range(config['repeat_times']) ]
+    output:
+        temp('report/summary.{data}_{i}.Rmd')
+    run:
+        rmd = '''
+something
+'''
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
+
+rule report_html:
+    input:
+        'report/summary.{data}_{i}.Rmd'
+    output:
+        'report/summary.{data}_{i}.html'
+    shell:
+        'Rscript -e "rmarkdown::render('./{input[0]}')"'

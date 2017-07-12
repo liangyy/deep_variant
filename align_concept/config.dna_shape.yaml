@@ -1,0 +1,17 @@
+deepsea-test:
+  '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+repeat_times: 3
+num_of_sequences: 1000
+layers:
+  cnn-1:
+    idx: 0
+    win_size: 8
+    jump: 1
+  cnn-2:
+    idx: 4
+    win_size: 39
+    jump: 4
+  cnn-3:
+    idx: 7
+    win_size: 163
+    jump: 16
