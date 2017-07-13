@@ -61,7 +61,7 @@ dist(A, B) = \\frac{{|A \cap B|}}{{|A \cup B|}}
 
 Alternatively, we can use the asymmetric similarity between $A$ and $B$:
 $$\\begin{{align}}
-dist(A, B) &= \\frac{{|A \cap B|}}{{|A|}} \\
+dist(A, B) &= \\frac{{|A \cap B|}}{{|A|}} \\\\
 dist(B, A) &= \\frac{{|A \cap B|}}{{|B|}}
 \end{{align}}$$
 
@@ -92,15 +92,22 @@ temp$name_1 <- temp$name_2
 temp$name_2 <- temp.name_1
 dist.asymetric <- rbind(dist.notidentical, temp, dist.identical)
 dist.asymetric$asymetric <- apply(dist.asymetric, 1, function(x){{
-    return(x['intersection'] / dist.identical[dist.identical$name_1 == x['name_1'], 'intersection'])
+    return(as.numeric(x['intersection']) / dist.identical[dist.identical$name_1 == x['name_1'], 'intersection'])
 }})
-dist.jaccard$name_1 <- factor(dist.jaccard$name_1, sort(dataname))
-dist.jaccard$name_2 <- factor(dist.jaccard$name_2, sort(dataname))
-ggplot(dist.jaccard, aes(name_1, name_2)) +
+ggplot(dist.asymetric, aes(name_1, name_2)) +
     geom_tile(aes(fill = asymetric)) +
     geom_text(aes(label = round(asymetric, 2)), size = 1.5) +
     scale_fill_gradient(low = "white", high = "red")  +
-    ggtitle('Pairwise Asymmetric Similarity') +
+    ggtitle('Pairwise Asymmetric Similarity (dist(x, y))') +
+    labs(x = 'dataset', y = 'dataset') +
+    theme(axis.text.x=element_text(angle=90,hjust=1))
+```
+
+# Size of data
+
+```{{r}}
+ggplot(dist.identical) + geom_bar(aes(x = name_1, y = intersection), stat = 'identity') +
+    ggtitle('Size of the data sets') +
     labs(x = 'dataset', y = 'dataset') +
     theme(axis.text.x=element_text(angle=90,hjust=1))
 ```
