@@ -16,8 +16,19 @@ def binary_to_char(binary):
     return seq
 
 def save_layer(activation, spatial_x, dataname, filename):
-    f = h5py.File(filename, 'w+')
-    grp = f.create_group(dataname)
-    grp.create_dataset('activation', activation)
-    grp.create_dataset('spatial_x', spatial_x)
+    f = h5py.File(filename, 'a')
+    try:
+        grp = f.create_group(dataname)
+    except ValueError:
+        grp = f[dataname] 
+    try:
+        grp.create_dataset('spatial_x', data=spatial_x)
+    except ValueError:
+        data = grp['spatial_x']
+        data[...] = spatial_x
+    try:
+        grp.create_dataset('activation', data=activation)
+    except ValueError:
+        data = grp['activation']
+        data[...] = activation
     f.close()

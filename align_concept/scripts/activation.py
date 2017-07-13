@@ -30,9 +30,10 @@ if 'scripts/' not in sys.path:
 import my_python
 from keras.models import load_model
 import numpy as np
+from keras.models import Model
 
 layers = [ int(i.strip()) for i in args.layers.split(',') ]
-layer_names = [ int(i.strip()) for i in args.names.split(',') ]
+layer_names = [ i.strip() for i in args.names.split(',') ]
 win_sizes = []
 jumps = []
 for i in args.length_n_jump.split(','):
@@ -48,5 +49,5 @@ x_subset = np.take(x, indice, axis = 0)
 for l in range(len(layers)):
     model_intermediate = Model(inputs=model.layers[0].input, outputs=model.layers[layers[l]].output)
     activation = model_intermediate.predict(x_subset, verbose = 1)
-    spatial_x = np.array([ win_sizes[l] / 2 + j * jumps[l] for j in range(activation.shape[0]) ])
+    spatial_x = np.array([ win_sizes[l] / 2 + j * jumps[l] for j in range(activation.shape[1]) ])
     my_python.save_layer(activation, spatial_x, layer_names[l], args.output)

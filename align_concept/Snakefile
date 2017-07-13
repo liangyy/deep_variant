@@ -19,23 +19,29 @@ rule collect:
         idx = [ 'data/collected_idx.{{data}}_{i}.txt'.format(i=i) for i in range(config['repeat_times']) ]  # 0-based separate by ','
     shell:
         '''python scripts/collect.py --input {input.data} --nrepeat {params.nrepeat} \
-        --out_prefix collected.{wildcards.data} \
+        --prefix_fasta data/collected.{wildcards.data} --prefix_idx data/collected_idx.{wildcards.data} \
         --nseq {params.nseq}'''
 
 def get_layer_index(config):
     out = []
     for i in config['layers'].keys():
-        out.append(config['layers'][i]['idx'])
+        out.append(str(config['layers'][i]['idx']))
+    out = ','.join(out)
+    return out
+
+def get_l_n_j(config):
+    out = []
+    for i in config['layers'].keys():
+        out.append('-'.join([str(config['layers'][i]['win_size']), str(config['layers'][i]['jump'])]))
     out = ','.join(out)
     return out
 
 def get_layer_name(config):
     out = []
     for i in config['layers'].keys():
-        out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']]))
+        out.append(i)
     out = ','.join(out)
     return out
-
 
 rule neural_activation:
     input:
@@ -44,13 +50,15 @@ rule neural_activation:
     params:
         layers = get_layer_index(config),  # separated by ','
         model = config['model'],
-        names = get_layer_name(config)
+        names = get_layer_name(config),
+        length_n_jump = get_l_n_j(config)
     output:
         'data/activation.{data}_{i}.hdf5'
     shell:
         '''python scripts/activation.py --input {input.data} --index {input.idx} \
         --layers {params.layers} --names {params.names} \
-        --model {params.model} --output {output[0]}'''
+        --model {params.model} --output {output[0]} \
+        --length_n_jump {params.length_n_jump}'''
 
 rule concept:
     input:
@@ -71,7 +79,7 @@ rule align:
 
 rule report_rmd:
     input:
-        [ 'data/aligned.{data}_{i}.feather'.format(i=i) for i in range(config['repeat_times']) ]
+        [ 'data/aligned.{{data}}_{i}.feather'.format(i=i) for i in range(config['repeat_times']) ]
     output:
         temp('report/summary.{data}_{i}.Rmd')
     run:
