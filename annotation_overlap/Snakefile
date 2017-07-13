@@ -11,7 +11,7 @@ def get_all_pairs(config_data, taskname):
     names = get_all_names(config_data)
     n = len(names)
     for i in range(n):
-        for j in range(i):
+        for j in range(i + 1):
             out.append('result/{taskname}__{data1}__{data2}.txt'.format(data1=names[i], data2=names[j], taskname=taskname))
     return out
 
@@ -47,7 +47,7 @@ output:
     toc_depth: 3
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
-  
+
 ```{{r setup}}
 knitr::opts_knit$set(root.dir = '../')
 ```
@@ -59,28 +59,49 @@ $$\\begin{{align}}
 dist(A, B) = \\frac{{|A \cap B|}}{{|A \cup B|}}
 \end{{align}}$$
 
+Alternatively, we can use the asymmetric similarity between $A$ and $B$:
+$$\\begin{{align}}
+dist(A, B) &= \\frac{{|A \cap B|}}{{|A|}} \\
+dist(B, A) &= \\frac{{|A \cap B|}}{{|B|}}
+\end{{align}}$$
+
+# Jaccard Similarity
+
 ```{{r}}
 library(ggplot2)
 dist <- read.table('{input}', sep = ',', header = T)
-dist <- lapply(dist, function(x) if(is.factor(x)) as.character(x) else x)
-jaccard.col <- c('name_1', 'name_2', 'jaccard')
-dist.copy <- dist
-temp <- dist$name_1
-dist.copy$name_1 <- dist.copy$name_2
-dist.copy$name_2 <- temp
-dataname <- unique(c(dist$name_1, dist$name_2))
-dist.self <- data.frame(name_1 = dataname, name_2 = dataname, jaccard = 1)
-dist.copy <- as.data.frame(dist.copy)
 dist <- as.data.frame(dist)
-dist.jaccard <- rbind(dist[, jaccard.col], dist.copy[, jaccard.col], dist.self)
+ggplot(dist, aes(name_1, name_2)) +
+    geom_tile(aes(fill = jaccard)) +
+    geom_text(aes(label = round(jaccard, 2)), size = 1.5) +
+    scale_fill_gradient(low = "white", high = "red")  +
+    ggtitle('Pairwise Jaccard Similarity') +
+    labs(x = 'dataset', y = 'dataset') +
+    theme(axis.text.x=element_text(angle=90,hjust=1))
+```
+
+# Asymmetric Similarity
+
+```{{r}}
+identical.ind <- dist$name_1 == dist$name_2
+dist.identical <- dist[identical.ind, ]
+dist.notidentical <- dist[!identical.ind, ]
+temp <- dist.notidentical
+temp.name_1 <- temp$name_1
+temp$name_1 <- temp$name_2
+temp$name_2 <- temp.name_1
+dist.asymetric <- rbind(dist.notidentical, temp, dist.identical)
+dist.asymetric$asymetric <- apply(dist.asymetric_notidentical, 1, function(x){{
+    return(x$intersection / dist.identical[dist.identical$name_1 == x$name_1, 'intersection'])
+}})
 dist.jaccard$name_1 <- factor(dist.jaccard$name_1, sort(dataname))
 dist.jaccard$name_2 <- factor(dist.jaccard$name_2, sort(dataname))
 ggplot(dist.jaccard, aes(name_1, name_2)) +
-    geom_tile(aes(fill = jaccard)) + 
-    geom_text(aes(label = round(jaccard, 2)), size = 1.5) +
-    scale_fill_gradient(low = "white", high = "red")  + 
-    ggtitle('Pairwise Jaccard Similarity') + 
-    labs(x = 'dataset', y = 'dataset') + 
+    geom_tile(aes(fill = asymetric)) +
+    geom_text(aes(label = round(asymetric, 2)), size = 1.5) +
+    scale_fill_gradient(low = "white", high = "red")  +
+    ggtitle('Pairwise Asymmetric Similarity') +
+    labs(x = 'dataset', y = 'dataset') +
     theme(axis.text.x=element_text(angle=90,hjust=1))
 ```
 '''.format(input=input.csv)
