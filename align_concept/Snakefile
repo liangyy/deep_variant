@@ -22,19 +22,19 @@ rule collect:
         --out_prefix collected.{wildcards.data} \
         --nseq {params.nseq}'''
 
-def get_layer_index(config):
-    out = []
-    for i in config['layers'].keys():
-        out.append(config['layers'][i]['idx'])
-    out = ','.join(out)
-    return out
-
-def get_layer_name(config):
-    out = []
-    for i in config['layers'].keys():
-        out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']])
-    out = ','.join(out)
-    return out
+# def get_layer_index(config):
+#     out = []
+#     for i in config['layers'].keys():
+#         out.append(config['layers'][i]['idx'])
+#     out = ','.join(out)
+#     return out
+#
+# def get_layer_name(config):
+#     out = []
+#     for i in config['layers'].keys():
+#         out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']])
+#     out = ','.join(out)
+#     return out
 
 
 # rule neural_activation:
