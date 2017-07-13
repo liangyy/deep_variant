@@ -15,8 +15,8 @@ rule collect:
         nrepeat = config['repeat_times'],
         nseq = config['num_of_sequences']
     output:
-        fasta = [ 'data/collected.{data}_{i}.fa'.format(i=i) for i in range(config['repeat_times']) ],
-        idx = [ 'data/collected_idx.{data}_{i}.txt'.format(i=i) for i in range(config['repeat_times']) ]  # 0-based separate by ','
+        fasta = [ 'data/collected.{{data}}_{i}.fa'.format(i=i) for i in range(config['repeat_times']) ],
+        idx = [ 'data/collected_idx.{{data}}_{i}.txt'.format(i=i) for i in range(config['repeat_times']) ]  # 0-based separate by ','
     shell:
         '''python scripts/collect.py --input {input.data} --nrepeat {params.nrepeat} \
         --out_prefix collected.{wildcards.data} \
