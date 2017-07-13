@@ -91,8 +91,8 @@ temp.name_1 <- temp$name_1
 temp$name_1 <- temp$name_2
 temp$name_2 <- temp.name_1
 dist.asymetric <- rbind(dist.notidentical, temp, dist.identical)
-dist.asymetric$asymetric <- apply(dist.asymetric_notidentical, 1, function(x){{
-    return(x$intersection / dist.identical[dist.identical$name_1 == x$name_1, 'intersection'])
+dist.asymetric$asymetric <- apply(dist.asymetric, 1, function(x){{
+    return(x['intersection'] / dist.identical[dist.identical$name_1 == x['name_1'], 'intersection'])
 }})
 dist.jaccard$name_1 <- factor(dist.jaccard$name_1, sort(dataname))
 dist.jaccard$name_2 <- factor(dist.jaccard$name_2, sort(dataname))

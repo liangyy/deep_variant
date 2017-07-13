@@ -1,5 +1,6 @@
 deepsea-test:
   '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+model: '../../../deep_variant/yanyu/DeepSEA/debug/keras_deepsea.hdf5' 
 repeat_times: 3
 num_of_sequences: 1000
 layers:

@@ -88,4 +88,5 @@ rule report_html:
     output:
         'report/summary.{data}_{i}.html'
     shell:
-        'Rscript -e "rmarkdown::render('./{input[0]}')"'
+        '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
+

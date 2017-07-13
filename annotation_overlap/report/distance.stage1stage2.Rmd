@@ -1,0 +1,66 @@
+---
+title: "Deep brain - Similarity between genomic annotation"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Distance between annotations
+
+Here we only consider binary labeled data and the similarity is defined as Jaccard distance, namely:
+$$\begin{align}
+dist(A, B) = \frac{|A \cap B|}{|A \cup B|}
+\end{align}$$
+
+Alternatively, we can use the asymmetric similarity between $A$ and $B$:
+$$\begin{align}
+dist(A, B) &= \frac{|A \cap B|}{|A|} \
+dist(B, A) &= \frac{|A \cap B|}{|B|}
+\end{align}$$
+
+# Jaccard Similarity
+
+```{r}
+library(ggplot2)
+dist <- read.table('result/distance.stage1stage2.csv', sep = ',', header = T)
+dist <- as.data.frame(dist)
+ggplot(dist, aes(name_1, name_2)) +
+    geom_tile(aes(fill = jaccard)) +
+    geom_text(aes(label = round(jaccard, 2)), size = 1.5) +
+    scale_fill_gradient(low = "white", high = "red")  +
+    ggtitle('Pairwise Jaccard Similarity') +
+    labs(x = 'dataset', y = 'dataset') +
+    theme(axis.text.x=element_text(angle=90,hjust=1))
+```
+
+# Asymmetric Similarity
+
+```{r}
+identical.ind <- dist$name_1 == dist$name_2
+dist.identical <- dist[identical.ind, ]
+dist.notidentical <- dist[!identical.ind, ]
+temp <- dist.notidentical
+temp.name_1 <- temp$name_1
+temp$name_1 <- temp$name_2
+temp$name_2 <- temp.name_1
+dist.asymetric <- rbind(dist.notidentical, temp, dist.identical)
+dist.asymetric$asymetric <- apply(dist.asymetric, 1, function(x){
+    return(x['intersection'] / dist.identical[dist.identical$name_1 == x['name_1'], 'intersection'])
+})
+dist.jaccard$name_1 <- factor(dist.jaccard$name_1, sort(dataname))
+dist.jaccard$name_2 <- factor(dist.jaccard$name_2, sort(dataname))
+ggplot(dist.jaccard, aes(name_1, name_2)) +
+    geom_tile(aes(fill = asymetric)) +
+    geom_text(aes(label = round(asymetric, 2)), size = 1.5) +
+    scale_fill_gradient(low = "white", high = "red")  +
+    ggtitle('Pairwise Asymmetric Similarity') +
+    labs(x = 'dataset', y = 'dataset') +
+    theme(axis.text.x=element_text(angle=90,hjust=1))
+```
