@@ -52,36 +52,36 @@ rule neural_activation:
         --layers {params.layers} --names {params.names} \
         --model {params.model} --output {output[0]}'''
 
-rule concept:
-    input:
-        'data/collected.{data}_{i}.fa'
-    output:
-        'data/concept.{data}_{i}.feather'
-    shell:
-        'Rscripts --vanilla --input={input[0]} --output={output[0]} concept.R'
-
-rule align:
-    input:
-        concept = 'data/concept.{data}_{i}.feather',
-        activation = 'data/activation.{data}_{i}.hdf5'
-    output:
-        'data/aligned.{data}_{i}.feather'
-    shell:
-        'python scripts/align.py --concept {input.concept} --activation {input.activation} --output {output[0]}'
-
-rule report_rmd:
-    input:
-        [ 'data/aligned.{data}_{i}.feather'.format(i=i) for i in range(config['repeat_times']) ]
-    output:
-        temp('report/summary.{data}_{i}.Rmd')
-    run:
-        # rmd = '''
+# rule concept:
+#     input:
+#         'data/collected.{data}_{i}.fa'
+#     output:
+#         'data/concept.{data}_{i}.feather'
+#     shell:
+#         'Rscripts --vanilla --input={input[0]} --output={output[0]} concept.R'
+#
+# rule align:
+#     input:
+#         concept = 'data/concept.{data}_{i}.feather',
+#         activation = 'data/activation.{data}_{i}.hdf5'
+#     output:
+#         'data/aligned.{data}_{i}.feather'
+#     shell:
+#         'python scripts/align.py --concept {input.concept} --activation {input.activation} --output {output[0]}'
+#
+# rule report_rmd:
+#     input:
+#         [ 'data/aligned.{data}_{i}.feather'.format(i=i) for i in range(config['repeat_times']) ]
+#     output:
+#         temp('report/summary.{data}_{i}.Rmd')
+#     run:
+#         rmd = '''
 # something
 # '''
-        o = open(output[0], 'w')
-        o.write(rmd)
-        o.close()
-
+#         o = open(output[0], 'w')
+#         o.write(rmd)
+#         o.close()
+#
 # rule report_html:
 #     input:
 #         'report/summary.{data}_{i}.Rmd'
@@ -89,4 +89,3 @@ rule report_rmd:
 #         'report/summary.{data}_{i}.html'
 #     shell:
 #         '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
-
