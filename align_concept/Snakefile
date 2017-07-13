@@ -29,13 +29,13 @@ def get_layer_index(config):
     out = ','.join(out)
     return out
 
-# def get_layer_name(config):
-#     out = []
-#     for i in config['layers'].keys():
-#         out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']])
-#     out = ','.join(out)
-#     return out
-#
+def get_layer_name(config):
+    out = []
+    for i in config['layers'].keys():
+        out.append('-'.join([config['layers'][i]['win_size'], config['layers'][i]['jump']]))
+    out = ','.join(out)
+    return out
+
 
 # rule neural_activation:
 #     input:
