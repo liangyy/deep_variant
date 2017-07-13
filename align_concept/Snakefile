@@ -64,9 +64,9 @@ rule concept:
     input:
         'data/collected.{data}_{i}.fa'
     output:
-        'data/concept.{data}_{i}.feather'
+        'data/concept.{data}_{i}.hdf5'
     shell:
-        'Rscripts --vanilla --input={input[0]} --output={output[0]} concept.R'
+        'Rscripts --vanilla concept.R --file {input[0]} --out {output[0]}'
 
 rule align:
     input:
