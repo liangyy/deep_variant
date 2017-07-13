@@ -18,9 +18,9 @@ rule collect:
         fasta = [ 'data/collected.{data}_{i}.fa'.format(i=i) for i in range(config['repeat_times']) ],
         idx = [ 'data/collected_idx.{data}_{i}.txt'.format(i=i) for i in range(config['repeat_times']) ]  # 0-based separate by ','
     shell:
-        'python scripts/collect.py --input {input.data} --nrepeat {params.nrepeat} \
+        '''python scripts/collect.py --input {input.data} --nrepeat {params.nrepeat} \
         --out_prefix collected.{wildcards.data} \
-        --nseq {params.nseq}'
+        --nseq {params.nseq}'''
 
 def get_layer_index(config):
     out = []
@@ -48,9 +48,9 @@ rule neural_activation:
     output:
         'data/activation.{data}_{i}.hdf5'
     shell:
-        'python scripts/activation.py --input {input.data} --index {input.idx} \
+        '''python scripts/activation.py --input {input.data} --index {input.idx} \
         --layers {params.layers} --names {params.names} \
-        --model {params.model} --output {output[0]}'
+        --model {params.model} --output {output[0]}'''
 
 rule concept:
     input:
@@ -75,18 +75,18 @@ rule report_rmd:
     output:
         temp('report/summary.{data}_{i}.Rmd')
     run:
-        rmd = '''
-something
-'''
+        # rmd = '''
+# something
+# '''
         o = open(output[0], 'w')
         o.write(rmd)
         o.close()
 
-rule report_html:
-    input:
-        'report/summary.{data}_{i}.Rmd'
-    output:
-        'report/summary.{data}_{i}.html'
-    shell:
-        '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
+# rule report_html:
+#     input:
+#         'report/summary.{data}_{i}.Rmd'
+#     output:
+#         'report/summary.{data}_{i}.html'
+#     shell:
+#         '''Rscript -e "rmarkdown::render('./{input[0]}')"'''
 
