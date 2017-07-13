@@ -37,20 +37,20 @@ def get_layer_name(config):
     return out
 
 
-rule neural_activation:
-    input:
-        idx = 'data/collected_idx.{data}_{i}.txt',
-        data = lambda wildcards: config[wildcards.data]
-    params:
-        layers = get_layer_index(config),  # separated by ','
-        model = config['model'],
-        names = get_layer_name(config)
-    output:
-        'data/activation.{data}_{i}.hdf5'
-    shell:
-        '''python scripts/activation.py --input {input.data} --index {input.idx} \
-        --layers {params.layers} --names {params.names} \
-        --model {params.model} --output {output[0]}'''
+# rule neural_activation:
+#     input:
+#         idx = 'data/collected_idx.{data}_{i}.txt',
+#         data = lambda wildcards: config[wildcards.data]
+#     params:
+#         layers = get_layer_index(config),  # separated by ','
+#         model = config['model'],
+#         names = get_layer_name(config)
+#     output:
+#         'data/activation.{data}_{i}.hdf5'
+#     shell:
+#         '''python scripts/activation.py --input {input.data} --index {input.idx} \
+#         --layers {params.layers} --names {params.names} \
+#         --model {params.model} --output {output[0]}'''
 
 # rule concept:
 #     input:
