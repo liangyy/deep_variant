@@ -66,7 +66,7 @@ rule concept:
     output:
         'data/concept.{data}_{i}.hdf5'
     shell:
-        'Rscripts --vanilla concept.R --file {input[0]} --out {output[0]}'
+        'Rscript --vanilla scripts/concept.R --file {input[0]} --out {output[0]}'
 
 rule align:
     input:

@@ -20,12 +20,15 @@ h5createFile(opt$out)
 for(feature in features) {
   h5createGroup(opt$out, feature)
   score <- pred[[feature]]
-  index <- 1 : dim(score)[1]
-  index <- index[!is.na(score)]
-  score <- score[!is.na(score)]
-  h5write(score, opt$out, paste(feature, 'score', sep = '/'))
+  index <- 1 : dim(score)[2]
+  # index <- index[!is.na(score[1,])]
+  if(feature %in% c('HelT', 'Roll')) {
+    index <- index + 0.5
+  }
+  # score <- score[!is.na(score)]
+  h5write(t(score), opt$out, paste(feature, 'score', sep = '/'))  # Notice that rhdf5 save the transposed matrix, so this operation makes sure that it is consistent with what we expect 
   h5write(index, opt$out, paste(feature, 'index', sep = '/'))
-  cmd <- paste('rm', paste(filname, feature, sep = '.'))
+  cmd <- paste('rm', paste(filename, feature, sep = '.'))
   system(cmd)
 }
 H5close()
