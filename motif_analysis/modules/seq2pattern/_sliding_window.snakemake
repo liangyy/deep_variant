@@ -163,16 +163,22 @@ pos <- read_feather('{input_p}')
 
 # Spatial Mask Effect in Sequences
 
-## Negative sequences
+## Negative Sequences
 
 ```{{r}}
-draw_heatmap(neg, 'Negative')
+neg.melt <- list()
+neg.melt$value <- draw_heatmap(neg, 'Negative')
+neg.melt$label <- 'Negative'
+neg.melt <- as.data.frame(neg.melt)
 ```
 
-## Positive sequences
+## Positive Sequences
 
 ```{{r}}
-draw_heatmap(pos, 'Positive')
+pos.melt <- list()
+pos.melt$value <- draw_heatmap(pos, 'Positive')
+pos.melt$label <- 'Positive'
+pos.melt <- as.data.frame(pos.melt)
 ```
 
 # Spatial Max/Min/Mean of Mask Effect (Collapsing spatial information)
@@ -182,6 +188,14 @@ data.neg <- summarize_stat(neg, 'negative')
 data.pos <- summarize_stat(pos, 'positive')
 data <- rbind(data.neg, data.pos)
 ggplot(data) + geom_boxplot(aes(x = variable, y = value, fill = label)) + ggtitle('Mean/Max/Min of Mask Effect') + labs(x = 'stat', y = 'value')
+```
+
+# Distribution of the Score
+
+```
+ggplot() + geom_histogram(data = neg.melt, aes(x = value, fill = label), alpha = .5) +
+geom_histogram(data = pos.melt, aes(x = value, fill = label), alpha = .5) +
+ggtitle('Distribution of Score')
 ```
 '''.format(input_p=input[0], input_n=input[1], envir=params.envir)
         o = open(output.o, 'w')

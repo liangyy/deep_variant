@@ -170,8 +170,9 @@ save_plot_pwm <- function(info, p, motif, path, plots, folder){
 draw_heatmap <- function(neg, title){
     neg$seq <- 1 : nrow(neg)
     neg.melt <- melt(neg, id.vars = 'seq')
-    ggplot(neg.melt) + geom_raster(aes(x = variable, y = seq, fill = value)) + 
+    ggplot(neg.melt) + geom_raster(aes(x = variable, y = seq, fill = value)) +
         ggtitle(paste('Spatial Mask Effect in', title, 'Sequences')) + labs(x = 'spatial positive', y = 'sequence')
+    return(neg.melt$value)
 }
 
 summarize_stat <- function(neg, label){
