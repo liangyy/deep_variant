@@ -263,7 +263,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 knitr::opts_knit$set(root.dir = '{envir}')
 ```
 
-# How signal distributes along a sequence
+# How critical window distributes along a sequence
 
 ```{{r}}
 library(ggplot2)
@@ -278,10 +278,14 @@ for(l in file.labels) {{
   signal <- read.table(file.name, sep = ' ', header = T)
   signal <- signal[with(signal, order(seq_id, pos_id)), ]
   signals[[l]] <- signal
-  print(ggplot(signal) + geom_bin2d(aes(x = pos_id, y = seq_id), binwidth = 1) + ggtitle(paste0('Signal distribution in ', l)))
+  print(ggplot(signal) + geom_bin2d(aes(x = pos_id, y = seq_id), binwidth = 1) + ggtitle(paste0('Critical window distribution in ', l)))
   total.counts <- c(total.counts, length(unique(signal$seq_id)))
 }}
 ```
+
+# How many sequences have critical windows
+
+For the ones that are randomly selected, it should cover all sequences with high probability. However, in the positive.positive or negative.negative, some sequences do not have critical windows.
 
 ```{{r, results = 'asis'}}
 library(pander)
@@ -290,9 +294,9 @@ total.counts <- data.frame(label = file.labels[1], total.counts = total.counts)
 pander(total.counts)
 ```
 
-# How many signal blocks in a sequence
+# How many critical window blocks in a sequence
 
-We merge all overlapping signals into signal blocks.
+We merge all overlapping critical windows into critical window blocks.
 
 ```{{r}}
 count_nblock <- function(x) {{
@@ -312,7 +316,7 @@ count_nblock <- function(x) {{
 for(l in names(signals)) {{
   nblock <- aggregate(pos_id ~ seq_id, data = signals[[l]], count_nblock)
   colnames(nblock) <- c('seq_id', 'nblock')
-  print(ggplot(nblock) + geom_bar(aes(x = nblock)) + ggtitle(paste0('Number of separated signal blocks per sequence \n in ', l)))
+  print(ggplot(nblock) + geom_bar(aes(x = nblock)) + ggtitle(paste0('Number of separated critical window blocks per sequence \n in ', l)))
 }}
 ```
 
@@ -340,7 +344,7 @@ for(l in names(signals)) {{
     }}
   }}
   block.info <- data.frame(seq.id = seq.ids, start = starts, end = ends)
-  print(ggplot(block.info) + geom_histogram(aes(x = end - start + 1), binwidth = 1) + ggtitle(paste0('The size of the signal block in ', l)))
+  print(ggplot(block.info) + geom_histogram(aes(x = end - start + 1), binwidth = 1) + ggtitle(paste0('The size of the critical window block in ', l)))
   block.infos[[l]] <- block.info
 }}
 ```
