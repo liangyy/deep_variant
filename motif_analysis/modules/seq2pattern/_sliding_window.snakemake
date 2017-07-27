@@ -236,3 +236,83 @@ rule signal2seq:
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
         --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge {params.merge}'
+
+rule signal_block_report_rmd:
+    input:
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.positive.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.random.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_negative.negative.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
+    output:
+        o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.Rmd'.format(model=config['model']['name']))
+    params:
+        envir = '../../',
+        prefix_dir = 'pattern/{model}/{{dataname}}.{{data}}/'.format(model=config['model']['name'])
+    run:
+        rmd = '''---
+title: "Motif Analysis - sliding window, the pattern of the signal block"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = '{envir}')
+```
+
+# How signal distributes along a sequence
+
+```{r}
+library(ggplot2)
+mask.size <- {mask_size}
+file.labels <- c('negative.negative', 'positive.random', 'positive.positive')
+file.prefix <- '{prefix_dir}/sliding_window/signal_'
+file.suffix <- paste0('.MaskSize_', mask.size, '.txt' )
+signals <- list()
+for(l in file.labels) {
+  file.name <- paste0(file.prefix, l, file.suffix)
+  signal <- read.table(file.name, sep = ' ', header = T)
+  signals[[l]] <- signal
+  ggplot(signal) + geom_bin2d(aes(x = pos_id, y = seq_id), binwidth = 1) + ggtitle(paste0('Signal distribution in ', l))
+}
+```
+
+# How many signal blocks in a sequence
+
+We merge all overlapping signals into signal blocks.
+
+```{r}
+count_nblock <- function(x) {
+  if(length(x) == 1) {
+    return(1)
+  }
+  count <- 1
+  pre <- x[1]  # In the input file, the pos_id is 1-based
+  for(i in 2 : length(x)) {
+    if((x[i] - pre) > mask.size) {
+      count <- count + 1
+      pre <- x[i]
+    }
+  }
+  return(count)
+}
+for(l in names(signals)) {
+  nblock <- aggregate(pos_id ~ seq_id, data = signals[[l]], count_nblock)
+  colnames(nblock) <- c('seq_id', 'nblock')
+  ggplot(nblock) + geom_bar(aes(x = nblock)) + ggtitle(paste0('Number of separated signal blocks per sequence \n in ', l))
+}
+```
+'''.format(envir=params.envir, prefix_dir=params.prefix_dir, mask_size=wildcards.mask_size)
+        o = open(output.o, 'w')
+        o.write(rmd)
+        o.close()
+
+rule signal_block_report_html:
+    input:
+        rmd = 'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.Rmd'.format(model=config['model']['name']),
+    output:
+        'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.html'.format(model=config['model']['name'])
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
