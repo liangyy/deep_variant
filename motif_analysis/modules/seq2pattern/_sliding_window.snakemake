@@ -192,7 +192,7 @@ ggplot(data) + geom_boxplot(aes(x = variable, y = value, fill = label)) + ggtitl
 
 # Distribution of the Score
 
-```
+```{r}
 ggplot() + geom_histogram(data = neg.melt, aes(x = value, fill = label), alpha = .5) +
 geom_histogram(data = pos.melt, aes(x = value, fill = label), alpha = .5) +
 ggtitle('Distribution of Score')
