@@ -243,7 +243,7 @@ rule signal_block_report_rmd:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.random.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_negative.negative.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
     output:
-        o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.Rmd'.format(model=config['model']['name']))
+        o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.signal_block.MaskSize_{{mask_size}}.Rmd'.format(model=config['model']['name']))
     params:
         envir = '../../',
         prefix_dir = 'pattern/{model}/{{dataname}}.{{data}}/'.format(model=config['model']['name'])
@@ -311,8 +311,8 @@ for(l in names(signals)) {{
 
 rule signal_block_report_html:
     input:
-        rmd = 'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.Rmd'.format(model=config['model']['name']),
+        rmd = 'report/{model}/{{dataname}}.{{data}}_sliding_window.signal_block.MaskSize_{{mask_size}}.Rmd'.format(model=config['model']['name']),
     output:
-        'report/{model}/{{dataname}}.{{data}}_sliding_window.MaskSize_{{mask_size}}.signal_block.html'.format(model=config['model']['name'])
+        'report/{model}/{{dataname}}.{{data}}_sliding_window.signal_block.MaskSize_{{mask_size}}.html'.format(model=config['model']['name'])
     shell:
         '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
