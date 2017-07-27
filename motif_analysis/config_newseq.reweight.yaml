@@ -6,6 +6,7 @@ method:
     mask_size: 8
     # window_size: 50
     quantile: 0.01
+    merge: '0'
   motif_gradient:
     snakemake: '_motif_gradient.snakemake'
   motif_activation:
