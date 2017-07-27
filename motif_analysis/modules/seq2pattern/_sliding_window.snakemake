@@ -273,17 +273,17 @@ file.prefix <- '{prefix_dir}/sliding_window/signal_'
 file.suffix <- paste0('.MaskSize_', mask.size, '.txt' )
 signals <- list()
 total.counts <- c()
-for(l in file.labels) {
+for(l in file.labels) {{
   file.name <- paste0(file.prefix, l, file.suffix)
   signal <- read.table(file.name, sep = ' ', header = T)
   signal <- signal[with(signal, order(seq_id, pos_id)), ]
   signals[[l]] <- signal
   print(ggplot(signal) + geom_bin2d(aes(x = pos_id, y = seq_id), binwidth = 1) + ggtitle(paste0('Signal distribution in ', l)))
   total.counts <- c(total.counts, length(unique(signal$seq_id)))
-}
+}}
 ```
 
-```{r, results = 'asis'}
+```{{r, results = 'asis'}}
 library(pander)
 panderOptions('table.split.table', Inf)
 total.counts <- data.frame(label = file.labels[1], total.counts = total.counts)
@@ -294,72 +294,72 @@ pander(total.counts)
 
 We merge all overlapping signals into signal blocks.
 
-```{r}
-count_nblock <- function(x) {
-  if(length(x) == 1) {
+```{{r}}
+count_nblock <- function(x) {{
+  if(length(x) == 1) {{
     return(1)
-  }
+  }}
   count <- 1
   pre <- x[1]  # In the input file, the pos_id is 1-based
-  for(i in 2 : length(x)) {
-    if((x[i] - pre) >= mask.size) {
+  for(i in 2 : length(x)) {{
+    if((x[i] - pre) >= mask.size) {{
       count <- count + 1
-    }
+    }}
     pre <- x[i]
-  }
+  }}
   return(count)
-}
-for(l in names(signals)) {
+}}
+for(l in names(signals)) {{
   nblock <- aggregate(pos_id ~ seq_id, data = signals[[l]], count_nblock)
   colnames(nblock) <- c('seq_id', 'nblock')
   print(ggplot(nblock) + geom_bar(aes(x = nblock)) + ggtitle(paste0('Number of separated signal blocks per sequence \n in ', l)))
-}
+}}
 ```
 
 # How big the block is
 
-```{r}
-get_last <- function(x) {
+```{{r}}
+get_last <- function(x) {{
   return(x[length(x)])
-}
+}}
 block.infos <- list()
-for(l in names(signals)) {
+for(l in names(signals)) {{
   signal <- signals[[l]]
   seq.ids <- signal$seq_id[1]
   starts <- signal$pos_id[1]
   ends <- signal$pos_id[1] + mask.size - 1
-  for(i in 2 : nrow(signal)) {
+  for(i in 2 : nrow(signal)) {{
     new.start <- signal$pos_id[i]
     new.seq.id <- signal$seq_id[i]
-    if(new.seq.id != get_last(seq.ids) | new.start > get_last(ends)) {  # The condition that a new block starts (either new sequence or no overlap
+    if(new.seq.id != get_last(seq.ids) | new.start > get_last(ends)) {{  # The condition that a new block starts (either new sequence or no overlap
       starts <- c(starts, new.start)
       seq.ids <- c(seq.ids, new.seq.id)
       ends <- c(ends, new.start + mask.size - 1)
-    } else {
+    }} else {{
       ends[length(ends)] <- new.start + mask.size - 1
-    }
-  }
+    }}
+  }}
   block.info <- data.frame(seq.id = seq.ids, start = starts, end = ends)
   print(ggplot(block.info) + geom_histogram(aes(x = end - start + 1), binwidth = 1) + ggtitle(paste0('The size of the signal block in ', l)))
   block.infos[[l]] <- block.info
-}
+}}
 ```
 
 # How far between two blocks
 
-```{r}
-get_pairwise_dist <- function(x){
+```{{r}}
+get_pairwise_dist <- function(x){{
   id <- x$seq.id[1]
   a <- c()  # Name of block 1
   b <- c()  # Name of block 2
   d <- c()  # Distance btw block 1 and 2
   l1 <- c()  # Size of block 1
   l2 <- c()  # Size of block 2
-  for(j in 1 : nrow(x)) {
+  for(j in 1 : nrow(x)) {{
     seq1 <- paste(id, j, sep= '-')
     pos1 <- mean(c(x[j, ]$start, x[j, ]$end))
     len1 <- x[j, ]$end - x[j, ]$start + 1
-    for(k in j : nrow(x)) {
+    for(k in j : nrow(x)) {{
       seq2 <- paste(id, k, sep= '-')
       pos2 <- mean(c(x[k, ]$start, x[k, ]$end))
       len2 <- x[k, ]$end - x[k, ]$start + 1
@@ -369,25 +369,25 @@ get_pairwise_dist <- function(x){
       d <- c(d, dist)
       l1 <- c(l1, len1)
       l2 <- c(l2, len2)
-    }
-  }
+    }}
+  }}
   re <- data.frame(block.1 = a, block.2 = b, distance = d, nblock = nrow(x), size.1 = l1, size.2 = len2)
   return(re)
-}
-for(l in names(block.infos)) {
+}}
+for(l in names(block.infos)) {{
   block.info <- block.infos[[l]]
   blockwise.distance <- c()
-  for(i in unique(block.info$seq.id)) {
+  for(i in unique(block.info$seq.id)) {{
     blocks.in.seq <- block.info[block.info$seq.id == i, ]
     blockwise.distance <- rbind(blockwise.distance, get_pairwise_dist(blocks.in.seq))
-  }
+  }}
   blockwise.distance$small.block.ind <- blockwise.distance$size.1 <= mask.size * 2 & blockwise.distance$size.2 <= mask.size * 2
   p <- ggplot(blockwise.distance[blockwise.distance$block.1 != blockwise.distance$block.2,]) +
   geom_histogram(aes(x = distance), binwidth = 10) + facet_grid(small.block.ind ~ nblock) +
   ggtitle(paste0('Distance between blocks \n (group by the number of blocks per sequence \n & whether both blocks are small) \n in ', l)) +
   theme(axis.text.x=element_text(angle=90,hjust=1))
   print(p)
-}
+}}
 
 ```
 '''.format(envir=params.envir, prefix_dir=params.prefix_dir, mask_size=wildcards.mask_size)
