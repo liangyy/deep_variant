@@ -91,7 +91,8 @@ There are some other directions and issues we need to explore and tackle. The an
       [here](allelic_imbalance_rerun.html)
 
 7. **Detecting Regulartory Grammar**:
-    - Critical windows are used to detect important "word" in the sequence and potentially the combination of "word" ("phrase") in the sequence. Here, we first explore the distribution of critical window along the sequence.  [E081](https://rawgit.com/liangyy/deep_variant/code/motif_analysis/report/Type1/newseq.matchgc.E081_sliding_window.signal_block.MaskSize_10.html)
+    - Critical windows are used to detect important "word" in the sequence and potentially the combination of "word" ("phrase") in the sequence. Here, we first explore the distribution of critical window along the sequence.  [E081](https://rawgit.com/liangyy/deep_variant/code/motif_analysis/report/Type1/newseq.matchgc.E081_sliding_window.signal_block.MaskSize_10.html),
+[Noonan](https://rawgit.com/liangyy/deep_variant/code/motif_analysis/report/Type1/newseq.matchgc.Noonan_sliding_window.signal_block.MaskSize_10.html)
     
 # TODO list
 
