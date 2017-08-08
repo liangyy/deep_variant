@@ -1,0 +1,58 @@
+---
+title: "Training - Compare AUCs by group"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+    toc_float: true
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+  
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+
+# Distribution of GC content
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(feather)
+model_list <- 'deepsea--extracted'
+by <- 'sequence'
+aucs <- c()
+for(i in strsplit(model_list, '--')[[1]]){
+    temp <- read_feather(paste0('result/deep_brain-stage1stage2/auc_', i, '.feather'))
+    if(by == 'model'){
+        temp$model <- i
+        colnames(temp)[colnames(temp) == 'info'] <- 'sequence'
+    }else{
+        temp$sequence <- i
+        colnames(temp)[colnames(temp) == 'info'] <- 'model'
+    }
+    aucs <- rbind(aucs, temp)
+}
+```
+
+# Results
+
+```{r, results='asis'}
+for(n in unique(aucs$data)) {
+  cat('\n')
+  cat('## ', n, '\n')
+  aucs.temp <- aucs[aucs$data == n,]
+  aucs.temp$sequence <- as.factor(aucs.temp$sequence)
+  aucs.temp$curve <- as.factor(aucs.temp$curve)
+  aucs.temp$model <- as.factor(aucs.temp$model)
+  levels(aucs.temp$sequence) <- c('DeepSEA Test Set', 'Extracted Sequences')
+  levels(aucs.temp$curve) <- c('PR AUC', 'ROC AUC')
+  levels(aucs.temp$model) <- c('gkm-SVM', 'JASPAR-Logistic', 'JASPAR-SVM', 'DeepSEA-Logistic')
+  p <- ggplot(aucs.temp) + geom_bar(aes(x = model, y = score, fill = model), stat = 'identity', position = 'dodge') + 
+    geom_text(aes(x = model, y = score, label = round(score, digits = 2)), position = position_dodge(width=1), size = 3) +
+    facet_grid(sequence ~ curve, scales = 'free_y') + 
+    ggtitle('Performance Comparison') + 
+    theme(axis.text.x=element_text(angle = 30, hjust = 1))
+  print(p)
+  cat('\n')
+}
+```
