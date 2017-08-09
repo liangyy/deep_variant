@@ -29,8 +29,7 @@ col_dic = { 'seq_id': 0, 'pos_id': 1 }
 position = np.loadtxt(args.position, skiprows=1)
 x_new = h5py.File(args.sequence, 'r')
 name = list(x_new.keys())[0]
-sequence = x_new[name][()]
-x_new.close()
+sequence = x_new[name]
 
 num_of_seq_per_seq = my_python.numSeqPerSeq(sequence.shape[1], args.mask_size)
 
@@ -59,7 +58,7 @@ if args.merge == 1:
                 seq_out.append(seq_memory)
                 start_out.append(start)
                 end_out.append(end)
-                extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
+                extracted = sequence[(int(seq_memory * num_of_seq_per_seq - 1))][int(start - 1) : int(end - 1), :]
                 ex_seq = ''
                 for j in range(extracted.shape[0]):
                     num = extracted[j,:].argmax()
@@ -79,7 +78,7 @@ if args.merge == 1:
             seq_out.append(seq_memory)
             start_out.append(start)
             end_out.append(end)
-            extracted = sequence[int(seq_memory * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
+            extracted = sequence[(int(seq_memory * num_of_seq_per_seq - 1))][int(start - 1) : int(end - 1), :]
             ex_seq = ''
             for j in range(extracted.shape[0]):
                 num = extracted[j,:].argmax()
@@ -98,7 +97,7 @@ elif args.merge != 1:
                 delta = (args.window_size - (end - start)) / 2
                 start = max(1, start - delta)
                 end = min(end + delta, sequence.shape[1] + 1)
-        extracted = sequence[int(seq * num_of_seq_per_seq - 1)][int(start - 1) : int(end - 1), :]
+        extracted = sequence[(int(seq * num_of_seq_per_seq - 1))][int(start - 1) : int(end - 1), :]
         ex_seq = ''
         for j in range(extracted.shape[0]):
             num = extracted[j,:].argmax()
@@ -108,6 +107,7 @@ elif args.merge != 1:
         end_out.append(end)
         char_out.append(ex_seq)
 names = [ '-'.join([ str(int(j)) for j in i]) for i in zip(seq_out, start_out, end_out) ]
+x_new.close()
 o = open(args.out, 'w')
 for i in range(len(names)):
     o.write('>{name}\n'.format(name=names[i]))
