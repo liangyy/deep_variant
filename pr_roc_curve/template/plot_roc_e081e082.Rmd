@@ -1,0 +1,64 @@
+---
+title: "Deep brain - Plot ROC curves of E081, E082"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+    toc_float: true
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+```{r setup}
+knitr::opts_knit$set(root.dir = '../')
+```
+  
+```{r plots_script}
+library(ggplot2)
+library(MESS)
+my_plot <- function(e081, name) {
+  e081.sub <- e081[sample(nrow(e081), 10000),]
+  start_n_end <- data.frame(rbind(c(name, 0, NA, NA, 0, 0, 'roc'), c(name, 1, NA, NA, 1, 1, 'roc')))
+  temp.col <- colnames(e081.sub)
+  temp.col <- temp.col[-3]
+  colnames(start_n_end) <- temp.col
+  start_n_end.all <- rbind.data.frame(start_n_end, start_n_end, start_n_end)
+  start_n_end.all$info <- rep(unique(e081.sub$info), each = 2)
+  e081.sub <- rbind.data.frame(e081.sub, start_n_end.all)
+  e081.sub$tpr <- as.numeric(e081.sub$tpr)
+  e081.sub$fpr <- as.numeric(e081.sub$fpr)
+  e081.auc <- c()
+  for(n in unique(e081.sub$info)) {
+    auc.temp <- auc(e081.sub[e081.sub$info == n, ]$fpr, e081.sub[e081.sub$info == n, ]$tpr)
+    x_median <- median(e081.sub[e081.sub$info == n, ]$fpr)
+    y_median <- median(e081.sub[e081.sub$info == n, ]$tpr)
+    temp <- c(n, auc.temp, x_median, y_median)
+    e081.auc <- rbind(e081.auc, temp)
+  }
+  e081.auc <- as.data.frame(e081.auc)
+  colnames(e081.auc) <- c('info', 'AUC', 'x', 'y')
+  e081.auc$AUC <- as.numeric(as.character(e081.auc$AUC))
+  e081.auc$x <- as.numeric(as.character(e081.auc$x))
+  e081.auc$y <- as.numeric(as.character(e081.auc$y))
+  e081.sub$info <- factor(e081.sub$info)
+  levels(e081.sub$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepSEA-Logistic')
+  e081.auc$info <- factor(e081.auc$info)
+  levels(e081.auc$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepSEA-Logistic')
+  p <- ggplot() + geom_line(data = e081.sub, aes(x = fpr, y = tpr, color = info)) + geom_text(data = e081.auc, aes(x = 0.25, y = rank(y)/20 + 0.8, label = paste0('AUC = ', round(AUC, 2)), color = info, hjust=1), size = 4) + labs(color='Classifier', x = 'False Positive Rate', y = 'True Positive Rate') + ggtitle(name) + theme(text = element_text(size=20)) + coord_fixed()
+  print(p)
+}
+```
+
+# E081
+
+```{r}
+e081 <- readRDS('result/temp.080917.e081.reweight.rds')
+my_plot(e081, 'E081')
+```
+
+# E082
+
+```{r}
+e082 <- readRDS('result/temp.080917.e082.reweight.rds')
+my_plot(e082, 'E082')
+```
