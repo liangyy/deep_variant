@@ -22,6 +22,9 @@ stage1stage2:
   c5.NH-A-H3K9ac: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/NH-A-H3K9ac.sorted'
   c6.NH-A-H3K9me3: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/NH-A-H3K9me3.sorted'
   c7.NH-A-H4K20me1: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/NH-A-H4K20me1.sorted'
+  d1.Cerebrum_frontal: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/Cerebrum_frontal.sorted'
+  d2.Frontal_cortex: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/Frontal_cortex.sorted'
+  d3.Cerebellum: '/project2/xinhe/yanyul/repo/deep_variant/download_annotation/data/Cerebellum.sorted'
 
 
   
