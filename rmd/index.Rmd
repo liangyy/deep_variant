@@ -56,6 +56,7 @@ There are three strategies:
     - [Stage1, train_deepsea vs. JASPAR, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
     - [Stage1, train_deepsea vs. gkmsvm, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
     - [Stage1 Stage2, compare all methods, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-stage1stage2.auc_comparison.html)
+    - [Stage1 Stage2, compare all methods, reweight, by group](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/template/auc_summary_bygroup.html)
 
 # Other analysis
 
