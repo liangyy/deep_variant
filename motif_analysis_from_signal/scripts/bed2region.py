@@ -11,11 +11,11 @@ args = parser.parse_args()
 import pandas as pd
 
 def split_to_region(group, *args):
-    row = group.irow(0)
+    row = group.iloc[0]
     window_size = args[0]
     chrm = row['chr']
-    start = row['start']
-    end = row['end']
+    start = int(row['start'])
+    end = int(row['end'])
     nregion = end - start - window_size + 1
     chrm_new = [chrm] * nregion
     start_new = [ start + i for i in range(nregion) ]
@@ -27,7 +27,7 @@ def split_to_region(group, *args):
 f = pd.read_table(args.bed, sep = '\t',
                                 header = None,
                                 names = ['chr', 'start', 'end'],
-                                index_col = [0, 1, 2])
+                                usecols = [0, 1, 2])
 out = f.groupby(['chr', 'start', 'end'],
                     group_keys = False).apply(split_to_region, args.window_size)
 out.to_csv(args.output, sep = '\t', index = False, compression = 'gzip')

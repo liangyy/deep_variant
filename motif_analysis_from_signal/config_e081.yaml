@@ -1,5 +1,5 @@
 E081:
-  bed_path: ''
+  bed_path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/data/E081-DNase.macs2.narrowPeak.sorted'
   window_size: 22
   nrepeat: 3
   nregion: 1000
