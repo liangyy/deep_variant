@@ -7,6 +7,7 @@ method:
     # window_size: 50
     quantile: 0.001
     merge: '0'
+    signal_length: 200
   motif_gradient:
     snakemake: '_motif_gradient.snakemake'
   motif_activation:

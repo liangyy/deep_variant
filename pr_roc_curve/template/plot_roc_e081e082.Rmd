@@ -41,10 +41,10 @@ my_plot <- function(e081, name) {
   e081.auc$x <- as.numeric(as.character(e081.auc$x))
   e081.auc$y <- as.numeric(as.character(e081.auc$y))
   e081.sub$info <- factor(e081.sub$info)
-  levels(e081.sub$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepSEA-Logistic')
+  levels(e081.sub$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepNN')
   e081.auc$info <- factor(e081.auc$info)
-  levels(e081.auc$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepSEA-Logistic')
-  p <- ggplot() + geom_line(data = e081.sub, aes(x = fpr, y = tpr, color = info)) + geom_text(data = e081.auc, aes(x = 0.25, y = rank(y)/20 + 0.8, label = paste0('AUC = ', round(AUC, 2)), color = info, hjust=1), size = 4) + labs(color='Classifier', x = 'False Positive Rate', y = 'True Positive Rate') + ggtitle(name) + theme(text = element_text(size=20)) + coord_fixed()
+  levels(e081.auc$info) <- c('JASPAR-Logistic', 'JASPAR-SVM', 'DeepNN')
+  p <- ggplot() + geom_line(data = e081.sub, aes(x = fpr, y = tpr, color = info)) + geom_text(data = e081.auc, aes(x = 0.25, y = rank(y)/20 + 0.8, label = paste0('AUC = ', round(AUC, 2)), color = info, hjust=1), size = 4, show.legend = FALSE) + labs(color='Classifier', x = 'False Positive Rate', y = 'True Positive Rate') + ggtitle(name) + theme(text = element_text(size=20)) + coord_fixed()
   print(p)
 }
 ```

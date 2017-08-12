@@ -30,6 +30,16 @@ rule extract_region:
     params:
         nrg = lambda wildcards: config[wildcards.name]['nregion']
     output:
-        'output/{name}_ws-{window_size}_repeat-{i}.fa.gz'
+        'output/{name}_ws-{window_size}_repeat-{i}.bed.gz'
     shell:
         'python scripts/extract_region.py --region {input[0]} --output {output[0]} --nregion {params.nrg}'
+
+rule region2seq:
+    input:
+        'output/{name}_ws-{window_size}_repeat-{i}.bed.gz'
+    output:
+        'output/{name}_ws-{window_size}_repeat-{i}.fa'
+    params:
+        lambda wildcards: config[wildcards.name]['genomic_annotation']
+    shell:
+        'bedtools getfasta -fi {params[0]} -bed {input[0]} -fo {output[0]}'
