@@ -1,0 +1,61 @@
+AME (Analysis of Motif Enrichment): Compiled on Jun 27 2017 at 23:27:24
+------------------------------
+Copyright (c) Robert McLeay <r.mcleay@imb.uq.edu.au> & Timothy Bailey <t.bailey@imb.uq.edu.au>, 2009.
+
+Command line
+ame --verbose 1 --oc . --control shuffled_E081_ws-free_repeat-0.fa --bgformat 1 --scoring avg --method ranksum --pvalue-report-threshold 0.05 E081_ws-free_repeat-0.fa db/JASPAR/JASPAR_CORE_2016_vertebrates.meme
+
+Not in partition maximization mode. Fixing partition at the number of primary sequences (620).
+
+Threshold p-value for reporting results: 0.05
+Motif p-values are corrected by #Motifs * #ThresholdsTested - (519 * 1 = 519)
+
+1. Ranksum p-values of motif MA0668.1 NEUROD2 (RMCATATGBY) top 620 seqs (left,right,twotailed): 1 5.076e-14 1.015e-13 U-value: 1.453e+05 (Corrected p-values: 1 2.635e-11 2.635e-11)
+2. Ranksum p-values of motif MA0607.1 Bhlha15 (SCATATGT) top 620 seqs (left,right,twotailed): 1 2.916e-13 5.833e-13 U-value: 1.468e+05 (Corrected p-values: 1 1.514e-10 1.514e-10)
+3. Ranksum p-values of motif MA0461.2 Atoh1 (RMCATATGBY) top 620 seqs (left,right,twotailed): 1 6.918e-12 1.384e-11 U-value: 1.496e+05 (Corrected p-values: 1 3.591e-09 3.591e-09)
+4. Ranksum p-values of motif MA0827.1 OLIG3 (AMCATATGBY) top 620 seqs (left,right,twotailed): 1 1.152e-11 2.303e-11 U-value: 1.5e+05 (Corrected p-values: 1 5.977e-09 5.977e-09)
+5. Ranksum p-values of motif MA0152.1 NFATC2 (TTTTCCA) top 620 seqs (left,right,twotailed): 1 3.041e-11 6.083e-11 U-value: 1.51e+05 (Corrected p-values: 1 1.579e-08 1.579e-08)
+6. Ranksum p-values of motif MA0624.1 NFATC1 (WWTTTCCRHN) top 620 seqs (left,right,twotailed): 1 4.458e-11 8.916e-11 U-value: 1.513e+05 (Corrected p-values: 1 2.314e-08 2.314e-08)
+7. Ranksum p-values of motif MA0091.1 TAL1::TCF3 (NSAMCATCTGKT) top 620 seqs (left,right,twotailed): 1 7.458e-11 1.492e-10 U-value: 1.518e+05 (Corrected p-values: 1 3.871e-08 3.871e-08)
+8. Ranksum p-values of motif MA0669.1 NEUROG2 (RACATATGTC) top 620 seqs (left,right,twotailed): 1 1.666e-10 3.331e-10 U-value: 1.526e+05 (Corrected p-values: 1 8.644e-08 8.644e-08)
+9. Ranksum p-values of motif MA0623.1 Neurog1 (DCCATATGKB) top 620 seqs (left,right,twotailed): 1 1.688e-10 3.376e-10 U-value: 1.526e+05 (Corrected p-values: 1 8.76e-08 8.76e-08)
+10. Ranksum p-values of motif MA0625.1 NFATC3 (WTTTTCCRYH) top 620 seqs (left,right,twotailed): 1 4.165e-10 8.33e-10 U-value: 1.535e+05 (Corrected p-values: 1 2.162e-07 2.162e-07)
+11. Ranksum p-values of motif MA0816.1 Ascl2 (ARCAGCTGCY) top 620 seqs (left,right,twotailed): 1 4.202e-10 8.405e-10 U-value: 1.535e+05 (Corrected p-values: 1 2.181e-07 2.181e-07)
+12. Ranksum p-values of motif MA0826.1 OLIG1 (AMCATATGKT) top 620 seqs (left,right,twotailed): 1 7.066e-10 1.413e-09 U-value: 1.54e+05 (Corrected p-values: 1 3.667e-07 3.667e-07)
+13. Ranksum p-values of motif MA0471.1 E2F6 (RGGCGGGARRV) top 620 seqs (left,right,twotailed): 1 1.337e-09 2.675e-09 U-value: 1.547e+05 (Corrected p-values: 1 6.941e-07 6.941e-07)
+14. Ranksum p-values of motif MA0678.1 OLIG2 (AMCATATGKT) top 620 seqs (left,right,twotailed): 1 6.382e-09 1.276e-08 U-value: 1.563e+05 (Corrected p-values: 1 3.312e-06 3.312e-06)
+15. Ranksum p-values of motif MA0048.2 NHLH1 (CGCAGCTGCK) top 620 seqs (left,right,twotailed): 1 2.299e-08 4.598e-08 U-value: 1.577e+05 (Corrected p-values: 1 1.193e-05 1.193e-05)
+16. Ranksum p-values of motif MA0832.1 Tcf21 (RYAACAGCTGTTRN) top 620 seqs (left,right,twotailed): 1 1.352e-07 2.704e-07 U-value: 1.598e+05 (Corrected p-values: 1 7.018e-05 7.018e-05)
+17. Ranksum p-values of motif MA0606.1 NFAT5 (NTTTTCCAYN) top 620 seqs (left,right,twotailed): 1 1.703e-07 3.405e-07 U-value: 1.6e+05 (Corrected p-values: 1 8.837e-05 8.837e-05)
+18. Ranksum p-values of motif MA0593.1 FOXP2 (RWGTAAACAVR) top 620 seqs (left,right,twotailed): 1 2.748e-07 5.496e-07 U-value: 1.606e+05 (Corrected p-values: 1 0.0001426 0.0001426)
+19. Ranksum p-values of motif MA0671.1 NFIX (NNTGCCAAN) top 620 seqs (left,right,twotailed): 1 3.055e-07 6.111e-07 U-value: 1.608e+05 (Corrected p-values: 1 0.0001586 0.0001586)
+20. Ranksum p-values of motif MA0818.1 BHLHE22 (AMCATATGBT) top 620 seqs (left,right,twotailed): 1 3.295e-07 6.589e-07 U-value: 1.608e+05 (Corrected p-values: 1 0.000171 0.000171)
+21. Ranksum p-values of motif MA0817.1 BHLHE23 (AAACATATGBTN) top 620 seqs (left,right,twotailed): 1 3.949e-07 7.897e-07 U-value: 1.611e+05 (Corrected p-values: 1 0.0002049 0.0002049)
+22. Ranksum p-values of motif MA0847.1 FOXD2 (GTAAACA) top 620 seqs (left,right,twotailed): 1 4.536e-07 9.072e-07 U-value: 1.612e+05 (Corrected p-values: 1 0.0002354 0.0002354)
+23. Ranksum p-values of motif MA0499.1 Myod1 (NSCAGCTGYYNYB) top 620 seqs (left,right,twotailed): 1 5.343e-07 1.069e-06 U-value: 1.614e+05 (Corrected p-values: 1 0.0002773 0.0002773)
+24. Ranksum p-values of motif MA0500.1 Myog (RRCAGCTGSNV) top 620 seqs (left,right,twotailed): 1 6.643e-07 1.329e-06 U-value: 1.617e+05 (Corrected p-values: 1 0.0003447 0.0003447)
+25. Ranksum p-values of motif MA0161.1 NFIC (TTGGCA) top 620 seqs (left,right,twotailed): 1 1.065e-06 2.129e-06 U-value: 1.623e+05 (Corrected p-values: 1 0.0005524 0.0005524)
+26. Ranksum p-values of motif MA0092.1 Hand1::Tcf3 (BRTCTGGMWT) top 620 seqs (left,right,twotailed): 1 1.166e-06 2.331e-06 U-value: 1.624e+05 (Corrected p-values: 1 0.0006048 0.0006048)
+27. Ranksum p-values of motif MA0633.1 Twist2 (NCCATATGTK) top 620 seqs (left,right,twotailed): 1 1.248e-06 2.497e-06 U-value: 1.625e+05 (Corrected p-values: 1 0.0006477 0.0006477)
+28. Ranksum p-values of motif MA0470.1 E2F4 (GGGCGGGAARN) top 620 seqs (left,right,twotailed): 1 2.558e-06 5.117e-06 U-value: 1.634e+05 (Corrected p-values: 1 0.001327 0.001327)
+29. Ranksum p-values of motif MA0032.2 FOXC1 (WAWGTAAAYAW) top 620 seqs (left,right,twotailed): 1 3.358e-06 6.715e-06 U-value: 1.638e+05 (Corrected p-values: 1 0.001741 0.001741)
+30. Ranksum p-values of motif MA0846.1 FOXC2 (WAWGTAAACAWW) top 620 seqs (left,right,twotailed): 1 3.431e-06 6.862e-06 U-value: 1.638e+05 (Corrected p-values: 1 0.001779 0.001779)
+31. Ranksum p-values of motif MA0162.2 EGR1 (SCCCCGCCCCCGCM) top 620 seqs (left,right,twotailed): 1 3.958e-06 7.915e-06 U-value: 1.64e+05 (Corrected p-values: 1 0.002052 0.002052)
+32. Ranksum p-values of motif MA0698.1 ZBTB18 (NATCCAGATGTKB) top 620 seqs (left,right,twotailed): 1 5.137e-06 1.027e-05 U-value: 1.644e+05 (Corrected p-values: 1 0.002663 0.002663)
+33. Ranksum p-values of motif MA0845.1 FOXB1 (WATGTAAATAT) top 620 seqs (left,right,twotailed): 1 5.559e-06 1.112e-05 U-value: 1.645e+05 (Corrected p-values: 1 0.002881 0.002881)
+34. Ranksum p-values of motif MA0521.1 Tcf12 (RACAGCTGSNV) top 620 seqs (left,right,twotailed): 1 6.562e-06 1.312e-05 U-value: 1.647e+05 (Corrected p-values: 1 0.0034 0.0034)
+35. Ranksum p-values of motif MA0597.1 THAP1 (YTGCCCDBA) top 620 seqs (left,right,twotailed): 1 1.298e-05 2.596e-05 U-value: 1.657e+05 (Corrected p-values: 1 0.006715 0.006715)
+36. Ranksum p-values of motif MA0522.2 TCF3 (HRCACCTGBN) top 620 seqs (left,right,twotailed): 1 1.45e-05 2.9e-05 U-value: 1.658e+05 (Corrected p-values: 1 0.007497 0.007497)
+37. Ranksum p-values of motif MA0848.1 FOXO4 (GTAAACA) top 620 seqs (left,right,twotailed): 1 1.852e-05 3.704e-05 U-value: 1.662e+05 (Corrected p-values: 1 0.009566 0.009566)
+38. Ranksum p-values of motif MA0691.1 TFAP4 (AWCAGCTGWT) top 620 seqs (left,right,twotailed): 1 2.543e-05 5.087e-05 U-value: 1.667e+05 (Corrected p-values: 1 0.01311 0.01311)
+39. Ranksum p-values of motif MA0849.1 FOXO6 (GTAAACA) top 620 seqs (left,right,twotailed): 1 2.566e-05 5.132e-05 U-value: 1.667e+05 (Corrected p-values: 1 0.01323 0.01323)
+40. Ranksum p-values of motif MA0481.1 FOXP1 (MWAADGTAAACAAAR) top 620 seqs (left,right,twotailed): 1 3.072e-05 6.144e-05 U-value: 1.669e+05 (Corrected p-values: 1 0.01582 0.01582)
+41. Ranksum p-values of motif MA0147.2 Myc (CCAYGTGSTY) top 620 seqs (left,right,twotailed): 1 3.334e-05 6.667e-05 U-value: 1.671e+05 (Corrected p-values: 1 0.01715 0.01715)
+42. Ranksum p-values of motif MA0058.3 MAX (AVCACGTGNY) top 620 seqs (left,right,twotailed): 1 3.653e-05 7.305e-05 U-value: 1.672e+05 (Corrected p-values: 1 0.01878 0.01878)
+43. Ranksum p-values of motif MA0517.1 STAT1::STAT2 (THAGTTTCRKTTTCY) top 620 seqs (left,right,twotailed): 1 4.362e-05 8.723e-05 U-value: 1.675e+05 (Corrected p-values: 1 0.02238 0.02238)
+44. Ranksum p-values of motif MA0645.1 ETV6 (MSCGGAAGTR) top 620 seqs (left,right,twotailed): 1 4.993e-05 9.986e-05 U-value: 1.677e+05 (Corrected p-values: 1 0.02558 0.02558)
+45. Ranksum p-values of motif MA0050.2 IRF1 (NTTYASTTTCACTTTCDBTTT) top 620 seqs (left,right,twotailed): 0.9999 5.449e-05 0.000109 U-value: 1.678e+05 (Corrected p-values: 1 0.02788 0.02788)
+46. Ranksum p-values of motif MA0149.1 EWSR1-FLI1 (GGAAGGAAGGAAGGAAGG) top 620 seqs (left,right,twotailed): 0.9999 6.902e-05 0.000138 U-value: 1.682e+05 (Corrected p-values: 1 0.03519 0.03519)
+47. Ranksum p-values of motif MA0830.1 TCF4 (HRCACCTGBN) top 620 seqs (left,right,twotailed): 0.9999 8.123e-05 0.0001625 U-value: 1.684e+05 (Corrected p-values: 1 0.04128 0.04128)
+48. Ranksum p-values of motif MA0030.1 FOXF2 (BNAASGTAAACAAD) top 620 seqs (left,right,twotailed): 0.9999 8.883e-05 0.0001777 U-value: 1.686e+05 (Corrected p-values: 1 0.04506 0.04506)
+49. Ranksum p-values of motif MA0059.1 MAX::MYC (RASCACGTGGT) top 620 seqs (left,right,twotailed): 0.9999 9.709e-05 0.0001942 U-value: 1.687e+05 (Corrected p-values: 1 0.04914 0.04914)
