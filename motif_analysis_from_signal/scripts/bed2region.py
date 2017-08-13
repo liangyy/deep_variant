@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(prog='bed2region.py', description='''
     in the bed file with the region length defined in window_size
 ''')
 parser.add_argument('--bed')
-parser.add_argument('--window_size', type=int)
+parser.add_argument('--window_size')
 parser.add_argument('--output')
 args = parser.parse_args()
 
@@ -12,11 +12,14 @@ import pandas as pd
 
 def split_to_region(group, *args):
     row = group.iloc[0]
-    window_size = args[0]
     chrm = row['chr']
     start = int(row['start'])
     end = int(row['end'])
-    nregion = end - start - window_size + 1
+    if args[0] == 'free':
+        nregion = 1
+    else:
+        window_size = int(args[0])
+        nregion = end - start - window_size + 1
     chrm_new = [chrm] * nregion
     start_new = [ start + i for i in range(nregion) ]
     end_new = [ start + i + window_size for i in range(nregion) ]
