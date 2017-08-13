@@ -38,8 +38,16 @@ rule region2seq:
     input:
         'output/{name}_ws-{window_size}_repeat-{i}.bed.gz'
     output:
-        'output/{name}_ws-{window_size}_repeat-{i}.fa'
+        temp('output/{name}_ws-{window_size}_repeat-{i}.temp.fa')
     params:
         lambda wildcards: config[wildcards.name]['genomic_annotation']
     shell:
         'bedtools getfasta -fi {params[0]} -bed {input[0]} -fo {output[0]}'
+
+rule uppercase:
+    input:
+        'output/{name}_ws-{window_size}_repeat-{i}.temp.fa'
+    output:
+        'output/{name}_ws-{window_size}_repeat-{i}.fa'
+    shell:
+        'python scripts/bed_uppercase.py --in {input[0]} --out {output[0]}'
