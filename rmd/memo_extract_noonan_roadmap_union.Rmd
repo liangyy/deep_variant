@@ -1,0 +1,71 @@
+---
+title: "Memo - preprocess Noonan Roadmap union BED file, extracted sequences"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+  
+# Working directory
+
+```{bash, eval=FALSE}
+$ mkdir test/0817_binize_noonan_roadmap_union
+```
+
+# Regions to bins (bin size = 200 bp)
+
+```{bash, eval=FALSE}
+$ python my_scripts/0_region2bins.py data/Noonan_brain_roadmap_union.bed.sorted.intersect test/0817_binize_noonan_roadmap_union/
+bedtools merge -i test/0817_binize_noonan_roadmap_union//Noonan_brain_roadmap_union.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/0817_binize_noonan_roadmap_union//Noonan_brain_roadmap_union.bed.sorted_bin200.bed.sorted.merged
+```
+
+# Label bins
+
+## Prepare input for `wrapper_label_intervals.py`
+
+```{bash, eval=FALSE}
+$ ls data/Noonan_brain_roadmap_union.bed > test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt
+$ cat test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt
+data/Noonan_brain_roadmap_union.bed
+```
+
+## Run `wrapper_label_intervals.py`
+
+```{bash, eval=FALSE}
+$ python my_scripts/wrapper_label_intervals.py test/0817_binize_noonan_roadmap_union/Noonan_brain_roadmap_union.bed.sorted_bin200.bed.sorted.merged.final test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt test/0817_binize_noonan_roadmap_union/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/0817_binize_noonan_roadmap_union//noonan_roadmap_union.txt_out
+>>> working on data/Noonan_brain_roadmap_union.bed
+>>> >>> sort data/Noonan_brain_roadmap_union.bed
+>>> >>> checking data/Noonan_brain_roadmap_union.bed
+>>> >>> number of columns data/Noonan_brain_roadmap_union.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/Noonan_brain_roadmap_union.bed
+>>> previous = 107368, after = 107368
+```
+
+# Bin to input format
+
+## Bin to fasta
+
+```{bash, eval=FALSE}
+$ python my_scripts/2_bin2seq.py test/0817_binize_noonan_roadmap_union/Noonan_brain_roadmap_union.bed.sorted_bin200.bed.sorted.merged.final
+```
+
+No illegal bin
+
+# Fasta to hdf5
+
+```{bash, eval=FALSE}
+$ python ../preprocessing/my_scripts/2_seq2input.py test/0817_binize_noonan_roadmap_union/Noonan_brain_roadmap_union.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt_out/
+```
