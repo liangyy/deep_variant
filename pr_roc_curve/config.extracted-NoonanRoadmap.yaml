@@ -1,0 +1,53 @@
+reweight: '1'
+extracted-ATACseq.reweight:
+  group1:
+    info: 'train_deepsea'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt_out/label.hdf5'
+          name: 'data/Noonan_brain_roadmap_union.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-NoonanRoadmap_noonan-roadmap.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/noonan-roadmap.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt_out/label.hdf5'
+          name: 'data/Noonan_brain_roadmap_union.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-logistic-NoonanRoadmap_noonan-roadmap.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/noonan-roadmap.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_binize_noonan_roadmap_union/noonan_roadmap_union.txt_out/label.hdf5'
+          name: 'data/Noonan_brain_roadmap_union.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-svm-NoonanRoadmap_noonan-roadmap.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/noonan-roadmap.gc.feather'

@@ -1,0 +1,70 @@
+reweight: '1'
+deepsea-ATACseq.reweight:
+  group1:
+    info: 'train_deepsea'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_noonan_roadmap_union_merge/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/type1-NoonanRoadmap_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_noonan-roadmap.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_noonan_roadmap_union_merge/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-logistic-NoonanRoadmap_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_noonan-roadmap.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_noonan_roadmap_union_merge/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/prediction/result/JASPAR-svm-NoonanRoadmap_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_noonan-roadmap.gc.feather'
+  group4:
+    info: 'gkmsvm'
+    data:
+      noonan-roadmap:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/0817_noonan_roadmap_union_merge/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/project2/xinhe/yanyul/repo/deep_variant/gkm_svm/result/deepsea_train-NoonanRoadmap_noonan-roadmap.2.deepsea_test-NoonanRoadmap.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_noonan-roadmap.gc.feather'
