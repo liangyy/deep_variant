@@ -3,4 +3,4 @@ E081:
   window_size: 22
   nrepeat: 3
   nregion: 1000
-  genomic_annotation: ''
+  genomic_annotation: '/project2/xinhe/yanyul/databases/hg19_complete/hg19.fa'

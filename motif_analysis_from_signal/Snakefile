@@ -6,7 +6,7 @@ def get_output(config):
     out = []
     for f in config.keys():
         for i in range(config[f]['nrepeat']):
-            out.append('output/{name}_ws-{window_size}_repeat-{i}.fa.gz'.format(name = f,
+            out.append('output/{name}_ws-{window_size}_repeat-{i}.fa'.format(name = f,
                 window_size = config[f]['window_size'],
                 i = i))
     return out
@@ -38,7 +38,7 @@ rule region2seq:
     input:
         'output/{name}_ws-{window_size}_repeat-{i}.bed.gz'
     output:
-        temp('output/{name}_ws-{window_size}_repeat-{i}.temp.fa')
+        temp('output/{name}_ws-{window_size}_repeat-{i}.temp_fa')
     params:
         lambda wildcards: config[wildcards.name]['genomic_annotation']
     shell:
@@ -46,8 +46,8 @@ rule region2seq:
 
 rule uppercase:
     input:
-        'output/{name}_ws-{window_size}_repeat-{i}.temp.fa'
+        'output/{name}_ws-{window_size}_repeat-{i}.temp_fa'
     output:
         'output/{name}_ws-{window_size}_repeat-{i}.fa'
     shell:
-        'python scripts/bed_uppercase.py --in {input[0]} --out {output[0]}'
+        'python scripts/bed_uppercase.py --input {input[0]} --out {output[0]}'

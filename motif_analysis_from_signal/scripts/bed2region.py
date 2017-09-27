@@ -17,6 +17,7 @@ def split_to_region(group, *args):
     end = int(row['end'])
     if args[0] == 'free':
         nregion = 1
+        window_size = end - start
     else:
         window_size = int(args[0])
         nregion = end - start - window_size + 1

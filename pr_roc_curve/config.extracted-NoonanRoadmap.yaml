@@ -1,5 +1,5 @@
 reweight: '1'
-extracted-ATACseq.reweight:
+extracted-NoonanRoadmap.reweight:
   group1:
     info: 'train_deepsea'
     data:
