@@ -216,32 +216,32 @@ rule extract_signal:
     input:
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/pattern_{{mode}}.MaskSize_{{mask_size}}.feather'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.Merge_{{merge}}.txt'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
     params:
         config['method']['sliding_window']['quantile'],
-        # config['method']['sliding_window']['merge']
+        config['method']['sliding_window']['merge']
     shell:
-        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --quantile={params[0]} --extract_mode={wildcards.extract_mode} --merge={wildcards.merge}'
+        'Rscript scripts/sliding_window_signal2region.R --file={input[0]} --out={output[0]} --quantile={params[0]} --extract_mode={wildcards.extract_mode} --merge={params[1]}'
 
 rule signal2seq:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.Merge_{{merge}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_{{mode}}.{{extract_mode}}.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
         'pattern/{model}/{{dataname}}.{{data}}/sliding_window/slided_sequences_{{mode}}.MaskSize_{{mask_size}}.hdf5'.format(model=config['model']['name'])
     output:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.WinSize_{{window_size}}.MaskSize_{{mask_size}}.Merge_{{merge}}.fa'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/extracted_{{mode}}.{{extract_mode}}.WinSize_{{window_size}}.MaskSize_{{mask_size}}.fa'.format(model=config['model']['name'])
     params:
         # mask_size = config['method']['sliding_window']['mask_size'],
         # window_size = config['method']['sliding_window']['window_size']
-        # merge = config['method']['sliding_window']['merge']
+        merge = config['method']['sliding_window']['merge']
     shell:
         'python scripts/signal2seq.py --position {input[0]} --sequence {input[1]} \
-        --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge {wildcards.merge}'
+        --out {output[0]} --mask_size {wildcards.mask_size} --window_size {wildcards.window_size} --merge {params.merge}'
 
 rule signal_block_report_rmd:
     input:
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.positive.MaskSize_{{mask_size}}.Merge_{{merge}}.txt'.format(model=config['model']['name']),
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.random.MaskSize_{{mask_size}}.Merge_{{merge}}.txt'.format(model=config['model']['name']),
-        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_negative.negative.MaskSize_{{mask_size}}.Merge_{{merge}}.txt'.format(model=config['model']['name'])
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.positive.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_positive.random.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name']),
+        'pattern/{model}/{{dataname}}.{{data}}/sliding_window/signal_negative.negative.MaskSize_{{mask_size}}.txt'.format(model=config['model']['name'])
     output:
         o = temp('report/{model}/{{dataname}}.{{data}}_sliding_window.signal_block.MaskSize_{{mask_size}}.Rmd'.format(model=config['model']['name']))
     params:

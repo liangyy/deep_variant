@@ -10,7 +10,7 @@ option_list = list(
     make_option(c('-m', '--extract_mode'), type='character', default='positive',
                 help='match the mode with the input file (positive|negative) or set it to random', metavar='character'),
     make_option(c('-q', '--quantile'), type='double', default=0.0001),
-    make_option(c('-M', '--merge'), type='double', default=1)
+    make_option(c('-M', '--merge'), type='double', default=1),
 );
 
 opt_parser = OptionParser(option_list=option_list);
@@ -18,10 +18,10 @@ opt = parse_args(opt_parser);
 
 
 pos <- read_feather(opt$file)
+seq <- c()
+position <- c()
 if(opt$extract_mode == 'positive'){
     threshold <- quantile(unlist(pos), opt$quantile)
-    seq <- c()
-    position <- c()
     for(x in 1 : nrow(pos)){
         signal <- pos[x,]
         pass.idx <- which(signal <= threshold)
@@ -30,8 +30,6 @@ if(opt$extract_mode == 'positive'){
     }
 }else if(opt$extract_mode == 'negative'){
     threshold <- quantile(unlist(pos), 1 - opt$quantile)
-    seq <- c()
-    position <- c()
     for(x in 1 : nrow(pos)){
         signal <- pos[x,]
         pass.idx <- which(signal >= threshold)
@@ -44,16 +42,28 @@ if(opt$extract_mode == 'positive'){
     }else{
         n <- opt$quantile * nrow(pos) * ncol(pos)
     }
-    seq <- c()
-    position <- c()
-    seq <- sample(1 : nrow(pos), n, replace=T)
-    position <- sample(1 : ncol(pos), n, replace=T)
+    seq <- sample(1 : nrow(pos), n, replace=F)
+    position <- sample(1 : ncol(pos), n, replace=F)
     temp <- paste(seq, position)
-    dup.ind <- duplicated(temp)
-    temp <- temp[!dup.ind]
+    # dup.ind <- duplicated(temp)
+    # temp <- temp[!dup.ind]
     order.idx <- order(temp)
-    seq <- seq[!dup.ind][order.idx]
-    position <- position[!dup.ind][order.idx]
+    seq <- seq[order.idx]
+    position <- position[order.idx]
+}else if(opt$extract_mode == 'random-signal'){
+    if(opt$merge == 1){
+        n <- opt$quantile * nrow(pos) * ncol(pos) * 0.25
+    }else{
+        n <- opt$quantile * nrow(pos) * ncol(pos)
+    }
+    seq <- sample(1 : nrow(pos), n, replace=F)
+    position <- sample(1 : ncol(pos), n, replace=F)
+    temp <- paste(seq, position)
+    # dup.ind <- duplicated(temp)
+    # temp <- temp[!dup.ind]
+    order.idx <- order(temp)
+    seq <- seq[order.idx]
+    position <- position[order.idx]
 }
 
 out <- data.frame(seq_id = seq, pos_id = position)
