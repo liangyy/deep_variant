@@ -11,9 +11,11 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
 1. Annotate DeepSEA sequence with new labels. 
     - See pipeline memo [here](memo_preprocessing.html) for E081, E082, Noonan, E129 (DeepSEA label)
     - See pipeline memo [here](memo_preprocessing_ATACseq.html) for ATAC-seq data from Noonan's lab
+    - See pipeline memo [here](memo_preprocessing_GSE70823.html) for d27-NSC, d41-neuron data from GSE70823
 2. Extract new sequences of interest based on new data set. 
     - See pipeline memo [here](memo_extract.html) for E081, E082, Noonan, E129 (DeepSEA label)
     - See pipeline memo [here](memo_extract_ATACseq.html) for ATAC-seq data from Noonan's lab
+    - See pipeline memo [here](memo_extract_GSE70823.html) for d27-NSC, d41-neuron data from GSE70823
 
 # Genomic Data
 

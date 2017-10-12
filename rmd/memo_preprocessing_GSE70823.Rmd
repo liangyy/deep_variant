@@ -1,0 +1,193 @@
+---
+title: "Memo - preprocess GSE70823 data, DeepSEA's sequences"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+The data is from this [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE70823). Here we use: d27, d41_1, and d41_2
+
+# Prepare label for DeepSEA's sequences
+  
+```{bash, eval=FALSE}
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ cat data/1012_gse70823.txt 
+data/GSM1820082_d27_fdr0.05.hot.bed
+data/GSM1820085_d411_fdr0.05.hot.bed
+data/GSM1820087_d412_fdr0.05.hot.bed
+$ python my_scripts/wrapper_label_intervals.py data/allTFs.pos.withID.bed data/1012_gse70823.txt test
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/1012_gse70823.txt
+>>> working on data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820082_d27_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820082_d27_fdr0.05.hot.bed
+>>> previous = 119778, after = 119778
+>>> working on data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820085_d411_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820085_d411_fdr0.05.hot.bed
+>>> previous = 45253, after = 45253
+>>> working on data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820087_d412_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820087_d412_fdr0.05.hot.bed
+>>> previous = 77612, after = 77612
+```
+
+# Merge prepared label with DeepSEA's representation
+
+```{bash, eval=FALSE}
+$ cd data
+$ mkdir ../test/1012_gse70823_merged
+$ ls GSM182008*in* > ../test/1012_gse70823_merged/merge.txt
+$ cd ../
+$ $ python my_scripts/merge_labels.py test/1012_gse70823.txt/label.hdf5 test/1012_gse70823_merged/merge.txt test/1012_gse70823_merged/
+$ h5dump -A -H test/1012_gse70823_merged/label_merge.hdf5
+HDF5 "test/1012_gse70823_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 3 ) / ( 2608182, 3 ) }
+   }
+}
+}
+
+```
+
+## Training
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_train_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 4 ) / ( 4400000, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 "test/1012_gse70823_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 3 ) / ( 2608182, 3 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5 trainxdata merged 1 2200000 test/1012_gse70823_merged/
+```
+
+## Testing
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_test_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 4 ) / ( 455024, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 "test/1012_gse70823_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 3 ) / ( 2608182, 3 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5 trainxdata merged 2309367 2536878 test/1012_gse70823_merged/
+```
+
+## Validation
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_valid_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 4 ) / ( 8000, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}
+HDF5 "test/1012_gse70823_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 3 ) / ( 2608182, 3 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/1012_gse70823_merged/label_merge.hdf5 trainxdata merged 2200001 2204000 test/1012_gse70823_merged/
+```
+
+# Summary
+
+```{bash, eval=FALSE}
+$ h5dump -A -H test/1012_gse70823_merged/*with_label.hdf5
+HDF5 "test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 3 ) / ( 455024, 3 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 "test/1012_gse70823_merged/DeepSEA_train_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 3 ) / ( 4400000, 3 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 "test/1012_gse70823_merged/DeepSEA_valid_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 3 ) / ( 8000, 3 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}
+```

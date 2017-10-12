@@ -1,0 +1,116 @@
+---
+title: "Memo - extract sequences from GSE70823 data"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+  
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+
+The data is from this [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE70823). Here we use: d27, d41_1, and d41_2  
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Output directory
+
+```{bash, eval=F}
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ mkdir test/0628_binize_ATACseq/
+```
+
+# Region to bin (bin size = 200 bp)
+
+```{bash, eval=F}
+$ python my_scripts/0_region2bins.py data/GSM1820082_d27_fdr0.05.hot.bed.sorted.intersect test/1012_gse70823_binize/
+bedtools merge -i test/1012_gse70823_binize//GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/1012_gse70823_binize//GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/GSM1820085_d411_fdr0.05.hot.bed.sorted.intersect test/1012_gse70823_binize/
+bedtools merge -i test/1012_gse70823_binize//GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/1012_gse70823_binize//GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/GSM1820087_d412_fdr0.05.hot.bed.sorted.intersect test/1012_gse70823_binize/
+bedtools merge -i test/1012_gse70823_binize//GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/1012_gse70823_binize//GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged
+```
+
+# Label bins
+
+## Prepare input for `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ ls data/GSM1820082_d27_fdr0.05.hot.bed > test/1012_gse70823_binize/d27.txt
+$ ls data/GSM1820085_d411_fdr0.05.hot.bed > test/1012_gse70823_binize/d41_1.txt
+$ ls data/GSM1820087_d412_fdr0.05.hot.bed > test/1012_gse70823_binize/d41_2.txt 
+$ cat test/1012_gse70823_binize/*txt
+data/GSM1820082_d27_fdr0.05.hot.bed
+data/GSM1820085_d411_fdr0.05.hot.bed
+data/GSM1820087_d412_fdr0.05.hot.bed
+```
+
+## Run `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ python my_scripts/wrapper_label_intervals.py test/1012_gse70823_binize/GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final test/1012_gse70823_binize/d27.txt test/1012_gse70823_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/1012_gse70823_binize//d27.txt_out
+>>> working on data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820082_d27_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820082_d27_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820082_d27_fdr0.05.hot.bed
+>>> previous = 119778, after = 119778
+$ python my_scripts/wrapper_label_intervals.py test/1012_gse70823_binize/GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final test/1012_gse70823_binize/d41_1.txt test/1012_gse70823_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/1012_gse70823_binize//d41_1.txt_out
+>>> working on data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820085_d411_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820085_d411_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820085_d411_fdr0.05.hot.bed
+>>> previous = 45253, after = 45253
+$ python my_scripts/wrapper_label_intervals.py test/1012_gse70823_binize/GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final test/1012_gse70823_binize/d41_2.txt test/1012_gse70823_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/1012_gse70823_binize//d41_2.txt_out
+>>> working on data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> sort data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> checking data/GSM1820087_d412_fdr0.05.hot.bed
+>>> >>> number of columns data/GSM1820087_d412_fdr0.05.hot.bed
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GSM1820087_d412_fdr0.05.hot.bed
+>>> previous = 77612, after = 77612
+```
+
+# Bin to input format
+
+## Bin to fasta
+
+```{bash, eval=F}
+$ python my_scripts/2_bin2seq.py test/1012_gse70823_binize/GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final 
+$ python my_scripts/2_bin2seq.py test/1012_gse70823_binize/GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final 
+$ python my_scripts/2_bin2seq.py test/1012_gse70823_binize/GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final 
+```
+
+## Line number of illegal bin
+
+No illegal bin is generated.
+
+# Fasta to hdf5
+
+```{bash, eval=F}
+$ python ../preprocessing/my_scripts/2_seq2input.py test/1012_gse70823_binize/GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/1012_gse70823_binize/d27.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/1012_gse70823_binize/GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/1012_gse70823_binize/d41_1.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/1012_gse70823_binize/GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.fa test/1012_gse70823_binize/d41_2.txt_out/
+```
