@@ -1,0 +1,8 @@
+model: '/scratch/midway2/xinhe/deep_variant/baseline_classifier/model/JASPAR-paperNSC_svm.best.hdf5'
+data:
+  deepsea: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+  d27: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d27.txt_out/GSM1820082_d27_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  d41-1: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41_1.txt_out/GSM1820085_d411_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  d41-2: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41_2.txt_out/GSM1820087_d412_fdr0.05.hot.bed.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+partition: 'gpu2'
+prefix: 'JASPAR-svm-paperNSC'

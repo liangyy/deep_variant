@@ -1,0 +1,15 @@
+task_name: 'DeepSEA-paperNSC'
+DeepSEA-paperNSC:
+  niter: 80
+  feature_model: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
+  data:
+    train: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_train_12__with_label_with_label.hdf5' # in standard format
+    valid: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_valid_12__with_label_with_label.hdf5' # in standard format
+Training:
+  default:
+    l1: 0
+    l2: 0
+partition: 'gpu2'
+type_of_head: 'logistic'
+selected_head:
+  best: 'default/00-0.1054-0.1051.hdf5'
