@@ -16,3 +16,4 @@ seed: 2017
 window_size: 300
 thread: 4
 cache: 6000
+working_dir: '/scratch/midway2/xinhe/deep_variant/gkm_svm'

@@ -96,9 +96,9 @@ rule get_train_sbatch:
 cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
-cd repo/deep_variant/gkm_svm
+cd {path}  # repo/deep_variant/gkm_svm
 gkmtrain -m {cache} {pos} {neg} model/{name}
-'''.format(i=i + 1, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=name[0])
+'''.format(i=i + 1, prefix=params.prefix, cache=params.cache, pos=pos, neg=neg, name=name[0], path = config['working_dir'])
             o.write(sbatch)
             o.close()
 #     run:
