@@ -1,0 +1,18 @@
+label:
+  d27: 1
+  d41-1: 2
+  d41-2: 3
+  training_data:
+    deepsea_train-paperNSC:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/train_all.h5'
+      y: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_train_12__with_label_with_label.hdf5'
+  validation_data:
+    deepsea_valid-paperNSC:
+      x: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/valid_all.h5'
+      y: 'None'
+size: 5000 # Per label, not used in testing phase
+repeat: 3
+seed: 2017
+window_size: 300
+thread: 4
+cache: 6000
