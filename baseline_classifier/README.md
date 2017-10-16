@@ -77,7 +77,7 @@ $ snakemake --configfile config.[TaskName].[classifier_head].yaml
 
 ### Select best model
 
-Do this manually
+Do this manually. The second number is validation loss.
 
 ## Merge head with body
 

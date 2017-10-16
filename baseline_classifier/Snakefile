@@ -62,7 +62,7 @@ cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
 module load cuda/7.5
-cd repo/deep_variant/baseline_classifier
+cd {path}/baseline_classifier
 mkdir {outdir}
 python scripts/train_head_on_cluster.py \
 --train {train} \
@@ -76,7 +76,7 @@ python scripts/train_head_on_cluster.py \
 '''.format(taskname=wildcards.motif_name, train=input.train, valid=input.valid,
 niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder,
 l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition,
-head=wildcards.head)
+head=wildcards.head, path=config['path'])
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
