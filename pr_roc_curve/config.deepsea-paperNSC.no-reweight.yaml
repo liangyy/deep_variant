@@ -1,0 +1,182 @@
+reweight: '0'
+deepsea-paperNSC:
+  group1:
+    info: 'train_deepsea'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d27.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d41-1.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d41-2.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-2.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-2.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_deepsea.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-2.gc.feather'
+  group4:
+    info: 'gkmsvm'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/gkm_svm/result/deepsea_train-paperNSC_d27.1.deepsea_test-paperNSC.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/gkm_svm/result/deepsea_train-paperNSC_d41-1.3.deepsea_test-paperNSC.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_merged/DeepSEA_test_12__with_label_with_label.hdf5'
+          name: 'traindata'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/gkm_svm/result/deepsea_train-paperNSC_d41-2.1.deepsea_test-paperNSC.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/deepsea_d41-2.gc.feather'

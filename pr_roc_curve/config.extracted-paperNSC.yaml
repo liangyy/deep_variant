@@ -1,0 +1,137 @@
+reweight: '1'
+extracted-ATACseq.reweight:
+  group1:
+    info: 'train_deepsea'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d27.txt_out/label.hdf5'
+          name: 'data/GSM1820082_d27_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d27.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41-1.txt_out/label.hdf5'
+          name: 'data/GSM1820085_d411_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d41-1.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d42-1.txt_out/label.hdf5'
+          name: 'data/GSM1820087_d412_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/type1-paperNSC_d41-2.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-2.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d27.txt_out/label.hdf5'
+          name: 'data/GSM1820082_d27_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_d27.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41-1.txt_out/label.hdf5'
+          name: 'data/GSM1820085_d411_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_d41-1.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41-2.txt_out/label.hdf5'
+          name: 'data/GSM1820087_d412_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-logistic-paperNSC_d41-2.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-2.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      d27:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d27.txt_out/label.hdf5'
+          name: 'data/GSM1820082_d27_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_d27.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d27.gc.feather'
+      d41-1:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41-1.txt_out/label.hdf5'
+          name: 'data/GSM1820085_d411_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_d41-1.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-1.gc.feather'
+      d41-2:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/1012_gse70823_binize/d41-2.txt_out/label.hdf5'
+          name: 'data/GSM1820087_d412_fdr0.05.hot.bed.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: 'None'
+        ypred:
+          path: '/scratch/midway2/xinhe/deep_variant/prediction/result/JASPAR-svm-paperNSC_d41-2.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/d41-2.gc.feather'
