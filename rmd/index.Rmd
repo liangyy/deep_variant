@@ -28,6 +28,7 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
 3. paperNSC
     - NSC data from this [paper](https://www.ncbi.nlm.nih.gov/pubmed/28803920) and the data is obtained from this [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE70823)
     - d27, d41-1, d41-2 data are used
+    - Is referred as `paperNSC`
 
 # Train new models
 
@@ -56,13 +57,16 @@ There are three strategies:
     - [Stage1, train_deepsea, deepsea+extracted, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/type1.reweight_plot.html)
     - [Stage1 Stage2, all methods, deepsea sequence, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/deepsea-stage1stage2.reweight_plot.html)
     - [Stage1 Stage2, all methods, extracted sequence, reweight](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/extracted-stage1stage2.reweight_plot.html)
-    - [Stage1 Stage2, all methods, extracted sequence, reweight, 080917 For Xin](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/template/plot_roc_e081e082.html)
+    - [Stage1 Stage2, all methods, extracted sequence, reweight, 080917 For Xin](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/template/plot_roc_e081e082.html),
+    - [paperNSC, all methods, deepsea sequences, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/deepsea-paperNSC.reweight_plot.html),
+    - [paperNSC, all methods, extracted sequences, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/extracted-paperNSC.reweight_plot.html)
 2. AUC scores
     - [Stage1, train_deepsea vs. JASPAR, no reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html)
     - [Stage1, train_deepsea vs. JASPAR, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
     - [Stage1, train_deepsea vs. gkmsvm, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/gkm_vs_type1_on_deepsea_test.auc_comparison.html)
     - [Stage1 Stage2, compare all methods, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-stage1stage2.auc_comparison.html)
-    - [Stage1 Stage2, compare all methods, reweight, by group](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/template/auc_summary_bygroup.html)
+    - [Stage1 Stage2, compare all methods, reweight, by group](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/template/auc_summary_bygroup.html),
+    - [paperNSC, all methods, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-paperNSC.auc_comparison.html)
 
 # Other analysis
 
