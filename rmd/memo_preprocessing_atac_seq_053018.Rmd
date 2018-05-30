@@ -1,0 +1,258 @@
+---
+title: "Memo - preprocess ATAC-seq data, DeepSEA's sequences (5/30/18)"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+The data is from obtained from Yifan.
+
+# Prepare label for DeepSEA's sequences
+
+**Note that**: I have changed the code of `wrapper_label_intervals.py` so that it can deal with BED files with overlapped regions (the file will be merged and tried again).
+
+```{bash, eval=FALSE}
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ cat data/atac-seq_053018.txt
+data/CN_all_peaks.narrowPeak.cleaned.hg19
+data/DN_all_peaks.narrowPeak.cleaned.hg19
+data/GA_all_peaks.narrowPeak.cleaned.hg19
+data/ips_all_peaks.narrowPeak.cleaned.hg19
+data/NSC_all_peaks.narrowPeak.cleaned.hg19
+$ python -i my_scripts/wrapper_label_intervals.py data/allTFs.pos.withID.bed data/atac-seq_053018.txt test
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018.txt
+>>> working on data/CN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> sort data/CN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> checking data/CN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> number of columns data/CN_all_peaks.narrowPeak.cleaned.hg19
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/CN_all_peaks.narrowPeak.cleaned.hg19
+>>> previous = 250161, after = 249590
+---data/CN_all_peaks.narrowPeak.cleaned.hg19 does not pass the checking, which means there are overlapped intervals inside the annotation data
+---data/CN_all_peaks.narrowPeak.cleaned.hg19 will be merged first and try again!
+>>> >>> merging
+>>> >>> sort data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> working on data/DN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> sort data/DN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> checking data/DN_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> number of columns data/DN_all_peaks.narrowPeak.cleaned.hg19
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/DN_all_peaks.narrowPeak.cleaned.hg19
+>>> previous = 278667, after = 278092
+---data/DN_all_peaks.narrowPeak.cleaned.hg19 does not pass the checking, which means there are overlapped intervals inside the annotation data
+---data/DN_all_peaks.narrowPeak.cleaned.hg19 will be merged first and try again!
+>>> >>> merging
+>>> >>> sort data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> working on data/GA_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> sort data/GA_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> checking data/GA_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> number of columns data/GA_all_peaks.narrowPeak.cleaned.hg19
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GA_all_peaks.narrowPeak.cleaned.hg19
+>>> previous = 330304, after = 329787
+---data/GA_all_peaks.narrowPeak.cleaned.hg19 does not pass the checking, which means there are overlapped intervals inside the annotation data
+---data/GA_all_peaks.narrowPeak.cleaned.hg19 will be merged first and try again!
+>>> >>> merging
+>>> >>> sort data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> working on data/ips_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> sort data/ips_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> checking data/ips_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> number of columns data/ips_all_peaks.narrowPeak.cleaned.hg19
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/ips_all_peaks.narrowPeak.cleaned.hg19
+>>> previous = 345427, after = 344669
+---data/ips_all_peaks.narrowPeak.cleaned.hg19 does not pass the checking, which means there are overlapped intervals inside the annotation data
+---data/ips_all_peaks.narrowPeak.cleaned.hg19 will be merged first and try again!
+>>> >>> merging
+>>> >>> sort data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> working on data/NSC_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> sort data/NSC_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> checking data/NSC_all_peaks.narrowPeak.cleaned.hg19
+>>> >>> number of columns data/NSC_all_peaks.narrowPeak.cleaned.hg19
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/NSC_all_peaks.narrowPeak.cleaned.hg19
+>>> previous = 249272, after = 248686
+---data/NSC_all_peaks.narrowPeak.cleaned.hg19 does not pass the checking, which means there are overlapped intervals inside the annotation data
+---data/NSC_all_peaks.narrowPeak.cleaned.hg19 will be merged first and try again!
+>>> >>> merging
+>>> >>> sort data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>>
+```
+
+# Merge prepared label with DeepSEA's representation
+
+```{bash, eval=FALSE}
+$ cd data
+$ mkdir ../test/atac-seq_053018_merged
+$ ls *hg19*mer*in* > ../test/atac-seq_053018_merged/merge.txt
+$ cd ../
+$ python my_scripts/merge_labels.py test/atac-seq_053018.txt/label.hdf5 test/atac-seq_053018_merged/merge.txt test/atac-seq_053018_merged/
+$ h5dump -A -H test/atac-seq_053018_merged/label_merge.hdf5
+HDF5 "test/atac-seq_053018_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 5 ) / ( 2608182, 5 ) }
+   }
+}
+}
+```
+
+## Training
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_train_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 4 ) / ( 4400000, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 "test/atac-seq_053018_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 5 ) / ( 2608182, 5 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_train_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5 trainxdata merged 1 2200000 test/atac-seq_053018_merged/
+```
+
+## Testing
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_test_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 4 ) / ( 455024, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 "test/atac-seq_053018_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 5 ) / ( 2608182, 5 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_test_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5 trainxdata merged 2309367 2536878 test/atac-seq_053018_merged/
+```
+
+## Validation
+
+```{bash, eval=FALSE}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5
+HDF5 "my_train/DeepSEA_valid_12__with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 4 ) / ( 8000, 4 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}
+HDF5 "test/atac-seq_053018_merged/label_merge.hdf5" {
+GROUP "/" {
+   DATASET "merged" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 2608182, 5 ) / ( 2608182, 5 ) }
+   }
+}
+}
+$ python my_scripts/add_y_label_and_rename.py my_train/DeepSEA_valid_12__with_label.hdf5 test/atac-seq_053018_merged/label_merge.hdf5 trainxdata merged 2200001 2204000 test/atac-seq_053018_merged/
+```
+
+# Summary
+
+```{bash, eval=FALSE}
+$ h5dump -A -H test/atac-seq_053018_merged/*with*
+HDF5 "test/atac-seq_053018_merged/DeepSEA_test_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 455024, 5 ) / ( 455024, 5 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 455024, 925 ) / ( 455024, 925 ) }
+   }
+}
+}
+HDF5 "test/atac-seq_053018_merged/DeepSEA_train_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 4400000, 5 ) / ( 4400000, 5 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 4400000, 925 ) / ( 4400000, 925 ) }
+   }
+}
+}
+HDF5 "test/atac-seq_053018_merged/DeepSEA_valid_12__with_label_with_label.hdf5" {
+GROUP "/" {
+   DATASET "traindata" {
+      DATATYPE  H5T_IEEE_F64LE
+      DATASPACE  SIMPLE { ( 8000, 5 ) / ( 8000, 5 ) }
+   }
+   DATASET "trainxdata" {
+      DATATYPE  H5T_IEEE_F32LE
+      DATASPACE  SIMPLE { ( 8000, 925 ) / ( 8000, 925 ) }
+   }
+}
+}
+```

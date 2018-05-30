@@ -24,8 +24,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -35,10 +35,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -303,7 +305,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Task</h1>
 <h4 class="author"><em>Yanyu Liang</em></h4>
-<h4 class="date"><em>17 October, 2017</em></h4>
+<h4 class="date"><em>30 May, 2018</em></h4>
 
 </div>
 
@@ -317,6 +319,7 @@ div.tocify {
 <li>See pipeline memo <a href="memo_preprocessing.html">here</a> for E081, E082, Noonan, E129 (DeepSEA label)</li>
 <li>See pipeline memo <a href="memo_preprocessing_ATACseq.html">here</a> for ATAC-seq data from Noonan’s lab</li>
 <li>See pipeline memo <a href="memo_preprocessing_GSE70823.html">here</a> for d27-NSC, d41-neuron data from GSE70823</li>
+<li>See pipeline memo <a href="memo_preprocessing_atac_seq_053018.html">here</a> for ATAC-seq data obtained from Yifan 5/30/18</li>
 </ul></li>
 <li>Extract new sequences of interest based on new data set.
 <ul>
