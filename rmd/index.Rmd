@@ -30,6 +30,9 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
     - NSC data from this [paper](https://www.ncbi.nlm.nih.gov/pubmed/28803920) and the data is obtained from this [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE70823)
     - d27, d41-1, d41-2 data are used
     - Is referred as `paperNSC`
+4. ATAC053018
+    - Obtained from Yifan on 5/30/18
+    - Contains cell types labelled as `CN`, `DN`, `GA`, `ips`, `NSC`
 
 # Train new models
 
