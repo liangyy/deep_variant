@@ -1,0 +1,5 @@
+dataname: 'data-test'
+data-test:
+  positive: 'test.bed'
+  negative: 'test.bed'
+genome-assembly: 'genome-assembly: ''/project2/xinhe/yanyul/databases/hg19/hg19.fa'
