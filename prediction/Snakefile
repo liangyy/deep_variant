@@ -29,9 +29,9 @@ cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
 module load cuda/7.5
-cd repo/deep_variant/prediction
+cd {wd}
 python scripts/predict.py --x {x} --out {out} --model {model}
-'''.format(prefix=config['prefix'], x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition)
+'''.format(prefix=config['prefix'], x=input.x, out=params.ypred, model=input.model, taskname=wildcards.dataset, partition=params.partition, wd=config['working_dir'])
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()

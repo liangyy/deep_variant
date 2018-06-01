@@ -15,6 +15,9 @@ parser.add_argument('--data_tag', help='''
 parser.add_argument('--config', help='''
     Name of config file for --configfile tag in snakemake call
 ''')
+parser.add_argument('--wd', help='''
+    working directory
+''')
 args = parser.parse_args()
 
 import re
@@ -37,10 +40,10 @@ sbatch = '''#!/bin/bash
 cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
-cd repo/deep_variant/gkm_svm
+cd {wd}
 snakemake --unlock {desired_out} --configfile {config}
 snakemake --rerun-incomplete {desired_out} --configfile {config}
-'''.format(data=data_info, model=model_info, desired_out=desired_out, config=args.config)
+'''.format(data=data_info, model=model_info, desired_out=desired_out, config=args.config, wd=args.wd)
 
 outname = 'sbatch/{data}.{model}.sbatch'.format(data=data_info, model=model_info)
 o = open(outname, 'w')
