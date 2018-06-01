@@ -23,6 +23,7 @@ rule train:
         batch_size = 100, # lambda wildcards: config[wildcards.motif_name][''],
         partition = config['partition'],
         # head = config['type_of_head']
+        wd = config['working_directory']
     output:
         'sbatch/{task_name}.{head}_{group}.train.sbatch'
     run:
@@ -41,7 +42,7 @@ cd /project2/xinhe/yanyul
 source setup.sh
 source activate deepvarpred_test
 module load cuda/7.5
-cd repo/deep_variant/train_deepsea
+cd {wd}
 mkdir {outdir}
 python scripts/train_head_on_cluster.py \
 --train {train} \
@@ -55,7 +56,7 @@ python scripts/train_head_on_cluster.py \
 '''.format(taskname=wildcards.task_name, train=input.train, valid=input.valid,
 niter=params.niter, batch_size=params.batch_size, outdir=params.outfolder,
 l1=params.l1, l2=params.l2, group=wildcards.group, partition=params.partition,
-head=wildcards.head)
+head=wildcards.head, wd=params.wd)
         o = open(output[0], 'w')
         o.write(sbatch)
         o.close()
