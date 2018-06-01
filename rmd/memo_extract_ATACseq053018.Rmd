@@ -1,0 +1,263 @@
+---
+title: "Memo - extract sequences from ATACseq 05/30/18 data"
+author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+<style>
+pre code, pre, code {
+  white-space: pre !important;
+  overflow-x: scroll !important;
+  word-break: keep-all !important;
+  word-wrap: initial !important;
+}
+</style>
+
+The data is obtained from Yifan containing CN, DN, GA, ips, NSC
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+```
+
+# Output directory
+
+```{bash, eval=F}
+$ cd /project2/xinhe/yanyul/deep_variant/yanyu/deep_brain
+$ mkdir test/atac-seq_053018_binize
+```
+
+# Region to bin (bin size = 200 bp)
+
+```{bash, eval=F}
+$ python my_scripts/0_region2bins.py data/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect test/atac-seq_053018_binize/
+bedtools merge -i test/atac-seq_053018_binize//CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/atac-seq_053018_binize//CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect test/atac-seq_053018_binize/
+bedtools merge -i test/atac-seq_053018_binize//DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/atac-seq_053018_binize//DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect test/atac-seq_053018_binize/
+bedtools merge -i test/atac-seq_053018_binize//GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/atac-seq_053018_binize//GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect test/atac-seq_053018_binize/
+bedtools merge -i test/atac-seq_053018_binize//CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/atac-seq_053018_binize//CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged
+$ python my_scripts/0_region2bins.py data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect test/atac-seq_053018_binize/
+bedtools merge -i test/atac-seq_053018_binize//NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted -d -1 -c 4,5 -o collapse,collapse > test/atac-seq_053018_binize//NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged
+```
+
+# Label bins
+
+## Prepare input for `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ ls data/CN_all_peaks.narrowPeak.cleaned.hg19.merged > test/atac-seq_053018_binize/CN.txt
+$ ls data/DN_all_peaks.narrowPeak.cleaned.hg19.merged > test/atac-seq_053018_binize/DN.txt
+$ ls data/GA_all_peaks.narrowPeak.cleaned.hg19.merged > test/atac-seq_053018_binize/GA.txt
+$ ls data/ips_all_peaks.narrowPeak.cleaned.hg19.merged > test/atac-seq_053018_binize/ips.txt
+$ ls data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged > test/atac-seq_053018_binize/NSC.txt
+$ cat test/atac-seq_053018_binize/*txt
+data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+```
+
+## Run `wrapper_label_intervals.py`
+
+```{bash, eval=F}
+$ python my_scripts/wrapper_label_intervals.py test/atac-seq_053018_binize/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final test/atac-seq_053018_binize/CN.txt test/atac-seq_053018_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018_binize//CN.txt_out
+>>> working on data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> sort data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/CN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> previous = 249590, after = 249590
+$ python my_scripts/wrapper_label_intervals.py test/atac-seq_053018_binize/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final test/atac-seq_053018_binize/DN.txt test/atac-seq_053018_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018_binize//DN.txt_out
+>>> working on data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> sort data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/DN_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> previous = 278092, after = 278092
+$ python my_scripts/wrapper_label_intervals.py test/atac-seq_053018_binize/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final test/atac-seq_053018_binize/GA.txt test/atac-seq_053018_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018_binize//GA.txt_out
+>>> working on data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> sort data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/GA_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> previous = 329787, after = 329787
+$ python my_scripts/wrapper_label_intervals.py test/atac-seq_053018_binize/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final test/atac-seq_053018_binize/ips.txt test/atac-seq_053018_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018_binize//ips.txt_out
+>>> working on data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> sort data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/ips_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> previous = 344669, after = 344669
+$ python my_scripts/wrapper_label_intervals.py test/atac-seq_053018_binize/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final test/atac-seq_053018_binize/NSC.txt test/atac-seq_053018_binize/
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+mkdir test/atac-seq_053018_binize//NSC.txt_out
+>>> working on data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> sort data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> checking data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> >>> number of columns data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+awk: cmd. line:1: (FILENAME=- FNR=4097) fatal: print to "standard output" failed (Broken pipe)
+cat: write error: Broken pipe
+>>> >>> intersecting data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged
+>>> previous = 248686, after = 248686
+```
+
+# Bin to input format
+
+## Bin to fasta
+
+```{bash, eval=F}
+$ python my_scripts/2_bin2seq.py test/atac-seq_053018_binize/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/atac-seq_053018_binize/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/atac-seq_053018_binize/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/atac-seq_053018_binize/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+$ python my_scripts/2_bin2seq.py test/atac-seq_053018_binize/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final
+Feature (chr17:81194400-81195400) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194600-81195600) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81194800-81195800) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195000-81196000) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195200-81196200) beyond the length of chr17 size (81195210 bp).  Skipping.
+Feature (chr17:81195400-81196400) beyond the length of chr17 size (81195210 bp).  Skipping.
+```
+
+## Line number of illegal bin
+
+```
+$ cat test/atac-seq_053018_binize/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final | grep -n 81194400 -A 7
+548979:chr17	81194200	81194400	548979	3,4	left,left
+548980:chr17	81194400	81194600	548980	2,3	left,left
+548981-chr17	81194600	81194800	548981	1,2	left,left
+548982-chr17	81194800	81195000	548982	0,1	hitted,left
+548983-chr17	81195000	81195200	548983	1,0	right,hitted
+548984-chr17	81195200	81195400	548984	2,1	right,right
+548985-chr17	81195400	81195600	548985	2,3	right,right
+548986-chr17	81195600	81195800	548986	4,3	right,right
+548987-chr17	81195800	81196000	548987	4	right
+$ cat test/atac-seq_053018_binize/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final | grep -n 81194400 -A 7
+726141:chr17	81194200	81194400	726141	4,3	left,left
+726142:chr17	81194400	81194600	726142	3,2	left,left
+726143-chr17	81194600	81194800	726143	2,1	left,left
+726144-chr17	81194800	81195000	726144	1,0	left,hitted
+726145-chr17	81195000	81195200	726145	1,0	right,hitted
+726146-chr17	81195200	81195400	726146	2,1	right,right
+726147-chr17	81195400	81195600	726147	3,2	right,right
+726148-chr17	81195600	81195800	726148	4,3	right,right
+726149-chr17	81195800	81196000	726149	4	right
+$ cat test/atac-seq_053018_binize/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final | grep -n 81194400 -A 7
+611601:chr17	81194200	81194400	611601	4,3	left,left
+611602:chr17	81194400	81194600	611602	3,2	left,left
+611603-chr17	81194600	81194800	611603	2,1	left,left
+611604-chr17	81194800	81195000	611604	1,0	left,hitted
+611605-chr17	81195000	81195200	611605	1,0	right,hitted
+611606-chr17	81195200	81195400	611606	2,1	right,right
+611607-chr17	81195400	81195600	611607	3,2	right,right
+611608-chr17	81195600	81195800	611608	4,3	right,right
+611609-chr17	81195800	81196000	611609	4	right
+--
+1405927:chr8	81194200	81194400	1405927	4	left
+1405928:chr8	81194400	81194600	1405928	3,4	left,left
+1405929-chr8	81194600	81194800	1405929	2,3	left,left
+1405930-chr8	81194800	81195000	1405930	1,2	left,left
+1405931-chr8	81195000	81195200	1405931	0,1	hitted,left
+1405932-chr8	81195200	81195400	1405932	1,0	right,hitted
+1405933-chr8	81195400	81195600	1405933	2,1	right,right
+1405934-chr8	81195600	81195800	1405934	2,3	right,right
+1405935-chr8	81195800	81196000	1405935	4,3	right,right
+$ cat test/atac-seq_053018_binize/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final | grep -n 81194400 -A 7
+273832:chr10	81194200	81194400	273832	4	left
+273833:chr10	81194400	81194600	273833	3	left
+273834-chr10	81194600	81194800	273834	2	left
+273835-chr10	81194800	81195000	273835	1	left
+273836-chr10	81195000	81195200	273836	0	hitted
+273837-chr10	81195200	81195400	273837	1	right
+273838-chr10	81195400	81195600	273838	2	right
+273839-chr10	81195600	81195800	273839	3	right
+273840-chr10	81195800	81196000	273840	4	right
+--
+921875:chr17	81194200	81194400	921875	3,4	left,left
+921876:chr17	81194400	81194600	921876	2,3	left,left
+921877-chr17	81194600	81194800	921877	1,2	left,left
+921878-chr17	81194800	81195000	921878	0,1	hitted,left
+921879-chr17	81195000	81195200	921879	1,0	right,hitted
+921880-chr17	81195200	81195400	921880	2,1	right,right
+921881-chr17	81195400	81195600	921881	2,3	right,right
+921882-chr17	81195600	81195800	921882	4,3	right,right
+921883-chr17	81195800	81196000	921883	4	right
+--
+2100527:chr8	81194200	81194400	2100527	4	left
+2100528:chr8	81194400	81194600	2100528	4,3	left,left
+2100529-chr8	81194600	81194800	2100529	3,2	left,left
+2100530-chr8	81194800	81195000	2100530	2,1	left,left
+2100531-chr8	81195000	81195200	2100531	1,0	left,hitted
+2100532-chr8	81195200	81195400	2100532	0,1	hitted,right
+2100533-chr8	81195400	81195600	2100533	2,1	right,right
+2100534-chr8	81195600	81195800	2100534	3,2	right,right
+2100535-chr8	81195800	81196000	2100535	4,3	right,right
+$ cat test/atac-seq_053018_binize/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final | grep -n 81194400 -A 7
+533711:chr17	81194200	81194400	533711	3,4	left,left
+533712:chr17	81194400	81194600	533712	2,3	left,left
+533713-chr17	81194600	81194800	533713	2,1	left,left
+533714-chr17	81194800	81195000	533714	0,1	hitted,left
+533715-chr17	81195000	81195200	533715	0,1	hitted,right
+533716-chr17	81195200	81195400	533716	2,1	right,right
+533717-chr17	81195400	81195600	533717	3,2	right,right
+533718-chr17	81195600	81195800	533718	4,3	right,right
+533719-chr17	81195800	81196000	533719	4	right
+```
+
+# Fasta to hdf5
+
+```{bash, eval=F}
+$ python ../preprocessing/my_scripts/2_seq2input.py test/atac-seq_053018_binize/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.fa test/atac-seq_053018_binize/CN.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/atac-seq_053018_binize/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.fa test/atac-seq_053018_binize/DN.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/atac-seq_053018_binize/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.fa test/atac-seq_053018_binize/GA.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/atac-seq_053018_binize/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.fa test/atac-seq_053018_binize/ips.txt_out/
+$ python ../preprocessing/my_scripts/2_seq2input.py test/atac-seq_053018_binize/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.fa test/atac-seq_053018_binize/NSC.txt_out/
+```
