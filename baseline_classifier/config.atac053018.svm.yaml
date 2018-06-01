@@ -48,5 +48,5 @@ Training:
 partition: 'gpu2'
 type_of_head: 'svm'
 selected_head:
-  best: ''
+  best: '1e-7/00-0.3276-0.3343.hdf5'
 path: '/scratch/midway2/xinhe/repo/deep_variant/'
