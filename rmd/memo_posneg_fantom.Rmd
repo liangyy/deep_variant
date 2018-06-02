@@ -53,4 +53,9 @@ df <- data.frame(cutoff = 10^cutoff.log, topNprecent = 1 - Fn(cutoff.log))
 pander(df)
 ```
 
+# Definition used downstream
 
+```{bash, eval=FALSE}
+$ cat fantomFetalBrainCage.bed |sort -k5 -nr|awk -F"\t" -v OFS="\t" '{if($5>10) print $1,$2,$3,$5}' > fantomFetalBrainCage.gt10.bed
+$ cat fantomFetalBrainCage.bed |awk -F"\t" -v OFS="\t" '{if($5==0) print $1,$2,$3,$5}' > fantomFetalBrainCage.eq0.bed
+```

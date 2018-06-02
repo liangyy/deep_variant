@@ -366,6 +366,11 @@ pander(df)</code></pre>
 </table>
 </div>
 </div>
+<div id="definition-used-downstream" class="section level1">
+<h1><span class="header-section-number">3</span> Definition used downstream</h1>
+<pre class="bash"><code>$ cat fantomFetalBrainCage.bed |sort -k5 -nr|awk -F&quot;\t&quot; -v OFS=&quot;\t&quot; &#39;{if($5&gt;10) print $1,$2,$3,$5}&#39; &gt; fantomFetalBrainCage.gt10.bed
+$ cat fantomFetalBrainCage.bed |awk -F&quot;\t&quot; -v OFS=&quot;\t&quot; &#39;{if($5==0) print $1,$2,$3,$5}&#39; &gt; fantomFetalBrainCage.eq0.bed</code></pre>
+</div>
 
 
 
