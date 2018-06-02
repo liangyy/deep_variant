@@ -17,6 +17,8 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
     - See pipeline memo [here](memo_extract.html) for E081, E082, Noonan, E129 (DeepSEA label)
     - See pipeline memo [here](memo_extract_ATACseq.html) for ATAC-seq data from Noonan's lab
     - See pipeline memo [here](memo_extract_GSE70823.html) for d27-NSC, d41-neuron data from GSE70823
+3. Define positive and negative sequences 
+    - See memo [here](memo_posneg_fantom.html) for fantom fetal brain cage peak from Zhongshan (06/02/18)
 
 # Genomic Data
 

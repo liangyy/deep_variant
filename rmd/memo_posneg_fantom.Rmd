@@ -1,0 +1,56 @@
+---
+title: "Memo - Determing the cutoff of positive and negative peaks (fantom fetal brain cage peak from Zhongshan 06/01/18)"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width=2000)
+library(pander)
+```
+
+# About data
+
+Obtained from `hg19.cage_peak_phase1and2combined_tpm.osc.txt.gz` - CAGE peak based expression table (RLE normalized) for human samples [see edgeR documentation for further details about normalization method]
+
+Only fetal brain is extracted (Zhongshan's part)
+
+# Preprocessing
+
+Obtained data from `/project2/xinhe/zhongshan/noncodingRNA/FANTOM/hg19.cage_peak_phase1and2combined_tpm.osc.txt.ordered.CNhs11797`
+
+## Negative sequences
+
+All peaks with zero entry are defined as negative sequences.
+
+```{bash, eval=FALSE}
+$ cat fantomFetalBrainCage.bed |awk -F"\t" -v OFS="\t" '{if($5==0) print $1,$2,$3,$5}' > fantomFetalBrainCage.negative.bed
+```
+
+## Pre-positive sequences
+
+Obtain the 'pre-positive' sequences by extracting all sequences with non-zero entry.
+
+```{bash, eval=FALSE}
+$ cat fantomFetalBrainCage.bed |sort -k5 -nr|awk -F"\t" '{if($5!=0) print $5}' > fantomFetalBrainCage.pre-positive.bed
+```
+
+## Distribution of pre-positive peaks
+
+```{r}
+prepos <- read.table('../data/fantomFetalBrainCage.pre-positive.bed')
+hist(log10(prepos$V1), xlab = 'log10(score)', main = '')
+Fn <- ecdf(log10(prepos$V1))
+plot(Fn)
+cutoff.log <- c(0, 1, 2)
+df <- data.frame(cutoff = 10^cutoff.log, topNprecent = 1 - Fn(cutoff.log))
+pander(df)
+```
+
+
