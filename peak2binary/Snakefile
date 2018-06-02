@@ -35,7 +35,9 @@ rule extend_region:
                 d2=1000-a-d;
                 s=s1-d; \
                 e=e1+d2; \
-                print $1,s,e; \
+                if( s>=0 ) {{ \
+                    print $1,s,e; \
+                }}
             }} \
         }}\' > {output[0]}
         '''
