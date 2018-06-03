@@ -18,7 +18,7 @@ We need to incorporate new data (fetal brain related) to the model. It contains 
     - See pipeline memo [here](memo_extract_ATACseq.html) for ATAC-seq data from Noonan's lab
     - See pipeline memo [here](memo_extract_GSE70823.html) for d27-NSC, d41-neuron data from GSE70823
     - See pipeline memo [here](memo_extract_ATACseq053018.html) for ATAC-seq data obtained from Yifan 5/30/18
-3. Define positive and negative sequences 
+3. Define positive and negative sequences
     - See memo [here](memo_posneg_fantom.html) for fantom fetal brain cage peak from Zhongshan (06/02/18)
 
 # Genomic Data
@@ -96,12 +96,14 @@ There are some other directions and issues we need to explore and tackle. The an
 
 5. **Data Quality**:
     - GC content.
-      [Stage1 DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html),
-      [Stage1 Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html),
-      [Stage2 Deepsea sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-ATACseq.gc_content.html),
-      [Stage2 Extracted sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-ATACseq.gc_content.html),
-      [paperNSC DeepSEA sequences](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-paperNSC.gc_content.html),
-      [paperNSC Extracted sequences](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-paperNSC.gc_content.html)
+        * [Stage1 DeepSEA test set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea.gc_content.html),
+        * [Stage1 Sequences extracted from BED file](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted.gc_content.html)
+        * [Stage2 Deepsea sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-ATACseq.gc_content.html)
+        * [Stage2 Extracted sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-ATACseq.gc_content.html)
+        * [paperNSC DeepSEA sequences](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-paperNSC.gc_content.html)
+        * [paperNSC Extracted sequences](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-paperNSC.gc_content.html)
+        * [ATACseq 05/30/18 from Yifan, DeepSEA sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/deepsea-ATAC053018.gc_content.html)
+        * [ATACseq 05/30/18 from Yifan, extracted sequence set](https://rawgit.com/liangyy/deep_variant/code/gc_content/report/extracted-ATAC053018.gc_content.html)
     - Similarity between data sets
       [Stage1 Stage2 with Normal Brain data from DeepSEA](https://rawgit.com/liangyy/deep_variant/code/annotation_overlap/report/distance.stage1stage2.html)
 
