@@ -1,0 +1,40 @@
+# This module takes a data sets and the goal is to test the performance (in terms of linear separatibility) of certain sequence feature representation on the data set.
+# K-fold cross validation is used to evaluate the performance empirically.
+# Two linear classifiers are implemented: logistic regression & SVM
+#
+# CAUTION:
+# 1. This module works with relatively small data sets. Large data set may take long time to run
+# 2. For SVM, hyperparameter affects the performance as well. So, it should be tuned
+
+rule all:
+    input:
+        'output/{data}__{feature}__{classifier}__{k}fold.performance.txt'.format(data = config['data'['name']], feature = config['feature']['name'], k = config['fold'])
+
+rule seq2feature:
+    input:
+        seq = config['data']['path'],
+        feature = config['feature']['path']
+    output:
+        'output/{data}__{feature}.feature.hdf5'
+    shell:
+        'python scripts/seq2feature.py --input {input.seq} --feature {input.feature} --out {output[0]}'
+
+rule cv:
+    input:
+        label = config['data']['path'],
+        feature: 'output/{data}__{feature}.feature.hdf5',
+    params:
+        classifier = config['classifier']['type'],
+        param = config['classifier']['params'],
+        k = config['fold']
+    output:
+        'output/{data}__{feature}__{classifier}__{k}fold.performance.txt'
+    shell:
+        '''
+        python scripts/keras_cv.py \
+            --label {input.label} \
+            --feature {input.feature} \
+            --classifier_type {params.classifier} \
+            --classifier_param {params.param} \
+            --fold {params.k}
+        '''
