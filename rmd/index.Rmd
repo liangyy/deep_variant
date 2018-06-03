@@ -67,6 +67,8 @@ There are three strategies:
     - [Stage1 Stage2, all methods, extracted sequence, reweight, 080917 For Xin](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/template/plot_roc_e081e082.html),
     - [paperNSC, all methods, deepsea sequences, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/deepsea-paperNSC.reweight_plot.html),
     - [paperNSC, all methods, extracted sequences, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/extracted-paperNSC.reweight_plot.html)
+    - [ATACseq 05/30/18 from Yifan, DeepSEA sequences](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/deepsea-ATAC053018.reweight_plot.html)
+    - [ATACseq 05/30/18 from Yifan, extracted sequences](https://rawgit.com/liangyy/deep_variant/code/pr_roc_curve/report/extracted-ATAC053018.reweight_plot.html)
 2. AUC scores
     - [Stage1, train_deepsea vs. JASPAR, no reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain.auc_comparison.html)
     - [Stage1, train_deepsea vs. JASPAR, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain_reweight.auc_comparison.html)
