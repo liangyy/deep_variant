@@ -76,6 +76,7 @@ There are three strategies:
     - [Stage1 Stage2, compare all methods, reweight](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-stage1stage2.auc_comparison.html)
     - [Stage1 Stage2, compare all methods, reweight, by group](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/template/auc_summary_bygroup.html),
     - [paperNSC, all methods, reweighted GC](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-paperNSC.auc_comparison.html)
+    - [ATACseq 05/30/18 from Yifan, all methods, reweighted by GC content](https://rawgit.com/liangyy/deep_variant/code/performance_comparison/report/deep_brain-ATAC053018.auc_comparison.html)
 
 # Other analysis
 
