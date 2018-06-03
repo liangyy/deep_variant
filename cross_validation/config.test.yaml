@@ -1,0 +1,10 @@
+data:
+  name: 'fantom-test'
+  path: ''
+feature:
+  name: 'deepsea'
+  path: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
+classifier:
+  type: 'logistic'  ## svm
+  param: 'none'  ## 1e-2
+fold: 5
