@@ -28,7 +28,7 @@ rule cv:
         param = config['classifier']['param'],
         prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
-        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ],
+        temp([ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]),
         [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.best.hdf5'.format(i = i + 1) for i in range(config['fold']) ]
     shell:
         '''
@@ -47,9 +47,9 @@ rule performance_report_rmd:
     params:
         prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
-        'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd'
+        temp('report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd')
     run:
-        '''---
+        rmd = '''---
 title: "Cross validation -- Performance on data = {data}; feature = {feature}; classifier = {classifier}; {k}fold"
 output:
   html_document:
@@ -60,7 +60,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
 ```{{r setup}}
-knitr::opts_knit$set(root.dir = '../../')
+# knitr::opts_knit$set(root.dir = '../')
 library(precrec)
 library(pander)
 library(dplyr)
@@ -70,11 +70,11 @@ library(dplyr)
 
 ```{{r}}
 fold <- {k}
-prefix <- '{prefix}'
+prefix <- '../{prefix}'
 scores <- list()
 truth <- list()
 for(i in 1 : fold) {{
-  temp <- read.table(paste0(prefix, i, 'predict.txt.gz'), header = T)
+  temp <- read.table(paste0(prefix, '-', i, '.predict.txt.gz'), header = T)
   scores[[paste('round', i)]] <- temp$y_pred
   truth[[paste('round', i)]] <- temp$y_true
 }}
@@ -88,6 +88,9 @@ df.auc <- df %>%
 pander(df.auc)
 ```
 '''.format(data = wildcards.data, feature = wildcards.feature, classifier = wildcards.classifier, k = wildcards.k, prefix = params.prefix)
+        o = open(output[0], 'w')
+        o.write(rmd)
+        o.close()
 
 rule performance_report_html:
     input:
