@@ -62,7 +62,7 @@ def train_model(model, xtrain, ytrain, prefix):
 def prediction(model, xtest, ytest, prefix):
     ypredict = model.predict(xtest)
     df = pd.DataFrame(data={'y_true': ytest, 'y_pred': ypredict[:, 0]})
-    df.to_csv(prefix + 'predict.txt.gz', sep='\t', index=False, header=True, compression='gzip')
+    df.to_csv(prefix + '.predict.txt.gz', sep='\t', index=False, header=True, compression='gzip')
 
 print('######## Loading data ########')
 n_folds = args.fold
@@ -77,7 +77,7 @@ skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)
 
 for i, (train, test) in enumerate(skf):
     print("######## Running Fold {n}/{k} ########".format(n=i+1, k=n_folds))
-    model = None     
+    model = None
     print('1. Building and compiling model type = {type}, param = {param}'.format(type=args.classifier_type, param=args.classifier_param))
     model = create_model(feature.shape[-1], 1, args.classifier_type, args.classifier_param)
     print('2. Training model')

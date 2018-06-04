@@ -26,7 +26,6 @@ rule cv:
     params:
         classifier = config['classifier']['type'],
         param = config['classifier']['param'],
-        k = config['fold'],
         prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
         [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ],
@@ -38,7 +37,7 @@ rule cv:
             --y {input.label} \
             --classifier_type {params.classifier} \
             --classifier_param {params.param} \
-            --fold {params.k} \
+            --fold {wildcards.k} \
             --prefix {params.prefix}
         '''
 
@@ -46,13 +45,49 @@ rule performance_report_rmd:
     input:
         [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
     params:
-        k = config['fold'],
         prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
         'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd'
     run:
-        '''
-'''
+        '''---
+title: "Cross validation -- Performance on data = {data}; feature = {feature}; classifier = {classifier}; {k}fold"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 3
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+---
+
+```{{r setup}}
+knitr::opts_knit$set(root.dir = '../../')
+library(precrec)
+library(pander)
+library(dplyr)
+```
+
+# Load data
+
+```{{r}}
+fold <- {k}
+prefix <- '{prefix}'
+scores <- list()
+truth <- list()
+for(i in 1 : fold) {{
+  temp <- read.table(paste0(prefix, i, 'predict.txt.gz'), header = T)
+  scores[[paste('round', i)]] <- temp$y_pred
+  truth[[paste('round', i)]] <- temp$y_true
+}}
+msmdat <- mmdata(scores, truth, dsids = 1 : fold)
+mscurves <- evalmod(msmdat)
+plot(mscurves)
+df <- auc(mscurves)
+df.auc <- df %>%
+  group_by(curvetypes) %>%
+  summarise(AUC = mean(aucs), SE = sd(aucs))
+pander(df.auc)
+```
+'''.format(data = wildcards.data, feature = wildcards.feature, classifier = wildcards.classifier, k = wildcards.k, prefix = params.prefix)
 
 rule performance_report_html:
     input:
