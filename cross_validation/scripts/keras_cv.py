@@ -18,7 +18,7 @@ parser.add_argument('--classifier_param', help='''
         'logistic': '3e-1_4e-2'
         'svm': '0_0.2' # l1 will not be used in svm!
 ''')
-parser.add_argument('--fold', help='''
+parser.add_argument('--fold', type=int, help='''
     The fold of CV
 ''')
 parser.add_argument('--prefix', help='''
@@ -27,9 +27,10 @@ parser.add_argument('--prefix', help='''
 args = parser.parse_args()
 
 import sys
-if '../baseline_classifier/scripts/' not in sys.path:
-	sys.path.insert(0, 'scripts/')
-import my_python
+import importlib.util
+spec = importlib.util.spec_from_file_location("my_python", "../baseline_classifier/scripts/my_python.py")
+my_python = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(my_python)
 import os
 os.environ['THEANO_FLAGS'] = "device=gpu"
 os.environ['floatX'] = 'float32'
@@ -47,20 +48,20 @@ def create_model(x_size, y_size, ctype, param):
     l1 = float(l1)
     l2 = float(l2)
     if ctype == 'logistic':
-		model = my_python.logistic_head(x_size, y_size, l1, l2)
-	elif ctype == 'svm':
-		model = my_python.svm_head(x_size, y_size, l2)
+        model = my_python.logistic_head(x_size, y_size, l1, l2)
+    elif ctype == 'svm':
+        model = my_python.svm_head(x_size, y_size, l2)
     return model
 
-def train_model(model, xtrain, ytrain, xtest, ytest, prefix):
+def train_model(model, xtrain, ytrain, prefix):
     earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
-    ModelCheckpoint(filepath=prefix + ".best.hdf5", monitor='val_loss', verbose=1, save_best_only=True, period=1)
+    checkpointer = ModelCheckpoint(filepath=prefix + ".best.hdf5", monitor='val_loss', verbose=1, save_best_only=True, period=1)
     # Fit the model
     model.fit(xtrain, ytrain, validation_split=0.33, epochs=80, batch_size=10, shuffle=True, verbose=1, callbacks=[checkpointer, earlystopper])
 
 def prediction(model, xtest, ytest, prefix):
     ypredict = model.predict(xtest)
-    df = pd.DataFrame(data={'y_true': ytest, 'y_pred': ypredict})
+    df = pd.DataFrame(data={'y_true': ytest, 'y_pred': ypredict[:, 0]})
     df.to_csv(prefix + 'predict.txt.gz', sep='\t', index=False, header=True, compression='gzip')
 
 print('######## Loading data ########')
@@ -75,9 +76,10 @@ print('finished!')
 skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)
 
 for i, (train, test) in enumerate(skf):
-    print("######## Running Fold {n}/{k} ########".format(n=i+1, k=n_folds)     model = None # Clearing the NN.
+    print("######## Running Fold {n}/{k} ########".format(n=i+1, k=n_folds))
+    model = None     
     print('1. Building and compiling model type = {type}, param = {param}'.format(type=args.classifier_type, param=args.classifier_param))
-    model = create_model(feature.shape[-1], label.shape[-1], args.classifier_type, args.classifier_param)
+    model = create_model(feature.shape[-1], 1, args.classifier_type, args.classifier_param)
     print('2. Training model')
     train_model(model, feature[train], label[train], '{prefix}-{i}'.format(prefix=args.prefix, i=i+1))
     print('3. Predicting on test sequences')

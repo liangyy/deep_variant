@@ -8,7 +8,7 @@
 
 rule all:
     input:
-        'report/performance.{data}__{feature}__{classifier}__{k}fold.html'.format(data = config['data'['name']], feature = config['feature']['name'], k = config['fold'])
+        'report/performance.{data}__{feature}__{classifier}__{k}fold.html'.format(data = config['data']['name'], feature = config['feature']['name'], k = config['fold'], classifier = config['classifier']['type'] + '-' + config['classifier']['param'])
 
 rule seq2feature:
     input:
@@ -22,20 +22,20 @@ rule seq2feature:
 rule cv:
     input:
         label = config['data']['path'],
-        feature: 'output/{data}__{feature}.feature.hdf5',
+        feature = 'output/{data}__{feature}.feature.hdf5'
     params:
         classifier = config['classifier']['type'],
-        param = config['classifier']['params'],
+        param = config['classifier']['param'],
         k = config['fold'],
-        prefix = 'output/{data}__{feature}__{classifier}__{k}'
+        prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
         [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ],
         [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.best.hdf5'.format(i = i + 1) for i in range(config['fold']) ]
     shell:
         '''
         python scripts/keras_cv.py \
-            --x {input.label} \
-            --y {input.feature} \
+            --x {input.feature} \
+            --y {input.label} \
             --classifier_type {params.classifier} \
             --classifier_param {params.param} \
             --fold {params.k} \
@@ -44,10 +44,10 @@ rule cv:
 
 rule performance_report_rmd:
     input:
-        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
+        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
     params:
         k = config['fold'],
-        prefix = 'output/{data}__{feature}__{classifier}__{k}'
+        prefix = 'output/{data}__{feature}__{classifier}__{k}fold'
     output:
         'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd'
     run:
@@ -57,7 +57,7 @@ rule performance_report_rmd:
 rule performance_report_html:
     input:
         rmd = 'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd',
-        data = [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
+        data = [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
     output:
         'report/performance.{data}__{feature}__{classifier}__{k}fold.html'
     shell:

@@ -1,6 +1,6 @@
 data:
-  name: 'fantom-test'
-  path: ''
+  name: 'test-deepsea-logistic'
+  path: '/scratch/midway2/xinhe/repo/deep_variant/peak2binary/output/test/merged.hdf5'
 feature:
   name: 'deepsea'
   path: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'

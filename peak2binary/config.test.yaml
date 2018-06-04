@@ -1,5 +1,5 @@
-dataname: 'data-test'
-data-test:
-  positive: 'test.bed'
-  negative: 'test.bed'
+dataname: 'test'
+test:
+  positive: '/scratch/midway2/xinhe/repo/deep_variant/peak2binary/data/test.pos.bed'
+  negative: '/scratch/midway2/xinhe/repo/deep_variant/peak2binary/data/test.neg.bed'
 genome-assembly: '/project2/xinhe/yanyul/databases/hg19/hg19.fa'

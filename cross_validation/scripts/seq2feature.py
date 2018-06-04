@@ -31,8 +31,8 @@ print('Loading feature model')
 feature_model = load_model(args.feature)
 
 print('Computing feature representation of input sequences')
-x_feature = feature_model.model.predict(x, verbose=1)
+x_feature = feature_model.predict(x, verbose=1)
 
 print('Saving output')
-o = h5py.File(args.output, 'w')
+o = h5py.File(args.out, 'w')
 o.create_dataset('trainxdata', data=x_feature)
