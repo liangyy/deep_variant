@@ -6,5 +6,5 @@ feature:
   path: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
 classifier:
   type: 'logistic'  ## svm
-  param: 'none'  ## 1e-2
+  param: '0_0'  ## logistic: l1_l2; svm: 0_l2 since l1 won't be used anyway  
 fold: 5

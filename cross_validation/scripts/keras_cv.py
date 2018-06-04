@@ -2,43 +2,83 @@
 
 import argparse
 parser = argparse.ArgumentParser(prog='cv.py', description='''
-    Given a sequence file and a feature representation in KERAS model format (HDF5), output the computed sequence feature in HDF5
+    Given the precomputed features from a feature representation model and true labels, perform [fold]-fold cross-validation on the input data sets. Output the predicted score of y and true y for each validation round
 ''')
-parser.add_argument('--input', help='''
-    Sequence in HDF5 format with X labelled as trainxdata and Y labelled as traindata
+parser.add_argument('--y', help='''
+    HDF5 with true label in 'traindata'
 ''')
-parser.add_argument('--feature', help='''
-    The feature representation in KERAS model format (HDF5)
+parser.add_argument('--x', help='''
+    HDF5 with sequence in 'trainxdata'
 ''')
-parser.add_argument('--out', help='''
-    Name of the output file
+parser.add_argument('--classifier_type', help='''
+    Type of classifier, 'logistic' or 'svm'
+''')
+parser.add_argument('--classifier_param', help='''
+    Parameters of classifier, for example ('l1_l2'):
+        'logistic': '3e-1_4e-2'
+        'svm': '0_0.2' # l1 will not be used in svm!
+''')
+parser.add_argument('--fold', help='''
+    The fold of CV
+''')
+parser.add_argument('--prefix', help='''
+    Prefix of models built during CV and output TXT.GZ file containing the predicted score and true scores for each round
 ''')
 args = parser.parse_args()
 
 import sys
-import numpy as np
-import h5py
-from keras.models import load_model
+if '../baseline_classifier/scripts/' not in sys.path:
+	sys.path.insert(0, 'scripts/')
+import my_python
+import os
+os.environ['THEANO_FLAGS'] = "device=gpu"
+os.environ['floatX'] = 'float32'
+import keras
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
+import numpy as np
+import pandas as pd
+import h5py
 from sklearn.cross_validation import StratifiedKFold
 
-def load_data():
-    # load your data using this function
 
-def create model():
-    # create your model using this function
+def create_model(x_size, y_size, ctype, param):
+    (l1, l2) = param.split('_')
+    l1 = float(l1)
+    l2 = float(l2)
+    if ctype == 'logistic':
+		model = my_python.logistic_head(x_size, y_size, l1, l2)
+	elif ctype == 'svm':
+		model = my_python.svm_head(x_size, y_size, l2)
+    return model
 
-def train_and_evaluate__model(model, data[train], labels[train], data[test], labels[test)):
-    model.fit...
-    # fit and evaluate here.
+def train_model(model, xtrain, ytrain, xtest, ytest, prefix):
+    earlystopper = EarlyStopping(monitor='val_loss', patience=5, verbose=1)
+    ModelCheckpoint(filepath=prefix + ".best.hdf5", monitor='val_loss', verbose=1, save_best_only=True, period=1)
+    # Fit the model
+    model.fit(xtrain, ytrain, validation_split=0.33, epochs=80, batch_size=10, shuffle=True, verbose=1, callbacks=[checkpointer, earlystopper])
 
+def prediction(model, xtest, ytest, prefix):
+    ypredict = model.predict(xtest)
+    df = pd.DataFrame(data={'y_true': ytest, 'y_pred': ypredict})
+    df.to_csv(prefix + 'predict.txt.gz', sep='\t', index=False, header=True, compression='gzip')
 
-n_folds = 10
-data, labels, header_info = load_data()
-skf = StratifiedKFold(labels, n_folds=n_folds, shuffle=True)
+print('######## Loading data ########')
+n_folds = args.fold
+h1 = h5py.File(args.y, 'r')
+label = h1['traindata'][...]
+h1.close()
+h2 = h5py.File(args.x, 'r')
+feature = h2['trainxdata'][...]
+h2.close()
+print('finished!')
+skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)
 
 for i, (train, test) in enumerate(skf):
-        print "Running Fold", i+1, "/", n_folds
-        model = None # Clearing the NN.
-        model = create_model()
-        train_and_evaluate_model(model, data[train], labels[train], data[test], labels[test))
+    print("######## Running Fold {n}/{k} ########".format(n=i+1, k=n_folds)     model = None # Clearing the NN.
+    print('1. Building and compiling model type = {type}, param = {param}'.format(type=args.classifier_type, param=args.classifier_param))
+    model = create_model(feature.shape[-1], label.shape[-1], args.classifier_type, args.classifier_param)
+    print('2. Training model')
+    train_model(model, feature[train], label[train], '{prefix}-{i}'.format(prefix=args.prefix, i=i+1))
+    print('3. Predicting on test sequences')
+    ypred = prediction(model, feature[test], label[test], '{prefix}-{i}'.format(prefix=args.prefix, i=i+1))

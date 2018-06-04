@@ -8,7 +8,7 @@
 
 rule all:
     input:
-        'output/{data}__{feature}__{classifier}__{k}fold.performance.txt'.format(data = config['data'['name']], feature = config['feature']['name'], k = config['fold'])
+        'report/performance.{data}__{feature}__{classifier}__{k}fold.html'.format(data = config['data'['name']], feature = config['feature']['name'], k = config['fold'])
 
 rule seq2feature:
     input:
@@ -26,15 +26,39 @@ rule cv:
     params:
         classifier = config['classifier']['type'],
         param = config['classifier']['params'],
-        k = config['fold']
+        k = config['fold'],
+        prefix = 'output/{data}__{feature}__{classifier}__{k}'
     output:
-        'output/{data}__{feature}__{classifier}__{k}fold.performance.txt'
+        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ],
+        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}fold-{i}.best.hdf5'.format(i = i + 1) for i in range(config['fold']) ]
     shell:
         '''
         python scripts/keras_cv.py \
-            --label {input.label} \
-            --feature {input.feature} \
+            --x {input.label} \
+            --y {input.feature} \
             --classifier_type {params.classifier} \
             --classifier_param {params.param} \
-            --fold {params.k}
+            --fold {params.k} \
+            --prefix {params.prefix}
         '''
+
+rule performance_report_rmd:
+    input:
+        [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
+    params:
+        k = config['fold'],
+        prefix = 'output/{data}__{feature}__{classifier}__{k}'
+    output:
+        'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd'
+    run:
+        '''
+'''
+
+rule performance_report_html:
+    input:
+        rmd = 'report/performance.{data}__{feature}__{classifier}__{k}fold.Rmd',
+        data = [ 'output/{{data}}__{{feature}}__{{classifier}}__{{k}}-{i}.predict.txt.gz'.format(i = i + 1) for i in range(config['fold']) ]
+    output:
+        'report/performance.{data}__{feature}__{classifier}__{k}fold.html'
+    shell:
+        '''Rscript -e "rmarkdown::render('./{input.rmd}')"'''
