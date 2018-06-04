@@ -1,0 +1,222 @@
+reweight: '1'
+extracted-ATAC053018.reweight:
+  group1:
+    info: 'train_deepsea'
+    data:
+      CN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/CN.txt_out/label.hdf5'
+          name: 'data/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '548982-548987'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/type1-ATAC053018_CN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/CN.gc.feather'
+      DN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/DN.txt_out/label.hdf5'
+          name: 'data/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '726144-726149'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/type1-ATAC053018_DN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/DN.gc.feather'
+      GA:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/GA.txt_out/label.hdf5'
+          name: 'data/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: '611604-611609'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/type1-ATAC053018_GA.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/GA.gc.feather'
+      ips:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/ips.txt_out/label.hdf5'
+          name: 'data/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: '921878-921883'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/type1-ATAC053018_ips.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/ips.gc.feather'
+      NSC:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/NSC.txt_out/label.hdf5'
+          name: 'data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 5 # 1-based
+          double: 'No'
+          remove: '533714-533719'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/type1-ATAC053018_NSC.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 5 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/NSC.gc.feather'
+  group2:
+    info: 'JASPAR-logistic'
+    data:
+      CN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/CN.txt_out/label.hdf5'
+          name: 'data/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '548982-548987'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-logistic-ATAC053018_CN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/CN.gc.feather'
+      DN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/DN.txt_out/label.hdf5'
+          name: 'data/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '726144-726149'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-logistic-ATAC053018_DN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/DN.gc.feather'
+      GA:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/GA.txt_out/label.hdf5'
+          name: 'data/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: '611604-611609'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-logistic-ATAC053018_GA.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/GA.gc.feather'
+      ips:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/ips.txt_out/label.hdf5'
+          name: 'data/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: '921878-921883'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-logistic-ATAC053018_ips.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/ips.gc.feather'
+      NSC:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/NSC.txt_out/label.hdf5'
+          name: 'data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 5 # 1-based
+          double: 'No'
+          remove: '533714-533719'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-logistic-ATAC053018_NSC.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 5 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/NSC.gc.feather'
+  group3:
+    info: 'JASPAR-svm'
+    data:
+      CN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/CN.txt_out/label.hdf5'
+          name: 'data/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 1 # 1-based
+          double: 'No'
+          remove: '548982-548987'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-svm-ATAC053018_CN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 1 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/CN.gc.feather'
+      DN:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/DN.txt_out/label.hdf5'
+          name: 'data/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 2 # 1-based
+          double: 'No'
+          remove: '726144-726149'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-svm-ATAC053018_DN.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 2 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/DN.gc.feather'
+      GA:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/GA.txt_out/label.hdf5'
+          name: 'data/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 3 # 1-based
+          double: 'No'
+          remove: '611604-611609'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-svm-ATAC053018_GA.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 3 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/GA.gc.feather'
+      ips:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/ips.txt_out/label.hdf5'
+          name: 'data/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 4 # 1-based
+          double: 'No'
+          remove: '921878-921883'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-svm-ATAC053018_ips.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 4 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/ips.gc.feather'
+      NSC:
+        y:
+          path: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/NSC.txt_out/label.hdf5'
+          name: 'data/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted.intersect'
+          label_idx: 5 # 1-based
+          double: 'No'
+          remove: '533714-533719'
+        ypred:
+          path: '/scratch/midway2/xinhe/repo/deep_variant/prediction/result/JASPAR-svm-ATAC053018_NSC.ypred.hdf5'
+          name: 'y_pred'
+          label_idx: 5 # 1-based
+          double: 'Yes'
+          remove: 'None'
+        gc: '../gc_content/results/NSC.gc.feather'
+

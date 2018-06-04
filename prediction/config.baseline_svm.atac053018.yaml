@@ -1,0 +1,11 @@
+model: '/scratch/midway2/xinhe/repo/deep_variant/baseline_classifier/model/JASPAR-ATAC053018_svm.best.hdf5'
+data:
+  deepsea: '/project2/xinhe/yanyul/deep_variant/yanyu/DanQ/my_train/data/test_all.h5'
+  CN: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/CN.txt_out/CN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  DN: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/DN.txt_out/DN_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  GA: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/GA.txt_out/GA_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  ips: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/ips.txt_out/ips_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+  NSC: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_binize/NSC.txt_out/NSC_all_peaks.narrowPeak.cleaned.hg19.merged.sorted_bin200.bed.sorted.merged.final.expended.hdf5'
+partition: 'gpu2'
+prefix: 'JASPAR-svm-ATAC053018'
+working_dir: '/scratch/midway2/xinhe/repo/deep_variant/prediction'

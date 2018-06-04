@@ -1,0 +1,16 @@
+task_name: 'DeepSEA-ATAC053018'
+DeepSEA-ATAC053018:
+  niter: 80
+  feature_model: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
+  data:
+    train: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_merged/DeepSEA_train_12__with_label_with_label.hdf5' # in standard format
+    valid: '/project2/xinhe/yanyul/deep_variant/yanyu/deep_brain/test/atac-seq_053018_merged/DeepSEA_valid_12__with_label_with_label.hdf5' # in standard format
+Training:
+  default:
+    l1: 0
+    l2: 0
+partition: 'gpu2'
+type_of_head: 'logistic'
+selected_head:
+  best: 'default/10-0.2863-0.2836.hdf5'
+working_directory: '/scratch/midway2/xinhe/repo/deep_variant/train_deepsea'

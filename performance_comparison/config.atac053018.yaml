@@ -1,0 +1,4 @@
+deep_brain-ATAC053018:
+  deepsea: '/scratch/midway2/xinhe/repo/deep_variant/pr_roc_curve/result/deepsea-ATAC053018.reweight_curves.feather'
+  extracted: '/scratch/midway2/xinhe/repo/deep_variant/pr_roc_curve/result/extracted-ATAC053018.reweight_curves.feather'
+by: 'sequence'
