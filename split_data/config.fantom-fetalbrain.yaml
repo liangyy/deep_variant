@@ -1,3 +1,3 @@
-fantomFetalBrain:config
+fantomFetalBrain:
   data: '/scratch/midway2/xinhe/repo/deep_variant/cross_validation/output/fantomFetalBrain-deepsea-logistic__deepsea.feature.hdf5'
   fold: 3

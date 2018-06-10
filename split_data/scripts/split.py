@@ -19,12 +19,10 @@ from sklearn.cross_validation import StratifiedKFold
 
 print('######## Loading data ########')
 n_folds = args.fold
-h1 = h5py.File(args.y, 'r')
+h1 = h5py.File(args.input, 'r')
 label = h1['traindata'][...]
+feature = h1['trainxdata'][...]
 h1.close()
-h2 = h5py.File(args.x, 'r')
-feature = h2['trainxdata'][...]
-h2.close()
 print('finished!')
 skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)
 

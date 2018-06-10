@@ -9,9 +9,9 @@ rule split:
     input:
         lambda wildcards: config[wildcards.name]['data']
     params:
-        config[wildcards.name]['fold']
+        lambda wildcards: config[wildcards.name]['fold']
     output:
         'output/{name}.train.hdf5',
         'output/{name}.valid.hdf5'
     shell:
-        'python scripts/split.py --input {input[0]} --fold {params[0]} --output output/{wildcards.name}'
+        'python scripts/split.py --input {input[0]} --fold {params[0]} --prefix output/{wildcards.name}'

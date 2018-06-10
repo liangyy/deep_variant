@@ -66,17 +66,19 @@ library(pander)
 library(dplyr)
 ```
 
-# Load data
-
 ```{{r}}
 fold <- {k}
 prefix <- '../{prefix}'
 scores <- list()
 truth <- list()
+pos.fraction <- c()
 for(i in 1 : fold) {{
   temp <- read.table(paste0(prefix, '-', i, '.predict.txt.gz'), header = T)
+  yt <- temp$y_true
+  yp <- temp$y_pred
   scores[[paste('round', i)]] <- temp$y_pred
   truth[[paste('round', i)]] <- temp$y_true
+  pos.fraction <- c(pos.fraction, sum(yt) / length(yt))
 }}
 msmdat <- mmdata(scores, truth, dsids = 1 : fold)
 mscurves <- evalmod(msmdat)
@@ -86,6 +88,7 @@ df.auc <- df %>%
   group_by(curvetypes) %>%
   summarise(AUC = mean(aucs), SE = sd(aucs))
 pander(df.auc)
+pander(data.frame(round = 1 : fold, positive.fraction = pos.fraction))
 ```
 '''.format(data = wildcards.data, feature = wildcards.feature, classifier = wildcards.classifier, k = wildcards.k, prefix = params.prefix)
         o = open(output[0], 'w')
