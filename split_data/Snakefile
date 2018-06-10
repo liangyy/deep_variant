@@ -1,0 +1,17 @@
+# this module takes an HDF5 training data and split it into training and validation sets
+
+rule all:
+    input:
+        'output/{name}.train.hdf5'.format(name = list(config.keys())[0]),
+        'output/{name}.valid.hdf5'.format(name = list(config.keys())[0])
+
+rule split:
+    input:
+        lambda wildcards: config[wildcards.name]['data']
+    params:
+        config[wildcards.name]['fold']
+    output:
+        'output/{name}.train.hdf5',
+        'output/{name}.valid.hdf5'
+    shell:
+        'python scripts/split.py --input {input[0]} --fold {params[0]} --output output/{wildcards.name}'
