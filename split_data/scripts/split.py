@@ -27,6 +27,8 @@ feature = h1['trainxdata'][...]
 h1.close()
 h1 = h5py.File(args.y, 'r')
 label = h1['traindata'][...]
+if len(label.shape) = 1:
+    label = np.expand_dims(label, axis=1)
 h1.close()
 print('finished!')
 skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)
