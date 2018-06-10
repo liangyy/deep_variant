@@ -1,0 +1,16 @@
+task_name: 'DeepSEA-fantomFetalBrain'
+DeepSEA-fantomFetalBrain:
+  niter: 80
+  feature_model: '/project2/xinhe/yanyul/deep_variant/yanyu/DeepSEA/debug/keras_deepsea_feature_12.hdf5'
+  data:
+    train: '/scratch/midway2/xinhe/repo/deep_variant/split_data/output/fantomFetalBrain.train.hdf5' # in standard format
+    valid: '/scratch/midway2/xinhe/repo/deep_variant/split_data/output/fantomFetalBrain.valid.hdf5' # in standard format
+Training:
+  default:
+    l1: 0
+    l2: 0
+partition: 'gpu2'
+type_of_head: 'logistic'
+selected_head:
+  best: 'default/'
+working_directory: '/scratch/midway2/xinhe/repo/deep_variant/train_deepsea'
