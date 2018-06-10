@@ -2,8 +2,11 @@ import argparse
 parser = argparse.ArgumentParser(prog='split.py', description='''
     Given training data, split it into two parts: training and validation sets. The fold controls the ratio of the size of these two sets. For instance, 5 fold means that the data is split into 5 parts and training takes 4 parts and validation takes one part
 ''')
-parser.add_argument('--input', help='''
-    HDF5 with true label in 'traindata'
+parser.add_argument('--x', help='''
+    HDF5 feature in 'trainxdata'
+''')
+parser.add_argument('--y', help='''
+    HDF5 label in 'traindata'
 ''')
 parser.add_argument('--fold', type=int, help='''
     The fold of CV
@@ -19,9 +22,11 @@ from sklearn.cross_validation import StratifiedKFold
 
 print('######## Loading data ########')
 n_folds = args.fold
-h1 = h5py.File(args.input, 'r')
-label = h1['traindata'][...]
+h1 = h5py.File(args.x, 'r')
 feature = h1['trainxdata'][...]
+h1.close()
+h1 = h5py.File(args.y, 'r')
+label = h1['traindata'][...]
 h1.close()
 print('finished!')
 skf = StratifiedKFold(label, n_folds=n_folds, shuffle=True)

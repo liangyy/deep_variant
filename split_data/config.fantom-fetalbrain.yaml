@@ -1,3 +1,4 @@
 fantomFetalBrain:
-  data: '/scratch/midway2/xinhe/repo/deep_variant/cross_validation/output/fantomFetalBrain-deepsea-logistic__deepsea.feature.hdf5'
+  x: '/scratch/midway2/xinhe/repo/deep_variant/cross_validation/output/fantomFetalBrain-deepsea-logistic__deepsea.feature.hdf5'
+  y: '/scratch/midway2/xinhe/repo/deep_variant/peak2binary/output/fantom-FetalBrain/merged.hdf5'
   fold: 3

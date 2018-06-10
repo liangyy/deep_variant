@@ -7,11 +7,12 @@ rule all:
 
 rule split:
     input:
-        lambda wildcards: config[wildcards.name]['data']
+        x = lambda wildcards: config[wildcards.name]['x'],
+        y = lambda wildcards: config[wildcards.name]['y']
     params:
         lambda wildcards: config[wildcards.name]['fold']
     output:
         'output/{name}.train.hdf5',
         'output/{name}.valid.hdf5'
     shell:
-        'python scripts/split.py --input {input[0]} --fold {params[0]} --prefix output/{wildcards.name}'
+        'python scripts/split.py --x {input.x} --y {input.y} --fold {params[0]} --prefix output/{wildcards.name}'
